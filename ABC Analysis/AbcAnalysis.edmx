@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Хранилище AbcAnalysisModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AbcClass_Static">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AbcCodeItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodeItem" Type="bigint" Nullable="false" />
+          <Property Name="AbcGroup_id" Type="int" Nullable="false" />
+          <Property Name="AbcClass_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AbcGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="30" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TaskData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="XDate" Type="date" Nullable="false" />
+          <Property Name="YearNum" Type="int" Nullable="false" />
+          <Property Name="MonthNum" Type="int" Nullable="false" />
+          <Property Name="Subinventory" Type="int" Nullable="false" />
+          <Property Name="Code" Type="bigint" Nullable="false" />
+          <Property Name="Category_Id" Type="int" Nullable="false" />
+          <Property Name="UserPositionType_Id" Type="int" Nullable="false" />
+          <Property Name="SalesOrder" Type="bit" Nullable="false" />
+          <Property Name="Orders" Type="int" Nullable="false" />
+          <Property Name="Tasks" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserPositionType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="30" Nullable="false" />
+        </EntityType>
+        <!--Ошибки, обнаруженные при создании:
+предупреждение 6002: В таблице или представлении "F:\GD\VISUAL STUDIO\PROJECTS\ABC ANALYSIS\ABC ANALYSIS\ABCANALYSIS.MDF.dbo.Subinventory" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.-->
+        <EntityType Name="Subinventory">
+          <Key>
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="Name" Type="int" Nullable="false" />
+        </EntityType>
+        <Function Name="DeleteTasks" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StartDate" Type="datetime2" Mode="In" />
+          <Parameter Name="EndDate" Type="datetime2" Mode="In" />
+        </Function>
+        <Function Name="LoadTasks" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <EntityContainer Name="Хранилище AbcAnalysisModelContainer">
+          <EntitySet Name="AbcClass_Static" EntityType="Self.AbcClass_Static" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AbcCodeItem" EntityType="Self.AbcCodeItem" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AbcGroup" EntityType="Self.AbcGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Category" EntityType="Self.Category" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TaskData" EntityType="Self.TaskData" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserPositionType" EntityType="Self.UserPositionType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Subinventory" EntityType="Self.Subinventory" store:Type="Views" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Subinventory].[Name] AS [Name]
+    FROM [dbo].[Subinventory] AS [Subinventory]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AbcAnalysisModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="AbcAnalysisEntities" annotation:LazyLoadingEnabled="true">
+          <FunctionImport Name="LoadTasks" />
+          <EntitySet Name="AbcClass_Static" EntityType="AbcAnalysisModel.AbcClass_Static" />
+          <EntitySet Name="AbcCodeItems" EntityType="AbcAnalysisModel.AbcCodeItem" />
+          <EntitySet Name="AbcGroups" EntityType="AbcAnalysisModel.AbcGroup" />
+          <EntitySet Name="Categories" EntityType="AbcAnalysisModel.Category" />
+          <EntitySet Name="TaskDatas" EntityType="AbcAnalysisModel.TaskData" />
+          <EntitySet Name="UserPositionTypes" EntityType="AbcAnalysisModel.UserPositionType" />
+          <EntitySet Name="Subinventories" EntityType="AbcAnalysisModel.Subinventory" />
+          <FunctionImport Name="DeleteTasks">
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
+        </EntityContainer>
+        <EntityType Name="AbcClass_Static">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="2" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="AbcCodeItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodeItem" Type="Int64" Nullable="false" />
+          <Property Name="AbcGroup_id" Type="Int32" Nullable="false" />
+          <Property Name="AbcClass_id" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AbcGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Category">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="TaskData">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="XDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="YearNum" Type="Int32" Nullable="false" />
+          <Property Name="MonthNum" Type="Int32" Nullable="false" />
+          <Property Name="Subinventory" Type="Int32" Nullable="false" />
+          <Property Name="Code" Type="Int64" Nullable="false" />
+          <Property Name="Category_Id" Type="Int32" Nullable="false" />
+          <Property Name="UserPositionType_Id" Type="Int32" Nullable="false" />
+          <Property Name="SalesOrder" Type="Boolean" Nullable="false" />
+          <Property Name="Orders" Type="Int32" Nullable="false" />
+          <Property Name="Tasks" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UserPositionType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Subinventory">
+          <Key>
+            <PropertyRef Name="Name" />
+          </Key>
+          <Property Name="Name" Type="Int32" Nullable="false" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Хранилище AbcAnalysisModelContainer" CdmEntityContainer="AbcAnalysisEntities">
+          <FunctionImportMapping FunctionImportName="LoadTasks" FunctionName="Хранилище AbcAnalysisModel.LoadTasks" />
+          <EntitySetMapping Name="AbcClass_Static">
+            <EntityTypeMapping TypeName="AbcAnalysisModel.AbcClass_Static">
+              <MappingFragment StoreEntitySet="AbcClass_Static">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AbcCodeItems">
+            <EntityTypeMapping TypeName="AbcAnalysisModel.AbcCodeItem">
+              <MappingFragment StoreEntitySet="AbcCodeItem">
+                <ScalarProperty Name="AbcClass_id" ColumnName="AbcClass_id" />
+                <ScalarProperty Name="AbcGroup_id" ColumnName="AbcGroup_id" />
+                <ScalarProperty Name="CodeItem" ColumnName="CodeItem" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AbcGroups">
+            <EntityTypeMapping TypeName="AbcAnalysisModel.AbcGroup">
+              <MappingFragment StoreEntitySet="AbcGroup">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Categories">
+            <EntityTypeMapping TypeName="AbcAnalysisModel.Category">
+              <MappingFragment StoreEntitySet="Category">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TaskDatas">
+            <EntityTypeMapping TypeName="AbcAnalysisModel.TaskData">
+              <MappingFragment StoreEntitySet="TaskData">
+                <ScalarProperty Name="Tasks" ColumnName="Tasks" />
+                <ScalarProperty Name="Orders" ColumnName="Orders" />
+                <ScalarProperty Name="SalesOrder" ColumnName="SalesOrder" />
+                <ScalarProperty Name="UserPositionType_Id" ColumnName="UserPositionType_Id" />
+                <ScalarProperty Name="Category_Id" ColumnName="Category_Id" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Subinventory" ColumnName="Subinventory" />
+                <ScalarProperty Name="MonthNum" ColumnName="MonthNum" />
+                <ScalarProperty Name="YearNum" ColumnName="YearNum" />
+                <ScalarProperty Name="XDate" ColumnName="XDate" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserPositionTypes">
+            <EntityTypeMapping TypeName="AbcAnalysisModel.UserPositionType">
+              <MappingFragment StoreEntitySet="UserPositionType">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Subinventories">
+            <EntityTypeMapping TypeName="AbcAnalysisModel.Subinventory">
+              <MappingFragment StoreEntitySet="Subinventory">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="DeleteTasks" FunctionName="Хранилище AbcAnalysisModel.DeleteTasks" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Нет" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

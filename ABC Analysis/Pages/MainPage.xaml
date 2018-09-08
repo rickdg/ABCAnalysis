@@ -1,0 +1,236 @@
+﻿<UserControl x:Class="Pages.MainPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             xmlns:local="clr-namespace:ABCAnalysis.Pages"
+             mc:Ignorable="d" d:DesignHeight="430" d:DesignWidth="885">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+
+        <Grid Margin="{StaticResource HeaderMargin}" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal">
+
+                <TextBlock VerticalAlignment="Center" Margin="0,0,8,0" Text="Последний пересчет" Style="{StaticResource Heading2}"/>
+
+                <DatePicker SelectedDate="{Binding FinalCalculationDate}" VerticalAlignment="Center">
+                    <DatePicker.CommandBindings>
+                        <CommandBinding Command="local:MyCommands.SelectToday"
+                                        CanExecute="CommandBinding_CanExecute"
+                                        Executed="CommandBinding_Executed"/>
+                    </DatePicker.CommandBindings>
+                    <DatePicker.CalendarStyle>
+                        <Style TargetType="Calendar" BasedOn="{StaticResource {x:Type Calendar}}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Calendar}">
+                                        <StackPanel HorizontalAlignment="Center" Name="PART_Root">
+                                            <CalendarItem Background="{DynamicResource InputBackgroundHover}" Name="PART_CalendarItem"/>
+                                            <Button Content="Сегодня"
+                                                    Command="local:MyCommands.SelectToday"
+                                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
+                                        </StackPanel>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DatePicker.CalendarStyle>
+                </DatePicker>
+
+            </StackPanel>
+        </Grid>
+
+
+        <StackPanel Orientation="Horizontal">
+            <StackPanel.Resources>
+                <Style TargetType="mui:ModernButton">
+                    <Setter Property="Margin" Value="0,-16,8,8"/>
+                    <Setter Property="IconHeight" Value="20"/>
+                    <Setter Property="IconWidth" Value="20"/>
+                    <Setter Property="EllipseDiameter" Value="34"/>
+                    <Setter Property="EllipseStrokeThickness" Value="0"/>
+                </Style>
+            </StackPanel.Resources>
+            <mui:ModernButton Command="{Binding CmdSave}" ToolTip="Сохранить" IconHeight="18" IconWidth="18"
+                              IconData="F1 M 20.5833,20.5833L 55.4167,20.5833L 55.4167,55.4167L 45.9167,55.4167L 45.9167,44.3333L 30.0833,44.3333L 30.0833,55.4167L 20.5833,55.4167L 20.5833,20.5833 Z M 33.25,55.4167L 33.25,50.6667L 39.5833,50.6667L 39.5833,55.4167L 33.25,55.4167 Z M 26.9167,23.75L 26.9167,33.25L 49.0833,33.25L 49.0833,23.75L 26.9167,23.75 Z"/>
+            <mui:ModernButton Command="{Binding CmdRunCalculate}" ToolTip="Выполнить расчет"
+                              IconData="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z"/>
+        </StackPanel>
+
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+
+            <Border BorderBrush="{DynamicResource SeparatorBackground}" BorderThickness="0,0,1,0" Margin="0,0,16,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Шаблоны" Style="{StaticResource Heading1}"/>
+                        <mui:ModernButton Command="{Binding CmdAddNewTemplate}" ToolTip="Добавить" EllipseStrokeThickness="0" Margin="16,0"
+                                          IconData="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z"/>
+                    </StackPanel>
+
+                    <ScrollViewer Grid.Row="1">
+                        <ListBox ItemsSource="{Binding Templates}"
+                                 SelectedItem="{Binding CurrentTemplate}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox IsChecked="{Binding Activated}" ToolTip="Активировать" Margin="8,0"/>
+                                        <TextBox Text="{Binding Name}" Width="100" Margin="8,0" ToolTip="Имя"/>
+                                        <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8"
+                                                          EllipseStrokeThickness="0" EllipseDiameter="16" Margin="8,0" ToolTip="Удалить"
+                                                          IconData="M 50.2708,42.3542L 54.625,38L 50.2708,33.6458L 52.6458,31.2708L 57,35.625L 61.3542,31.2708L 63.7291,33.6458L 59.375,38L 63.7292,42.3542L 61.3542,44.7292L 57,40.375L 52.6458,44.7292L 50.2708,42.3542 Z"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+
+                </Grid>
+            </Border>
+
+
+            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,16,0">
+                <StackPanel.Resources>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Orientation" Value="Horizontal"/>
+                        <Setter Property="Margin" Value="0,0,0,4" />
+                    </Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                        <Setter Property="Width" Value="180"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                        <Setter Property="Width" Value="170"/>
+                    </Style>
+                    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                        <Setter Property="Width" Value="170"/>
+                    </Style>
+                    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
+                        <Setter Property="Padding" Value="0,3"/>
+                    </Style>
+                    <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
+                        <Setter Property="Padding" Value="0,3"/>
+                    </Style>
+                </StackPanel.Resources>
+
+                <TextBlock Text="Параметры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+                <StackPanel>
+                    <TextBlock Text="Группа АВС"/>
+                    <ComboBox ItemsSource="{Binding AbcGroups}"
+                              SelectedValue="{Binding CurrentTemplate.AbcGroup_id}"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Entity.Id"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Интервал запуска (дн)"/>
+                    <TextBox Text="{Binding CurrentTemplate.RunInterval}"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Расчетный период (дн)"/>
+                    <TextBox Text="{Binding CurrentTemplate.BillingPeriod}"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Кол-во позиций класса А"/>
+                    <TextBox Text="{Binding CurrentTemplate.QuantityAClass}"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Кол-во позиций класса В"/>
+                    <TextBox Text="{Binding CurrentTemplate.QuantityBClass}"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Использовать для расчета"/>
+                    <RadioButton Content="Заказы" IsChecked="{Binding CurrentTemplate.ByOrders}"/>
+                    <RadioButton Content="Задачи" IsChecked="{Binding CurrentTemplate.ByTasks, Mode=OneWay}" Margin="8,0,0,0"/>
+                </StackPanel>
+                <TextBlock Text="Порог перехода" Style="{StaticResource Heading1}" Margin="0,8,0,4"/>
+                <StackPanel>
+                    <TextBlock Text="Верхняя граница AB"/>
+                    <TextBox Text="{Binding CurrentTemplate.UpperThresholdAB.Text}" ToolTip="Процент или число"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Нижняя граница AB"/>
+                    <TextBox Text="{Binding CurrentTemplate.LowerThresholdAB.Text}" ToolTip="Процент или число"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Верхняя граница BC"/>
+                    <TextBox Text="{Binding CurrentTemplate.UpperThresholdBC.Text}" ToolTip="Процент или число"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Нижняя граница BC"/>
+                    <TextBox Text="{Binding CurrentTemplate.LowerThresholdBC.Text}" ToolTip="Процент или число"/>
+                </StackPanel>
+            </StackPanel>
+
+
+            <Grid Grid.Column="2" Margin="0,0,16,0" Grid.IsSharedSizeScope="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <StackPanel Margin="0,0,0,8">
+                    <TextBlock Text="Фильтры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+                    <CheckBox Content="Учитывать только ЗнП" IsChecked="{Binding CurrentTemplate.SalesOrder}" Padding="0,4"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="Col1"/>
+                            <ColumnDefinition SharedSizeGroup="Col2"/>
+                            <ColumnDefinition SharedSizeGroup="Col3"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Зона" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
+                        <TextBlock Grid.Column="1" Text="ТПП" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
+                        <TextBlock Grid.Column="2" Text="Категория" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
+                    </Grid>
+                </StackPanel>
+                <ScrollViewer Grid.Row="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="Col1"/>
+                            <ColumnDefinition SharedSizeGroup="Col2"/>
+                            <ColumnDefinition SharedSizeGroup="Col3"/>
+                        </Grid.ColumnDefinitions>
+                        <ListBox Margin="0,0,8,0" ItemsSource="{Binding CurrentTemplate.Subinventories}" MinWidth="50" MinHeight="100" >
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <ListBox Grid.Column="1" Margin="8,0" ItemsSource="{Binding CurrentTemplate.UserPositionTypes}" MinWidth="50" MinHeight="100" >
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <ListBox Grid.Column="2" Margin="8,0,0,0" ItemsSource="{Binding CurrentTemplate.Categoryes}" MinWidth="50" MinHeight="100" >
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </ScrollViewer>
+            </Grid>
+
+        </Grid>
+    </Grid>
+</UserControl>

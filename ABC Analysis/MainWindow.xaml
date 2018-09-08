@@ -1,0 +1,32 @@
+﻿<mui:ModernWindow x:Class="MainWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+                  Title="{Binding Title, Mode=OneWay}" IsTitleVisible="True"
+                  ContentSource="/Pages/MainPage.xaml"
+                  MinWidth="1012" MinHeight="525"
+                  WindowState="{Binding WindowState}" Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}"
+                  Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" Closing="ModernWindow_Closing">
+
+    <mui:ModernWindow.TitleLinks>
+        <mui:Link DisplayName="Настройки" Source="/Pages/Settings.xaml"/>
+    </mui:ModernWindow.TitleLinks>
+
+    <mui:ModernWindow.MenuLinkGroups>
+        <mui:LinkGroup DisplayName="Главная">
+            <mui:LinkGroup.Links>
+                <mui:Link DisplayName="" Source="/Pages/MainPage.xaml"/>
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
+        <mui:LinkGroup DisplayName="Данные">
+            <mui:LinkGroup.Links>
+                <mui:Link DisplayName="" Source="/Pages/DataManagement.xaml"/>
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
+        <mui:LinkGroup DisplayName="Настройки" GroupKey="settings">
+            <mui:LinkGroup.Links>
+                <mui:Link DisplayName="" Source="/Pages/Settings.xaml"/>
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
+    </mui:ModernWindow.MenuLinkGroups>
+</mui:ModernWindow>
