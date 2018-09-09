@@ -90,6 +90,10 @@
       <Schema Namespace="AbcAnalysisModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="AbcAnalysisEntities" annotation:LazyLoadingEnabled="true">
           <FunctionImport Name="LoadTasks" />
+          <FunctionImport Name="DeleteTasks">
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
           <EntitySet Name="AbcClass_Static" EntityType="AbcAnalysisModel.AbcClass_Static" />
           <EntitySet Name="AbcCodeItems" EntityType="AbcAnalysisModel.AbcCodeItem" />
           <EntitySet Name="AbcGroups" EntityType="AbcAnalysisModel.AbcGroup" />
@@ -97,10 +101,6 @@
           <EntitySet Name="TaskDatas" EntityType="AbcAnalysisModel.TaskData" />
           <EntitySet Name="UserPositionTypes" EntityType="AbcAnalysisModel.UserPositionType" />
           <EntitySet Name="Subinventories" EntityType="AbcAnalysisModel.Subinventory" />
-          <FunctionImport Name="DeleteTasks">
-            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
-            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
-          </FunctionImport>
         </EntityContainer>
         <EntityType Name="AbcClass_Static">
           <Key>
@@ -161,13 +161,14 @@
           </Key>
           <Property Name="Name" Type="Int32" Nullable="false" />
         </EntityType>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="Хранилище AbcAnalysisModelContainer" CdmEntityContainer="AbcAnalysisEntities">
           <FunctionImportMapping FunctionImportName="LoadTasks" FunctionName="Хранилище AbcAnalysisModel.LoadTasks" />
+          <FunctionImportMapping FunctionImportName="DeleteTasks" FunctionName="Хранилище AbcAnalysisModel.DeleteTasks" />
           <EntitySetMapping Name="AbcClass_Static">
             <EntityTypeMapping TypeName="AbcAnalysisModel.AbcClass_Static">
               <MappingFragment StoreEntitySet="AbcClass_Static">
@@ -234,7 +235,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="DeleteTasks" FunctionName="Хранилище AbcAnalysisModel.DeleteTasks" />
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

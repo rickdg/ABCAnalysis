@@ -65,5 +65,12 @@ Namespace Pages
 #End Region
 #End Region
 
+
+        Public Sub UpdateTemplates()
+            For Each Tmp In Templates
+                Tmp.UpdateLists()
+            Next
+        End Sub
+
     End Class
 End Namespace

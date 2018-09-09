@@ -62,14 +62,20 @@ Namespace Pages
             Dim Dlg As New ModernDialog
             Dlg.Content = New DataLoader(Dlg)
             Dlg.ShowDialog()
-            If Dlg.DialogResult Then RefreshSeriesCollection()
+            If Dlg.DialogResult Then
+                RefreshSeriesCollection()
+                MainPage.Model.UpdateTemplates()
+            End If
         End Sub
         Public ReadOnly Property CmdDeleteTasks As ICommand = New RelayCommand(AddressOf DeleteTasksExecute)
         Private Sub DeleteTasksExecute(parameter As Object)
             Dim Dlg As New ModernDialog With {.Title = "Удаление данных"}
             Dlg.Buttons = {Dlg.YesButton, Dlg.CancelButton}
             Dlg.Content = New DeleteTasks(Dlg)
-            If Dlg.ShowDialog() Then RefreshSeriesCollection()
+            If Dlg.ShowDialog() Then
+                RefreshSeriesCollection()
+                MainPage.Model.UpdateTemplates()
+            End If
         End Sub
         Public ReadOnly Property CmdChangeStackMode As ICommand = New RelayCommand(AddressOf ChangeStackModeExecute)
         Private Sub ChangeStackModeExecute(ByVal parameter As Object)

@@ -130,6 +130,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
+    <Compile Include="AbcCalculator\Models\AbcClass.vb" />
+    <Compile Include="AbcCalculator\Models\AbcItem.vb" />
     <Compile Include="AbcCalculator\Models\DataItemComparer.vb" />
     <Compile Include="AbcCalculator\Models\DataItem.vb" />
     <Compile Include="AbcClass_Static.vb">
