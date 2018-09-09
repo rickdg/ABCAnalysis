@@ -1,8 +1,8 @@
 ﻿Namespace Pages
-    Public Class ThresholdClass
+    Public Class Threshold
 
-        Public Property Value As Double
         Public Property IsPercent As Boolean
+        Public Property Value As Double
         Public Property Text As String
             Get
                 If IsPercent Then

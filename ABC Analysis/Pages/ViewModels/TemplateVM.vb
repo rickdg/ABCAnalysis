@@ -3,9 +3,10 @@ Imports Newtonsoft.Json
 
 Namespace Pages
     Public Class TemplateVM
+        Inherits Template
 
-        Private _QuantityAClass As UShort
-        Private _QuantityBClass As UShort
+        Private _QuantityAClass As Integer
+        Private _QuantityBClass As Integer
         Private _ByOrders As Boolean
 
 
@@ -22,33 +23,28 @@ Namespace Pages
 
 
         Public Property Activated As Boolean
-        Public Property Name As String
         Public Property Parent As MainPageVM
 
 
 #Region "ABC parameters"
-        Public Property AbcGroup_id As Integer
-        Public Property RunInterval As Byte
-        Public Property BillingPeriod As Byte
-        Public Property QuantityAClass As UShort
+        Public Overrides Property QuantityAClass As Integer
             Get
                 Return _QuantityAClass
             End Get
             Set
-                _QuantityAClass = Value
+                _QuantityAClass = Math.Abs(Value)
                 QuantityABClass = _QuantityAClass + _QuantityBClass
             End Set
         End Property
-        Public Property QuantityBClass As UShort
+        Public Overrides Property QuantityBClass As Integer
             Get
                 Return _QuantityBClass
             End Get
             Set
-                _QuantityBClass = Value
+                _QuantityBClass = Math.Abs(Value)
                 QuantityABClass = _QuantityAClass + _QuantityBClass
             End Set
         End Property
-        Public Property QuantityABClass As Integer
         Public Property ByOrders As Boolean
             Get
                 Return _ByOrders
@@ -59,22 +55,51 @@ Namespace Pages
             End Set
         End Property
         Public Property ByTasks As Boolean
-#End Region
-
-
-#Region "Threshold"
-        Public Property UpperThresholdAB As New ThresholdClass
-        Public Property LowerThresholdAB As New ThresholdClass
-        Public Property UpperThresholdBC As New ThresholdClass
-        Public Property LowerThresholdBC As New ThresholdClass
+        <JsonIgnore>
+        Public Overrides ReadOnly Property GetValueFunc As Func(Of TaskData, Integer)
+            Get
+                If ByOrders Then
+                    Return Function(d) d.Orders
+                Else
+                    Return Function(d) d.Tasks
+                End If
+            End Get
+        End Property
 #End Region
 
 
 #Region "Filters"
-        Public Property SalesOrder As Boolean
+        <JsonIgnore>
+        Public Overrides ReadOnly Property IsSalesOrderFunc As Func(Of TaskData, Boolean)
+            Get
+                If SalesOrder Then
+                    Return Function(d) d.SalesOrder
+                Else
+                    Return Function(d) True
+                End If
+            End Get
+        End Property
         Public Property Subinventories As New List(Of Named(Of Integer))
         Public Property UserPositionTypes As New List(Of Named(Of String))
         Public Property Categoryes As New List(Of Named(Of String))
+        <JsonIgnore>
+        Public Overrides ReadOnly Property Subinventories_id As IEnumerable(Of Integer)
+            Get
+                Return Subinventories.Where(Function(i) i.IsChecked = True).Select(Function(i) i.Name).ToList
+            End Get
+        End Property
+        <JsonIgnore>
+        Public Overrides ReadOnly Property UserPositionTypes_id As IEnumerable(Of Integer)
+            Get
+                Return UserPositionTypes.Where(Function(i) i.IsChecked = True).Select(Function(i) i.Id).ToList
+            End Get
+        End Property
+        <JsonIgnore>
+        Public Overrides ReadOnly Property Categoryes_id As IEnumerable(Of Integer)
+            Get
+                Return Categoryes.Where(Function(i) i.IsChecked = True).Select(Function(i) i.Id).ToList
+            End Get
+        End Property
 #End Region
 
 
@@ -113,7 +138,13 @@ Namespace Pages
                     targetCollection.Add(createFunc(Item))
                 End If
             Next
-            targetCollection.Sort(New Comparer(Of Named(Of TKey), TKey)())
+            targetCollection.Sort(New NamedComparer(Of Named(Of TKey), TKey)())
         End Sub
+
+
+        Public Function GetTemplate() As Template
+            Return Me
+        End Function
+
     End Class
 End Namespace

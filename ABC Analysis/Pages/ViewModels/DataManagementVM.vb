@@ -1,5 +1,4 @@
-﻿Imports System.Threading
-Imports ABCAnalysis.Content
+﻿Imports ABCAnalysis.Content
 Imports ABCAnalysis.ExcelConnection
 Imports FirstFloor.ModernUI.Presentation
 Imports FirstFloor.ModernUI.Windows.Controls
@@ -8,7 +7,6 @@ Imports LiveCharts.Configurations
 Imports LiveCharts.Wpf
 
 Namespace Pages
-
     Public Class DataManagementVM
         Inherits NotifyPropertyChanged
 
@@ -54,6 +52,11 @@ Namespace Pages
         Public Property MonthMapper As New CartesianMapper(Of MeasureModel)
 
 
+        Public ReadOnly Property CmdViewData As ICommand = New RelayCommand(AddressOf ViewDataExecute)
+        Private Sub ViewDataExecute(parameter As Object)
+            Dim ViewTask As New Task(Sub() ViewData(CType(parameter, LoadType)))
+            ViewTask.Start()
+        End Sub
         Public ReadOnly Property CmdLoadTasks As ICommand = New RelayCommand(AddressOf LoadTasksExecute)
         Private Sub LoadTasksExecute(parameter As Object)
             Dim Dlg As New ModernDialog
@@ -80,11 +83,6 @@ Namespace Pages
             For Each Series In SeriesCollection.Cast(Of StackedColumnSeries)
                 Series.StackMode = StackMode
             Next
-        End Sub
-        Public ReadOnly Property CmdViewData As ICommand = New RelayCommand(AddressOf ViewDataExecute)
-        Private Sub ViewDataExecute(parameter As Object)
-            Dim ViewTask As New Task(Sub() ViewData(CType(parameter, LoadType)))
-            ViewTask.Start()
         End Sub
 
 

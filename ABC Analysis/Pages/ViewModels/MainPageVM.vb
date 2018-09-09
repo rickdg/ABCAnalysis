@@ -1,4 +1,6 @@
 ﻿Imports System.Collections.ObjectModel
+Imports ABCAnalysis.AbcCalculator
+Imports ABCAnalysis.Content
 Imports FirstFloor.ModernUI.Presentation
 Imports Newtonsoft.Json
 
@@ -44,8 +46,20 @@ Namespace Pages
 #Region "Commands"
         <JsonIgnore>
         Public ReadOnly Property CmdSave As ICommand = New RelayCommand(Sub() Serialize(Me, SerializeFileName))
-        '<JsonIgnore>
-        'Public ReadOnly Property CmdRunCalculate As ICommand = New RelayCommand()
+        <JsonIgnore>
+        Public ReadOnly Property CmdRunCalculate As ICommand = New RelayCommand(AddressOf RunCalculateExecute)
+        Private Sub RunCalculateExecute(parameter As Object)
+            Using Context As New AbcAnalysisEntities
+                Dim Calculator As New Calculator With {
+                    .InitialDate = Context.TaskDatas.Min(Function(t) t.XDate),
+                    .FinalDate = FinalCalculationDate,
+                    .Templates = Templates.Where(Function(t) t.Activated = True).Select(Function(t) t.GetTemplate).ToList,
+                    .Data = Context.TaskDatas.Where(Function(t) t.XDate <= FinalCalculationDate).ToList}
+
+                Dim NewTask As New Task(Sub() Calculator.Calculate())
+                NewTask.Start()
+            End Using
+        End Sub
         <JsonIgnore>
         Public ReadOnly Property CmdAddNewTemplate As ICommand = New RelayCommand(Sub() Templates.Add(New TemplateVM(True) With {.Parent = Me}))
 #End Region

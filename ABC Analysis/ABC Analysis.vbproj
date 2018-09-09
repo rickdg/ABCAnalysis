@@ -130,6 +130,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
+    <Compile Include="AbcCalculator\Models\DataItemComparer.vb" />
+    <Compile Include="AbcCalculator\Models\DataItem.vb" />
     <Compile Include="AbcClass_Static.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
@@ -139,6 +141,7 @@
     <Compile Include="AbcGroup.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
+    <Compile Include="AbcCalculator\Calculator.vb" />
     <Compile Include="Category.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
@@ -148,12 +151,12 @@
     <Compile Include="Content\SettingsAbcGroups.xaml.vb">
       <DependentUpon>SettingsAbcGroups.xaml</DependentUpon>
     </Compile>
-    <Compile Include="EntityViewModels\AbcGroupVM.vb" />
+    <Compile Include="Content\EntityViewModels\AbcGroupVM.vb" />
     <Compile Include="Pages\Models\MeasureModel.vb" />
     <Compile Include="Pages\DataManagement.xaml.vb">
       <DependentUpon>DataManagement.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Models\Comparer.vb" />
+    <Compile Include="Pages\Models\NamedComparer.vb" />
     <Compile Include="Content\DataLoader.xaml.vb">
       <DependentUpon>DataLoader.xaml</DependentUpon>
     </Compile>
@@ -177,6 +180,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Models\Month_Tasks_Orders.vb" />
+    <Compile Include="Pages\Models\Template.vb" />
     <Compile Include="Pages\Settings.xaml.vb">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
@@ -184,7 +188,7 @@
     <Compile Include="Pages\ViewModels\MainPageVM.vb" />
     <Compile Include="Pages\Models\Named.vb" />
     <Compile Include="Pages\ViewModels\TemplateVM.vb" />
-    <Compile Include="Pages\Models\ThresholdClass.vb" />
+    <Compile Include="Pages\Models\Threshold.vb" />
     <Compile Include="Subinventory.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
