@@ -163,19 +163,19 @@
                 <TextBlock Text="Порог перехода" Style="{StaticResource Heading1}" Margin="0,8,0,4"/>
                 <StackPanel>
                     <TextBlock Text="Верхняя граница AB"/>
-                    <TextBox Text="{Binding CurrentTemplate.UpperThresholdAB.Text}" ToolTip="Процент или число"/>
+                    <TextBox Text="{Binding CurrentTemplate.UpThresholdAB.Text}" ToolTip="Процент или число"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Нижняя граница AB"/>
-                    <TextBox Text="{Binding CurrentTemplate.LowerThresholdAB.Text}" ToolTip="Процент или число"/>
+                    <TextBox Text="{Binding CurrentTemplate.LowThresholdAB.Text}" ToolTip="Процент или число"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Верхняя граница BC"/>
-                    <TextBox Text="{Binding CurrentTemplate.UpperThresholdBC.Text}" ToolTip="Процент или число"/>
+                    <TextBox Text="{Binding CurrentTemplate.UpThresholdBC.Text}" ToolTip="Процент или число"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Нижняя граница BC"/>
-                    <TextBox Text="{Binding CurrentTemplate.LowerThresholdBC.Text}" ToolTip="Процент или число"/>
+                    <TextBox Text="{Binding CurrentTemplate.LowThresholdBC.Text}" ToolTip="Процент или число"/>
                 </StackPanel>
             </StackPanel>
 

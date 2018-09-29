@@ -46,5 +46,17 @@ Namespace ExcelConnection
             End Try
         End Sub
 
+
+        Public Sub ViewCollection(Of T)(name As String, collection As IEnumerable(Of T))
+            Dim NewFile = GetInBaseFileInfo(GetInBaseDirectoryInfo("Validation"), $"{name}.xlsx")
+            Using Package As New ExcelPackage(NewFile)
+                Dim Sheet = Package.Workbook.Worksheets.Add(name)
+                Sheet.Cells("A1").LoadFromCollection(collection, True, TableStyles.Light9)
+                Sheet.Cells.AutoFitColumns()
+                Package.Save()
+            End Using
+            Process.Start(NewFile.FullName)
+        End Sub
+
     End Module
 End Namespace

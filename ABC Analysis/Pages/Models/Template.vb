@@ -16,10 +16,10 @@
 
 
 #Region "Threshold"
-        Public Property UpperThresholdAB As Threshold
-        Public Property LowerThresholdAB As Threshold
-        Public Property UpperThresholdBC As Threshold
-        Public Property LowerThresholdBC As Threshold
+        Public Property UpThresholdAB As New Threshold With {.IsUp = True}
+        Public Property LowThresholdAB As New Threshold
+        Public Property UpThresholdBC As New Threshold With {.IsUp = True}
+        Public Property LowThresholdBC As New Threshold
 #End Region
 
 

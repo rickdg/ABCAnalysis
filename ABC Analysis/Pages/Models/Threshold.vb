@@ -2,6 +2,7 @@
     Public Class Threshold
 
         Public Property IsPercent As Boolean
+        Public Property IsUp As Boolean
         Public Property Value As Double
         Public Property Text As String
             Get
@@ -23,6 +24,26 @@
                 End If
             End Set
         End Property
+
+
+        Public Function GetThreshold(val As Integer) As Integer
+            Dim Result As Integer
+            If IsPercent Then
+                If IsUp Then
+                    Result = CInt(val + (val * Value))
+                Else
+                    Result = CInt(val - (val * Value))
+                End If
+            Else
+                If IsUp Then
+                    Result = CInt(val + Value)
+                Else
+                    Result = CInt(val - Value)
+                End If
+            End If
+            If Result < 0 Then Result = 0
+            Return Result
+        End Function
 
     End Class
 End Namespace
