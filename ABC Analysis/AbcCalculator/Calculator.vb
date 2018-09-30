@@ -5,18 +5,18 @@ Namespace AbcCalculator
     Public Class Calculator
 
 #Region "Input"
+        Public Property Temp As Template
         Public Property InitialDate As Date
         Public Property FinalDate As Date
-        Public Property Templates As IEnumerable(Of Template)
         Public Property Data As IEnumerable(Of TaskData)
 #End Region
 
 
         Public Sub Calculate()
-            For Each tmp In Templates
-                SetMasterData(tmp)
-                RunIterations(tmp)
-            Next
+            SetMasterData()
+            RunIterations()
+
+            ViewCollection("ClassChangeList", ClassChangeList)
         End Sub
 
 
@@ -24,27 +24,21 @@ Namespace AbcCalculator
         Private Property Iterations As Integer
         Private Property StartDate As Date
         Private Property CalculationData As IEnumerable(Of DataItem)
-        Private Property StatisticsData As IEnumerable(Of DataItem)
         Private Property CodeDict As Dictionary(Of Long, AbcClass())
 
 
-        Private Sub SetMasterData(tmp As Template)
-            Iterations = CInt(Fix((DateDiff("d", InitialDate, FinalDate) - tmp.BillingPeriod) / tmp.RunInterval))
+        Private Sub SetMasterData()
+            Iterations = CInt(Fix((DateDiff("d", InitialDate, FinalDate) - Temp.BillingPeriod) / Temp.RunInterval))
 
-            StartDate = FinalDate.AddDays(-((Iterations * tmp.RunInterval) + tmp.BillingPeriod))
+            StartDate = FinalDate.AddDays(-((Iterations * Temp.RunInterval) + Temp.BillingPeriod))
 
             CalculationData = (From d In Data
-                               Where tmp.Subinventories_id.Contains(d.Subinventory) AndAlso
-                                   tmp.UserPositionTypes_id.Contains(d.UserPositionType_Id) AndAlso
-                                   tmp.Categoryes_id.Contains(d.Category_Id) AndAlso
-                                   tmp.IsSalesOrderFunc(d)
-                               Select New DataItem With {.XDate = d.XDate, .Code = d.Code, .Value = tmp.GetValueFunc(d)}).ToList
-
-            StatisticsData = (From d In Data
-                              Where tmp.Subinventories_id.Contains(d.Subinventory)
-                              Select New DataItem With {.XDate = d.XDate, .Code = d.Code, .Value = d.Tasks}).ToList
+                               Where Temp.UserPositionTypes_id.Contains(d.UserPositionType_Id) AndAlso
+                                   Temp.Categoryes_id.Contains(d.Category_Id) AndAlso
+                                   Temp.IsSalesOrderFunc(d)
+                               Select New DataItem With {.XDate = d.XDate, .Code = d.Code, .Value = Temp.GetValueFunc(d)}).ToList
             Iterations -= 1
-            CodeDict = CalculationData.Distinct(New DataItemComparer).ToDictionary(Function(d) d.Code, Function() New AbcClass(Iterations) {})
+            CodeDict = Data.Distinct(New TaskDataComparer).ToDictionary(Function(d) d.Code, Function() New AbcClass(Iterations) {})
         End Sub
 #End Region
 
@@ -53,46 +47,56 @@ Namespace AbcCalculator
         Private Property CurIter As Integer
         Private Property StartBillingPeriod As Date
         Private Property FinalBillingPeriod As Date
-        Private Property StartInterval As Date
-        Private Property FinalInterval As Date
 
 
-        Private Sub RunIterations(tmp As Template)
+        Private Sub RunIterations()
+            Dim PrevAbcTable1 As IEnumerable(Of AbcItem)
+            Dim PrevAbcTable2 As IEnumerable(Of AbcItem)
+
             For i = 0 To Iterations
                 CurIter = i
                 StartBillingPeriod = StartDate
-                FinalBillingPeriod = StartDate.AddDays(tmp.BillingPeriod)
-                StartDate = StartDate.AddDays(tmp.RunInterval)
+                FinalBillingPeriod = StartDate.AddDays(Temp.BillingPeriod)
+                StartDate = StartDate.AddDays(Temp.RunInterval)
 
-                Dim AbcTable = CreateAbcTable(tmp)
+                Dim AbcTable = CreateAbcTable()
 
-                If CurIter = 0 Then Continue For
+                If CurIter = 0 Then
+                    PrevAbcTable1 = AbcTable
+                    Continue For
+                End If
 
-                ThresholdAlgorithm(tmp, AbcTable)
+                If CurIter Mod 2 = 0 Then
+                    PrevAbcTable1 = AbcTable
+                    TransitionToX(PrevAbcTable2)
+                Else
+                    PrevAbcTable2 = AbcTable
+                    TransitionToX(PrevAbcTable1)
+                End If
 
-                Equalization(tmp, AbcTable)
+                ThresholdAlgorithm(AbcTable)
+                Equalization(AbcTable)
 
-                StartInterval = FinalBillingPeriod.AddDays(1)
-                FinalInterval = FinalBillingPeriod.AddDays(tmp.RunInterval)
+                RecordStatistics(AbcTable)
             Next
         End Sub
 #End Region
 
 
-        Private Function CreateAbcTable(tmp As Template) As IEnumerable(Of AbcItem)
+        Private Function CreateAbcTable() As IEnumerable(Of AbcItem)
             Dim AbcTable = (From d In CalculationData
                             Where d.XDate >= StartBillingPeriod AndAlso d.XDate <= FinalBillingPeriod
-                            Group d By d.Code Into Sum = Sum(d.Value)
+                            Group By d.Code Into Sum = Sum(d.Value)
                             Order By Sum Descending, Code Ascending
                             Select New AbcItem With {.Code = Code, .Value = Sum, .AbcClass = AbcClass.C}).ToList
 
             For j = 0 To AbcTable.Count - 1
                 Dim Item = AbcTable(j)
-                If j < tmp.QuantityAClass Then
+                If j < Temp.QuantityAClass Then
                     Item.AbcClass = AbcClass.A
                     CodeDict(Item.Code)(CurIter) = AbcClass.A
                 Else
-                    If j < tmp.QuantityABClass Then
+                    If j < Temp.QuantityABClass Then
                         Item.AbcClass = AbcClass.B
                         CodeDict(Item.Code)(CurIter) = AbcClass.B
                     Else
@@ -105,24 +109,38 @@ Namespace AbcCalculator
         End Function
 
 
-        Private Sub ThresholdAlgorithm(tmp As Template, abcTable As IEnumerable(Of AbcItem))
-            Dim ThresholdAB As Integer
-            Dim ThresholdBC As Integer
+        Private Sub TransitionToX(prevAbcTable As IEnumerable(Of AbcItem))
+            For Each Item In prevAbcTable
+                If CodeDict(Item.Code)(CurIter) = AbcClass.NA Then
+                    CodeDict(Item.Code)(CurIter) = AbcClass.X
+                End If
+            Next
+
+            For Each Item In CodeDict
+                If Item.Value(CurIter - 1) = AbcClass.X AndAlso Item.Value(CurIter) = AbcClass.NA Then
+                    Item.Value(CurIter) = AbcClass.X
+                End If
+            Next
+        End Sub
+
+
+#Region "Algorithms"
+        Private Sub ThresholdAlgorithm(abcTable As IEnumerable(Of AbcItem))
             Dim UpThresholdAB As Integer
             Dim LowThresholdAB As Integer
             Dim UpThresholdBC As Integer
             Dim LowThresholdBC As Integer
 
-            If tmp.QuantityAClass <= abcTable.Count - 1 Then
-                ThresholdAB = abcTable(tmp.QuantityAClass).Value
-                UpThresholdAB = tmp.UpThresholdAB.GetThreshold(ThresholdAB)
-                LowThresholdAB = tmp.LowThresholdAB.GetThreshold(ThresholdAB)
+            If Temp.QuantityAClass <= abcTable.Count - 1 Then
+                Dim ThresholdAB = abcTable(Temp.QuantityAClass).Value
+                UpThresholdAB = Temp.UpThresholdAB.GetThreshold(ThresholdAB)
+                LowThresholdAB = Temp.LowThresholdAB.GetThreshold(ThresholdAB)
             End If
 
-            If tmp.QuantityABClass <= abcTable.Count - 1 Then
-                ThresholdBC = abcTable(tmp.QuantityABClass).Value
-                UpThresholdBC = tmp.UpThresholdBC.GetThreshold(ThresholdBC)
-                LowThresholdBC = tmp.LowThresholdBC.GetThreshold(ThresholdBC)
+            If Temp.QuantityABClass <= abcTable.Count - 1 Then
+                Dim ThresholdBC = abcTable(Temp.QuantityABClass).Value
+                UpThresholdBC = Temp.UpThresholdBC.GetThreshold(ThresholdBC)
+                LowThresholdBC = Temp.LowThresholdBC.GetThreshold(ThresholdBC)
             End If
 
             For i = 0 To abcTable.Count - 1
@@ -185,9 +203,9 @@ Namespace AbcCalculator
         End Sub
 
 
-        Private Sub Equalization(tmp As Template, abcTable As IEnumerable(Of AbcItem))
-            Dim QtyA = tmp.QuantityAClass
-            Dim QtyB = tmp.QuantityBClass
+        Private Sub Equalization(abcTable As IEnumerable(Of AbcItem))
+            Dim QtyA = Temp.QuantityAClass
+            Dim QtyB = Temp.QuantityBClass
             Dim CurQtyA = abcTable.Count(Function(Item) Item.AbcClass = AbcClass.A)
             If QtyA > CurQtyA Then
                 For i = 0 To abcTable.Count - 1
@@ -240,6 +258,43 @@ Namespace AbcCalculator
                 End If
             End If
         End Sub
+#End Region
+
+
+#Region "Statistics"
+        Private Property AbcList As New Dictionary(Of Date, IEnumerable(Of StatItem))
+        Private Property PickList As New Dictionary(Of Date, IEnumerable(Of StatItem))
+        Private Property ClassChangeList As New List(Of Transition)
+
+        Private Sub RecordStatistics(abcTable As IEnumerable(Of AbcItem))
+            Dim StartInterval = FinalBillingPeriod.AddDays(1)
+            Dim FinalInterval = FinalBillingPeriod.AddDays(Temp.RunInterval)
+
+            Dim Abc = (From at In abcTable
+                       Group By at.AbcClass Into Count, Sum(at.Value)
+                       Select New StatItem With {.AbcClass = AbcClass, .QtyCode = Count, .QtyTasks = Sum}).
+                       Concat(From cd In CodeDict
+                              Where cd.Value(CurIter) = AbcClass.X
+                              Group By AbcClass = cd.Value(CurIter) Into Count
+                              Select New StatItem With {.AbcClass = AbcClass, .QtyCode = Count, .QtyTasks = 0}).ToList
+
+            Dim Pick = (From td In (From d In Data
+                                    Join cd In CodeDict On cd.Key Equals d.Code
+                                    Where d.XDate >= StartInterval AndAlso d.XDate <= FinalInterval
+                                    Group By d.Code, AbcClass = cd.Value(CurIter) Into Sum(d.Tasks))
+                        Group By td.AbcClass Into Count, Sum(td.Sum)
+                        Select New StatItem With {.AbcClass = AbcClass, .QtyCode = Count, .QtyTasks = Sum}).ToList
+
+            Dim ClassChange = (From cd In CodeDict
+                               Where cd.Value(CurIter) <> AbcClass.NA
+                               Group By prev = cd.Value(CurIter - 1), cur = cd.Value(CurIter) Into Count
+                               Select New DirectionItem(prev, cur) With {.QtyCode = Count}).ToList
+
+            AbcList.Add(FinalBillingPeriod, Abc)
+            PickList.Add(FinalInterval, Pick)
+            ClassChangeList.Add(New Transition(FinalBillingPeriod, ClassChange))
+        End Sub
+#End Region
 
     End Class
 End Namespace

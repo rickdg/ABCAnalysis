@@ -47,17 +47,21 @@ Namespace Pages
         <JsonIgnore>
         Public ReadOnly Property CmdSave As ICommand = New RelayCommand(Sub() Serialize(Me, SerializeFileName))
         <JsonIgnore>
-        Public ReadOnly Property CmdRunCalculate As ICommand = New RelayCommand(AddressOf RunCalculateExecute)
-        Private Sub RunCalculateExecute(parameter As Object)
+        Public ReadOnly Property CmdRunCalculate As ICommand = New RelayCommand(AddressOf CalculateExecute)
+        Private Sub CalculateExecute(parameter As Object)
+            For Each Tmp In Templates.Where(Function(t) t.Activated = True).Select(Function(t) t.GetTemplate).ToList
+                 Task.Factory.StartNew(Sub() RunCalculate(Tmp))
+            Next
+        End Sub
+        Private Sub RunCalculate(tmp As Template)
             Using Context As New AbcAnalysisEntities
+                Dim InitialDate = Context.TaskDatas.Min(Function(t) t.XDate)
                 Dim Calculator As New Calculator With {
-                    .InitialDate = Context.TaskDatas.Min(Function(t) t.XDate),
+                    .Temp = tmp,
+                    .InitialDate = InitialDate,
                     .FinalDate = FinalCalculationDate,
-                    .Templates = Templates.Where(Function(t) t.Activated = True).Select(Function(t) t.GetTemplate).ToList,
-                    .Data = Context.TaskDatas.Where(Function(t) t.XDate <= FinalCalculationDate).ToList}
-
-                Dim NewTask As New Task(Sub() Calculator.Calculate())
-                NewTask.Start()
+                    .Data = Context.TaskDatas.Where(Function(t) t.XDate <= FinalCalculationDate AndAlso tmp.Subinventories_id.Contains(t.Subinventory)).ToList}
+                Calculator.Calculate()
             End Using
         End Sub
         <JsonIgnore>

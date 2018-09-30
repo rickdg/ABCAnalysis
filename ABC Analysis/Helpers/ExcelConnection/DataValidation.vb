@@ -58,5 +58,17 @@ Namespace ExcelConnection
             Process.Start(NewFile.FullName)
         End Sub
 
+
+        Public Sub ViewArray(name As String, arr As IEnumerable(Of Object()))
+            Dim NewFile = GetInBaseFileInfo(GetInBaseDirectoryInfo("Validation"), $"{name}.xlsx")
+            Using Package As New ExcelPackage(NewFile)
+                Dim Sheet = Package.Workbook.Worksheets.Add(name)
+                Sheet.Cells("A1").LoadFromArrays(arr)
+                Sheet.Cells.AutoFitColumns()
+                Package.Save()
+            End Using
+            Process.Start(NewFile.FullName)
+        End Sub
+
     End Module
 End Namespace
