@@ -1,27 +1,27 @@
 ﻿Namespace AbcCalculator
     Public Class Transition
 
-        Public Sub New(xDate As Date, arr As IEnumerable(Of DirectionItem))
+        Public Sub New(xDate As Date, data As IEnumerable(Of DirectionItem))
             Дата = xDate
-            NAA = GetQtyCode(arr, DirectionTransition.NAA)
-            NAB = GetQtyCode(arr, DirectionTransition.NAB)
-            NAC = GetQtyCode(arr, DirectionTransition.NAC)
-            AA = GetQtyCode(arr, DirectionTransition.AA)
-            AB = GetQtyCode(arr, DirectionTransition.AB)
-            AC = GetQtyCode(arr, DirectionTransition.AC)
-            AX = GetQtyCode(arr, DirectionTransition.AX)
-            BA = GetQtyCode(arr, DirectionTransition.BA)
-            BB = GetQtyCode(arr, DirectionTransition.BB)
-            BC = GetQtyCode(arr, DirectionTransition.BC)
-            BX = GetQtyCode(arr, DirectionTransition.BX)
-            CA = GetQtyCode(arr, DirectionTransition.CA)
-            CB = GetQtyCode(arr, DirectionTransition.CB)
-            CC = GetQtyCode(arr, DirectionTransition.CC)
-            CX = GetQtyCode(arr, DirectionTransition.CX)
-            XA = GetQtyCode(arr, DirectionTransition.XA)
-            XB = GetQtyCode(arr, DirectionTransition.XB)
-            XC = GetQtyCode(arr, DirectionTransition.XC)
-            XX = GetQtyCode(arr, DirectionTransition.XX)
+            NAA = GetValue(data, DirectionTransition.NAA)
+            NAB = GetValue(data, DirectionTransition.NAB)
+            NAC = GetValue(data, DirectionTransition.NAC)
+            AA = GetValue(data, DirectionTransition.AA)
+            AB = GetValue(data, DirectionTransition.AB)
+            AC = GetValue(data, DirectionTransition.AC)
+            AX = GetValue(data, DirectionTransition.AX)
+            BA = GetValue(data, DirectionTransition.BA)
+            BB = GetValue(data, DirectionTransition.BB)
+            BC = GetValue(data, DirectionTransition.BC)
+            BX = GetValue(data, DirectionTransition.BX)
+            CA = GetValue(data, DirectionTransition.CA)
+            CB = GetValue(data, DirectionTransition.CB)
+            CC = GetValue(data, DirectionTransition.CC)
+            CX = GetValue(data, DirectionTransition.CX)
+            XA = GetValue(data, DirectionTransition.XA)
+            XB = GetValue(data, DirectionTransition.XB)
+            XC = GetValue(data, DirectionTransition.XC)
+            XX = GetValue(data, DirectionTransition.XX)
         End Sub
 
 
@@ -47,10 +47,10 @@
         Public Property XX As Integer
 
 
-        Private Function GetQtyCode(list As IEnumerable(Of DirectionItem), Direction As DirectionTransition) As Integer
-            Dim DirecItem = list.Where(Function(i) i.Direction = Direction).FirstOrDefault
-            If DirecItem Is Nothing Then Return 0
-            Return DirecItem.QtyCode
+        Private Function GetValue(data As IEnumerable(Of DirectionItem), Direction As DirectionTransition) As Integer
+            Dim Item = data.Where(Function(i) i.Direction = Direction).FirstOrDefault
+            If Item Is Nothing Then Return 0
+            Return Item.QtyCode
         End Function
 
     End Class

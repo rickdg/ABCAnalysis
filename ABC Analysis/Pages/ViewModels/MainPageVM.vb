@@ -1,4 +1,5 @@
 ﻿Imports System.Collections.ObjectModel
+Imports System.Data.Entity.SqlServer
 Imports ABCAnalysis.AbcCalculator
 Imports ABCAnalysis.Content
 Imports FirstFloor.ModernUI.Presentation
@@ -17,13 +18,10 @@ Namespace Pages
                     AbcGroups.Add(New AbcGroupVM() With {.Entity = AbcGroup})
                 Next
             End Using
-            FinalCalculationDate = Now.Date
         End Sub
 
 
 #Region "ViewModel"
-        <JsonIgnore>
-        Public Property FinalCalculationDate As Date
         <JsonIgnore>
         Public Property AbcGroups As New ObservableCollection(Of AbcGroupVM)
 
@@ -49,20 +47,25 @@ Namespace Pages
         <JsonIgnore>
         Public ReadOnly Property CmdRunCalculate As ICommand = New RelayCommand(AddressOf CalculateExecute)
         Private Sub CalculateExecute(parameter As Object)
-            For Each Tmp In Templates.Where(Function(t) t.Activated = True).Select(Function(t) t.GetTemplate).ToList
-                 Task.Factory.StartNew(Sub() RunCalculate(Tmp))
+            For Each Tmp In Templates.Where(Function(i) i.Activated = True).Select(Function(i) i.GetTemplate).ToList
+                Task.Factory.StartNew(Sub() RunCalculate(Tmp))
             Next
         End Sub
         Private Sub RunCalculate(tmp As Template)
+            Dim Stopwatch As New Stopwatch
+            Stopwatch.Start()
             Using Context As New AbcAnalysisEntities
-                Dim InitialDate = Context.TaskDatas.Min(Function(t) t.XDate)
-                Dim Calculator As New Calculator With {
+                Dim InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
+                Dim FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
+                Dim Calculator As New ParallelTestCalculator With {
                     .Temp = tmp,
                     .InitialDate = InitialDate,
-                    .FinalDate = FinalCalculationDate,
-                    .Data = Context.TaskDatas.Where(Function(t) t.XDate <= FinalCalculationDate AndAlso tmp.Subinventories_id.Contains(t.Subinventory)).ToList}
+                    .FinalDate = FinalDate,
+                    .Data = Context.TaskDatas.Where(Function(i) i.XDate <= FinalDate AndAlso tmp.Subinventories_id.Contains(i.Subinventory)).ToList}
                 Calculator.Calculate()
             End Using
+            Stopwatch.Stop()
+            MsgBox(Stopwatch.Elapsed.TotalSeconds)
         End Sub
         <JsonIgnore>
         Public ReadOnly Property CmdAddNewTemplate As ICommand = New RelayCommand(Sub() Templates.Add(New TemplateVM(True) With {.Parent = Me}))

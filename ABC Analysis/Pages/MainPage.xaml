@@ -15,35 +15,7 @@
 
 
         <Grid Margin="{StaticResource HeaderMargin}" HorizontalAlignment="Right" VerticalAlignment="Top">
-            <StackPanel Orientation="Horizontal">
-
-                <TextBlock VerticalAlignment="Center" Margin="0,0,8,0" Text="Последний пересчет" Style="{StaticResource Heading2}"/>
-
-                <DatePicker SelectedDate="{Binding FinalCalculationDate}" VerticalAlignment="Center">
-                    <DatePicker.CommandBindings>
-                        <CommandBinding Command="local:MyCommands.SelectToday"
-                                        CanExecute="CommandBinding_CanExecute"
-                                        Executed="CommandBinding_Executed"/>
-                    </DatePicker.CommandBindings>
-                    <DatePicker.CalendarStyle>
-                        <Style TargetType="Calendar" BasedOn="{StaticResource {x:Type Calendar}}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type Calendar}">
-                                        <StackPanel HorizontalAlignment="Center" Name="PART_Root">
-                                            <CalendarItem Background="{DynamicResource InputBackgroundHover}" Name="PART_CalendarItem"/>
-                                            <Button Content="Сегодня"
-                                                    Command="local:MyCommands.SelectToday"
-                                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"/>
-                                        </StackPanel>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </DatePicker.CalendarStyle>
-                </DatePicker>
-
-            </StackPanel>
+            
         </Grid>
 
 

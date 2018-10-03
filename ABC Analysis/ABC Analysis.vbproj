@@ -130,11 +130,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
+    <Compile Include="AbcCalculator\BaseCalculator.vb" />
+    <Compile Include="AbcCalculator\ParallelTestCalculator.vb" />
+    <Compile Include="AbcCalculator\TestCalculator.vb" />
     <Compile Include="AbcCalculator\Models\AbcClass.vb" />
     <Compile Include="AbcCalculator\Models\AbcItem.vb" />
     <Compile Include="AbcCalculator\Models\DataItemComparer.vb" />
     <Compile Include="AbcCalculator\Models\DataItem.vb" />
     <Compile Include="AbcCalculator\Models\DirectionItem.vb" />
+    <Compile Include="AbcCalculator\Models\Statistics\ResultCalculation.vb" />
+    <Compile Include="AbcCalculator\Models\Statistics\AbcValue.vb" />
+    <Compile Include="AbcCalculator\Models\Statistics\GenericTransition.vb" />
     <Compile Include="AbcCalculator\Models\Statistics\Transition.vb" />
     <Compile Include="AbcCalculator\Models\StatItem.vb" />
     <Compile Include="AbcClass_Static.vb">
