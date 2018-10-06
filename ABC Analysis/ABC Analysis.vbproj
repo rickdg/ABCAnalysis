@@ -137,12 +137,12 @@
     <Compile Include="AbcCalculator\Models\AbcItem.vb" />
     <Compile Include="AbcCalculator\Models\DataItemComparer.vb" />
     <Compile Include="AbcCalculator\Models\DataItem.vb" />
-    <Compile Include="AbcCalculator\Models\DirectionItem.vb" />
+    <Compile Include="AbcCalculator\Models\Statistics\DirectionItem.vb" />
     <Compile Include="AbcCalculator\Models\Statistics\ResultCalculation.vb" />
     <Compile Include="AbcCalculator\Models\Statistics\AbcValue.vb" />
     <Compile Include="AbcCalculator\Models\Statistics\GenericTransition.vb" />
     <Compile Include="AbcCalculator\Models\Statistics\Transition.vb" />
-    <Compile Include="AbcCalculator\Models\StatItem.vb" />
+    <Compile Include="AbcCalculator\Models\Statistics\StatItem.vb" />
     <Compile Include="AbcClass_Static.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
@@ -199,7 +199,6 @@
     <Compile Include="Pages\ViewModels\MainPageVM.vb" />
     <Compile Include="Pages\Models\Named.vb" />
     <Compile Include="Pages\ViewModels\TemplateVM.vb" />
-    <Compile Include="Pages\Models\Threshold.vb" />
     <Compile Include="Subinventory.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>

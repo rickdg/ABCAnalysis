@@ -16,8 +16,8 @@ Namespace AbcCalculator
         Public Sub Calculate()
             Dim CalculationData = (From d In Data
                                    Where Temp.UserPositionTypes_id.Contains(d.UserPositionType_Id) AndAlso
-                                   Temp.Categoryes_id.Contains(d.Category_Id) AndAlso
-                                   Temp.IsSalesOrderFunc(d)
+                                       Temp.Categoryes_id.Contains(d.Category_Id) AndAlso
+                                       Temp.IsSalesOrderFunc(d)
                                    Select New DataItem With {.XDate = d.XDate, .Code = d.Code, .Value = Temp.GetValueFunc(d)}).ToList
 
             Parallel.ForEach(GetTemplates(False),
@@ -28,8 +28,9 @@ Namespace AbcCalculator
                                  .FinalDate = FinalDate,
                                  .Data = Data,
                                  .CalculationData = CalculationData}
+
                                  Calculator.Calculate()
-                                 ResultCalculation.Add(New ResultCalculation(Calculator.Temp, Calculator.PickQtyTasks))
+                                 ResultCalculation.Add(New ResultCalculation(Calculator.Temp, Calculator.PickQtyTasks, Calculator.GenericClassChange))
                              End Sub)
 
             ViewCollection("ResultCalculation", ResultCalculation)
@@ -40,22 +41,14 @@ Namespace AbcCalculator
 
 
         Private Function GetTemplates(isPercent As Boolean) As IEnumerable(Of Template)
-            Return (From RunInterval In {7, 14}
-                    From BillingPeriod In {84}
-                    From UpThresholdAB In {0}
-                    From LowThresholdAB In {0}
-                    From UpThresholdBC In {0}
-                    From LowThresholdBC In {0}
+            Return (From RunInterval In {7, 14, 21, 28, 35}
+                    From BillingPeriod In {21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, 105, 112}
                     Select New Template With {
                        .RunInterval = CByte(RunInterval),
                        .BillingPeriod = CByte(BillingPeriod),
                        .QuantityAClass = Temp.QuantityAClass,
                        .QuantityBClass = Temp.QuantityBClass,
-                       .QuantityABClass = Temp.QuantityABClass,
-                       .UpThresholdAB = New Threshold With {.IsUp = True, .IsPercent = isPercent, .Value = UpThresholdAB},
-                       .LowThresholdAB = New Threshold With {.IsUp = False, .IsPercent = isPercent, .Value = LowThresholdAB},
-                       .UpThresholdBC = New Threshold With {.IsUp = True, .IsPercent = isPercent, .Value = UpThresholdBC},
-                       .LowThresholdBC = New Threshold With {.IsUp = False, .IsPercent = isPercent, .Value = LowThresholdBC}}).ToList
+                       .QuantityABClass = Temp.QuantityABClass}).ToList
         End Function
 
     End Class

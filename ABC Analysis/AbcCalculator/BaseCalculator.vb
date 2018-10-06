@@ -27,15 +27,6 @@ Namespace AbcCalculator
             Iterations -= 1
             CodeDict = Data.Distinct(New TaskDataComparer).ToDictionary(Function(d) d.Code, Function() New AbcClass(Iterations) {})
         End Sub
-
-
-        Public Sub SetCalculationData()
-            CalculationData = (From d In Data
-                               Where Temp.UserPositionTypes_id.Contains(d.UserPositionType_Id) AndAlso
-                                   Temp.Categoryes_id.Contains(d.Category_Id) AndAlso
-                                   Temp.IsSalesOrderFunc(d)
-                               Select New DataItem With {.XDate = d.XDate, .Code = d.Code, .Value = Temp.GetValueFunc(d)}).ToList
-        End Sub
 #End Region
 
 
@@ -70,7 +61,7 @@ Namespace AbcCalculator
                     TransitionToX(PrevAbcTable1)
                 End If
 
-                ThresholdAlgorithm(AbcTable)
+                'ThresholdAlgorithm(AbcTable)
                 Equalization(AbcTable)
 
                 RecordStatistics(AbcTable)
@@ -90,20 +81,43 @@ Namespace AbcCalculator
                             Order By Sum Descending, Code Ascending
                             Select New AbcItem With {.Code = Code, .Value = Sum, .AbcClass = AbcClass.C}).ToList
 
-            For j = 0 To AbcTable.Count - 1
-                Dim Item = AbcTable(j)
-                If j < Temp.QuantityAClass Then
-                    Item.AbcClass = AbcClass.A
-                    CodeDict(Item.Code)(CurIter) = AbcClass.A
-                Else
-                    If j < Temp.QuantityABClass Then
-                        Item.AbcClass = AbcClass.B
-                        CodeDict(Item.Code)(CurIter) = AbcClass.B
+            If CurIter = 0 Then
+                For j = 0 To AbcTable.Count - 1
+                    Dim Item = AbcTable(j)
+                    If j < Temp.QuantityAClass Then
+                        Item.AbcClass = AbcClass.A
+                        CodeDict(Item.Code)(CurIter) = AbcClass.A
                     Else
-                        CodeDict(Item.Code)(CurIter) = AbcClass.C
+                        If j < Temp.QuantityABClass Then
+                            Item.AbcClass = AbcClass.B
+                            CodeDict(Item.Code)(CurIter) = AbcClass.B
+                        Else
+                            CodeDict(Item.Code)(CurIter) = AbcClass.C
+                        End If
                     End If
-                End If
-            Next
+                Next
+            Else
+                For j = 0 To AbcTable.Count - 1
+                    Dim Item = AbcTable(j)
+                    Dim PrevAbc = CodeDict(Item.Code)(CurIter - 1)
+                    If {AbcClass.A, AbcClass.B, AbcClass.C}.Contains(PrevAbc) Then
+                        Item.AbcClass = PrevAbc
+                        CodeDict(Item.Code)(CurIter) = PrevAbc
+                    Else
+                        If j < Temp.QuantityAClass Then
+                            Item.AbcClass = AbcClass.A
+                            CodeDict(Item.Code)(CurIter) = AbcClass.A
+                        Else
+                            If j < Temp.QuantityABClass Then
+                                Item.AbcClass = AbcClass.B
+                                CodeDict(Item.Code)(CurIter) = AbcClass.B
+                            Else
+                                CodeDict(Item.Code)(CurIter) = AbcClass.C
+                            End If
+                        End If
+                    End If
+                Next
+            End If
 
             Return AbcTable
         End Function
@@ -128,79 +142,6 @@ Namespace AbcCalculator
                 If Item.Value(CurIter - 1) = AbcClass.X AndAlso Item.Value(CurIter) = AbcClass.NA Then
                     Item.Value(CurIter) = AbcClass.X
                 End If
-            Next
-        End Sub
-
-
-        Private Sub ThresholdAlgorithm(abcTable As IEnumerable(Of AbcItem))
-            If Temp.QuantityAClass <= abcTable.Count - 1 Then
-                Dim ThresholdAB = abcTable(Temp.QuantityAClass).Value
-                UpThresholdAB = Temp.UpThresholdAB.GetThreshold(ThresholdAB)
-                LowThresholdAB = Temp.LowThresholdAB.GetThreshold(ThresholdAB)
-            End If
-
-            If Temp.QuantityABClass <= abcTable.Count - 1 Then
-                Dim ThresholdBC = abcTable(Temp.QuantityABClass).Value
-                UpThresholdBC = Temp.UpThresholdBC.GetThreshold(ThresholdBC)
-                LowThresholdBC = Temp.LowThresholdBC.GetThreshold(ThresholdBC)
-            End If
-
-            For i = 0 To abcTable.Count - 1
-                Dim Item = abcTable(i)
-                Dim PrevAbc = CodeDict(Item.Code)(CurIter - 1)
-                Dim CurAbc = CodeDict(Item.Code)(CurIter)
-
-                Select Case PrevAbc
-                    Case AbcClass.A
-                        Select Case CurAbc
-                            Case AbcClass.B
-                                If Item.Value >= LowThresholdAB Then
-                                    Item.AbcClass = AbcClass.A
-                                    CodeDict(Item.Code)(CurIter) = AbcClass.A
-                                End If
-                            Case AbcClass.C
-                                If Item.Value >= LowThresholdBC Then
-                                    If Item.Value >= LowThresholdAB Then
-                                        Item.AbcClass = AbcClass.A
-                                        CodeDict(Item.Code)(CurIter) = AbcClass.A
-                                    Else
-                                        Item.AbcClass = AbcClass.B
-                                        CodeDict(Item.Code)(CurIter) = AbcClass.B
-                                    End If
-                                End If
-                        End Select
-                    Case AbcClass.B
-                        Select Case CurAbc
-                            Case AbcClass.C
-                                If Item.Value >= LowThresholdBC Then
-                                    Item.AbcClass = AbcClass.B
-                                    CodeDict(Item.Code)(CurIter) = AbcClass.B
-                                End If
-                            Case AbcClass.A
-                                If Item.Value <= UpThresholdAB Then
-                                    Item.AbcClass = AbcClass.B
-                                    CodeDict(Item.Code)(CurIter) = AbcClass.B
-                                End If
-                        End Select
-                    Case AbcClass.C
-                        Select Case CurAbc
-                            Case AbcClass.B
-                                If Item.Value <= UpThresholdBC Then
-                                    Item.AbcClass = AbcClass.C
-                                    CodeDict(Item.Code)(CurIter) = AbcClass.C
-                                End If
-                            Case AbcClass.A
-                                If Item.Value <= UpThresholdAB Then
-                                    If Item.Value <= UpThresholdBC Then
-                                        Item.AbcClass = AbcClass.C
-                                        CodeDict(Item.Code)(CurIter) = AbcClass.C
-                                    Else
-                                        Item.AbcClass = AbcClass.B
-                                        CodeDict(Item.Code)(CurIter) = AbcClass.B
-                                    End If
-                                End If
-                        End Select
-                End Select
             Next
         End Sub
 

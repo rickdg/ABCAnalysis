@@ -15,14 +15,6 @@
 #End Region
 
 
-#Region "Threshold"
-        Public Property UpThresholdAB As New Threshold With {.IsUp = True}
-        Public Property LowThresholdAB As New Threshold
-        Public Property UpThresholdBC As New Threshold With {.IsUp = True}
-        Public Property LowThresholdBC As New Threshold
-#End Region
-
-
 #Region "Filters"
         Public Property SalesOrder As Boolean
         Public Overridable ReadOnly Property IsSalesOrderFunc As Func(Of TaskData, Boolean)
