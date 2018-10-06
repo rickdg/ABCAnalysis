@@ -167,7 +167,6 @@
     <Compile Include="Pages\DataManagement.xaml.vb">
       <DependentUpon>DataManagement.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Models\NamedComparer.vb" />
     <Compile Include="Content\DataLoader.xaml.vb">
       <DependentUpon>DataLoader.xaml</DependentUpon>
     </Compile>

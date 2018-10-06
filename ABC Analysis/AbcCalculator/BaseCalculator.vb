@@ -61,7 +61,6 @@ Namespace AbcCalculator
                     TransitionToX(PrevAbcTable1)
                 End If
 
-                'ThresholdAlgorithm(AbcTable)
                 Equalization(AbcTable)
 
                 RecordStatistics(AbcTable)
@@ -125,12 +124,6 @@ Namespace AbcCalculator
 
 
 #Region "Algorithms"
-        Private Property UpThresholdAB As Integer
-        Private Property LowThresholdAB As Integer
-        Private Property UpThresholdBC As Integer
-        Private Property LowThresholdBC As Integer
-
-
         Private Sub TransitionToX(prevAbcTable As IEnumerable(Of AbcItem))
             For Each Item In prevAbcTable
                 If CodeDict(Item.Code)(CurIter) = AbcClass.NA Then

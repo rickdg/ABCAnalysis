@@ -11,13 +11,10 @@
         Public Overridable Property QuantityAClass As Integer
         Public Overridable Property QuantityBClass As Integer
         Public Property QuantityABClass As Integer
-        Public Overridable ReadOnly Property GetValueFunc As Func(Of TaskData, Integer)
 #End Region
 
 
 #Region "Filters"
-        Public Property SalesOrder As Boolean
-        Public Overridable ReadOnly Property IsSalesOrderFunc As Func(Of TaskData, Boolean)
         Public Overridable ReadOnly Property Subinventories_id As IEnumerable(Of Integer)
         Public Overridable ReadOnly Property UserPositionTypes_id As IEnumerable(Of Integer)
         Public Overridable ReadOnly Property Categoryes_id As IEnumerable(Of Integer)

@@ -1,4 +1,5 @@
-﻿Imports FirstFloor.ModernUI.Presentation
+﻿Imports System.Collections.ObjectModel
+Imports FirstFloor.ModernUI.Presentation
 Imports Newtonsoft.Json
 
 Namespace Pages
@@ -15,10 +16,7 @@ Namespace Pages
 
 
         Public Sub New(withUpdate As Boolean)
-            If withUpdate Then
-                UpdateLists()
-                ByOrders = True
-            End If
+            If withUpdate Then UpdateLists()
         End Sub
 
 
@@ -45,43 +43,13 @@ Namespace Pages
                 QuantityABClass = _QuantityAClass + _QuantityBClass
             End Set
         End Property
-        Public Property ByOrders As Boolean
-            Get
-                Return _ByOrders
-            End Get
-            Set
-                _ByOrders = Value
-                ByTasks = Not Value
-            End Set
-        End Property
-        Public Property ByTasks As Boolean
-        <JsonIgnore>
-        Public Overrides ReadOnly Property GetValueFunc As Func(Of TaskData, Integer)
-            Get
-                If ByOrders Then
-                    Return Function(d) d.Orders
-                Else
-                    Return Function(d) d.Tasks
-                End If
-            End Get
-        End Property
 #End Region
 
 
 #Region "Filters"
-        <JsonIgnore>
-        Public Overrides ReadOnly Property IsSalesOrderFunc As Func(Of TaskData, Boolean)
-            Get
-                If SalesOrder Then
-                    Return Function(d) d.SalesOrder
-                Else
-                    Return Function(d) True
-                End If
-            End Get
-        End Property
-        Public Property Subinventories As New List(Of Named(Of Integer))
-        Public Property UserPositionTypes As New List(Of Named(Of String))
-        Public Property Categoryes As New List(Of Named(Of String))
+        Public Property Subinventories As New ObservableCollection(Of Named(Of Integer))
+        Public Property UserPositionTypes As New ObservableCollection(Of Named(Of String))
+        Public Property Categoryes As New ObservableCollection(Of Named(Of String))
         <JsonIgnore>
         Public Overrides ReadOnly Property Subinventories_id As IEnumerable(Of Integer)
             Get
@@ -130,7 +98,7 @@ Namespace Pages
 
 
         Private Sub LoadAndSort(Of TData, TKey As IComparable)(sourceCollection As IQueryable(Of TData),
-                                                           targetCollection As List(Of Named(Of TKey)),
+                                                           targetCollection As ObservableCollection(Of Named(Of TKey)),
                                                            existFunc As Func(Of Named(Of TKey), TData, Boolean),
                                                            createFunc As Func(Of TData, Named(Of TKey)))
             For Each Item In sourceCollection
@@ -138,7 +106,7 @@ Namespace Pages
                     targetCollection.Add(createFunc(Item))
                 End If
             Next
-            targetCollection.Sort(New NamedComparer(Of Named(Of TKey), TKey)())
+            targetCollection.OrderBy(Function(i) i.Name)
         End Sub
 
 

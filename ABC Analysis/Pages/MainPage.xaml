@@ -113,11 +113,11 @@
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Интервал запуска (дн)"/>
-                    <TextBox Text="{Binding CurrentTemplate.RunInterval}"/>
+                    <TextBox Text="{Binding CurrentTemplate.RunInterval}" IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Расчетный период (дн)"/>
-                    <TextBox Text="{Binding CurrentTemplate.BillingPeriod}"/>
+                    <TextBox Text="{Binding CurrentTemplate.BillingPeriod}" IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Кол-во позиций класса А"/>
@@ -126,11 +126,6 @@
                 <StackPanel>
                     <TextBlock Text="Кол-во позиций класса В"/>
                     <TextBox Text="{Binding CurrentTemplate.QuantityBClass}"/>
-                </StackPanel>
-                <StackPanel>
-                    <TextBlock Text="Использовать для расчета"/>
-                    <RadioButton Content="Заказы" IsChecked="{Binding CurrentTemplate.ByOrders}"/>
-                    <RadioButton Content="Задачи" IsChecked="{Binding CurrentTemplate.ByTasks, Mode=OneWay}" Margin="8,0,0,0"/>
                 </StackPanel>
             </StackPanel>
 
@@ -142,7 +137,6 @@
                 </Grid.RowDefinitions>
                 <StackPanel Margin="0,0,0,8">
                     <TextBlock Text="Фильтры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
-                    <CheckBox Content="Учитывать только ЗнП" IsChecked="{Binding CurrentTemplate.SalesOrder}" Padding="0,4"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition SharedSizeGroup="Col1"/>

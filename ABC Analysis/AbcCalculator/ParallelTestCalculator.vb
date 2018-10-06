@@ -17,8 +17,8 @@ Namespace AbcCalculator
             Dim CalculationData = (From d In Data
                                    Where Temp.UserPositionTypes_id.Contains(d.UserPositionType_Id) AndAlso
                                        Temp.Categoryes_id.Contains(d.Category_Id) AndAlso
-                                       Temp.IsSalesOrderFunc(d)
-                                   Select New DataItem With {.XDate = d.XDate, .Code = d.Code, .Value = Temp.GetValueFunc(d)}).ToList
+                                       d.SalesOrder
+                                   Select New DataItem With {.XDate = d.XDate, .Code = d.Code, .Value = d.Orders}).ToList
 
             Parallel.ForEach(GetTemplates(False),
                              Sub(t)
@@ -41,8 +41,8 @@ Namespace AbcCalculator
 
 
         Private Function GetTemplates(isPercent As Boolean) As IEnumerable(Of Template)
-            Return (From RunInterval In {7, 14, 21, 28, 35}
-                    From BillingPeriod In {21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, 105, 112}
+            Return (From RunInterval In {7, 14, 21, 28, 35, 42, 49, 56}
+                    From BillingPeriod In {21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, 105, 112, 119, 126, 133, 140, 147, 154, 161, 168, 175, 182, 189, 196, 203}
                     Select New Template With {
                        .RunInterval = CByte(RunInterval),
                        .BillingPeriod = CByte(BillingPeriod),
