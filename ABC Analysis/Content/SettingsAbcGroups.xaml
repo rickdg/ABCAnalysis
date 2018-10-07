@@ -39,6 +39,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0" EllipseDiameter="16"
+                                                  HorizontalAlignment="Center"
                                                   IconData="M 50.2708,42.3542L 54.625,38L 50.2708,33.6458L 52.6458,31.2708L 57,35.625L 61.3542,31.2708L 63.7291,33.6458L 59.375,38L 63.7292,42.3542L 61.3542,44.7292L 57,40.375L 52.6458,44.7292L 50.2708,42.3542 Z"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>

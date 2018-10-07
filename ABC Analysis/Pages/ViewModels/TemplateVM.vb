@@ -106,7 +106,6 @@ Namespace Pages
                     targetCollection.Add(createFunc(Item))
                 End If
             Next
-            targetCollection.OrderBy(Function(i) i.Name)
         End Sub
 
 

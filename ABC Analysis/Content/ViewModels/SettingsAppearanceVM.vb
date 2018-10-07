@@ -39,7 +39,7 @@ Namespace Content
             Set
                 If _SelectedAccentColor <> Value Then
                     _SelectedAccentColor = Value
-                    AppearanceManager.Current.AccentColor = Value
+                    MainWindow.Model.AccentColor = Value
                     OnPropertyChanged("SelectedAccentColor")
                     DataManagement.Model.RefreshColorSeries()
                 End If
@@ -53,7 +53,7 @@ Namespace Content
             Set
                 If _SelectedTheme IsNot Value Then
                     _SelectedTheme = Value
-                    AppearanceManager.Current.ThemeSource = Value.Source
+                    MainWindow.Model.ThemeSource = Value.Source
                     OnPropertyChanged("SelectedTheme")
                 End If
             End Set

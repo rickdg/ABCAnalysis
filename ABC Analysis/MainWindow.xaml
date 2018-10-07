@@ -10,23 +10,34 @@
 
     <mui:ModernWindow.TitleLinks>
         <mui:Link DisplayName="Настройки" Source="/Pages/Settings.xaml"/>
+        <mui:Link DisplayName="Обновления" Source="/Pages/Updates.xaml"/>
     </mui:ModernWindow.TitleLinks>
 
     <mui:ModernWindow.MenuLinkGroups>
+        
         <mui:LinkGroup DisplayName="Главная">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="" Source="/Pages/MainPage.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
+        
         <mui:LinkGroup DisplayName="Данные">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="" Source="/Pages/DataManagement.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
+        
         <mui:LinkGroup DisplayName="Настройки" GroupKey="settings">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="" Source="/Pages/Settings.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
+        
+        <mui:LinkGroup DisplayName="Обновления" GroupKey="Updates">
+            <mui:LinkGroup.Links>
+                <mui:Link DisplayName="" Source="/Pages/Updates.xaml"/>
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
+
     </mui:ModernWindow.MenuLinkGroups>
 </mui:ModernWindow>
