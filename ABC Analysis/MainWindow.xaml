@@ -4,7 +4,7 @@
                   xmlns:mui="http://firstfloorsoftware.com/ModernUI"
                   Title="{Binding Title, Mode=OneWay}" IsTitleVisible="True"
                   ContentSource="/Pages/MainPage.xaml"
-                  MinWidth="1012" MinHeight="525"
+                  MinWidth="807" MinHeight="544"
                   WindowState="{Binding WindowState}" Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}"
                   Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" Closing="ModernWindow_Closing">
 

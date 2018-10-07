@@ -12,23 +12,31 @@
     <MyType>Custom</MyType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>false</BootstrapperEnabled>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Background</UpdateMode>
+    <UpdateInterval>1</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>true</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <InstallUrl>https://netapps.000webhostapp.com/MyApplication/</InstallUrl>
+    <ProductName>ABC Analysis</ProductName>
+    <PublisherName>NetApps</PublisherName>
+    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <WebPage>ABC Analysis.html</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
+    <TrustUrlParameters>true</TrustUrlParameters>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <BootstrapperEnabled>false</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -69,6 +77,18 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>1148E2F2FF6680484BB5BACB153A918F1DD06EB6</ManifestCertificateThumbprint>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -256,7 +276,6 @@
     </Compile>
     <Compile Include="Content\EntityViewModels\AbcGroupVM.vb" />
     <Compile Include="Helpers\DatabaseAdmin.vb" />
-    <Compile Include="Pages\Models\NamedComparer.vb" />
     <Compile Include="Pages\Models\MeasureModel.vb" />
     <Compile Include="Pages\DataManagement.xaml.vb">
       <DependentUpon>DataManagement.xaml</DependentUpon>
@@ -284,6 +303,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Models\Month_Tasks_Orders.vb" />
+    <Compile Include="Pages\Models\Named.vb" />
     <Compile Include="Pages\Models\Template.vb" />
     <Compile Include="Pages\Settings.xaml.vb">
       <DependentUpon>Settings.xaml</DependentUpon>
@@ -291,9 +311,10 @@
     <Compile Include="Pages\Updates.xaml.vb">
       <DependentUpon>Updates.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Models\DataItem.vb" />
     <Compile Include="Pages\ViewModels\DataManagementVM.vb" />
     <Compile Include="Pages\ViewModels\MainPageVM.vb" />
-    <Compile Include="Pages\Models\Named.vb" />
+    <Compile Include="Pages\Models\IntNamed.vb" />
     <Compile Include="Pages\ViewModels\TemplateVM.vb" />
     <Compile Include="Subinventory.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
@@ -425,7 +446,28 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <PublishFile Include="AbcAnalysis.mdf">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+    <PublishFile Include="AbcAnalysis_log.ldf">
+      <Visible>False</Visible>
+      <Group>
+      </Group>
+      <TargetPath>
+      </TargetPath>
+      <PublishState>Include</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>File</FileType>
+    </PublishFile>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="AbcAnalysis.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

@@ -45,37 +45,19 @@ Namespace Pages
         <JsonIgnore>
         Public ReadOnly Property CmdSave As ICommand = New RelayCommand(Sub() Serialize(Me, SerializeFileName))
         <JsonIgnore>
-        Public ReadOnly Property CmdRunCalculate As ICommand = New RelayCommand(AddressOf CalculateExecute)
-        Private Sub CalculateExecute(parameter As Object)
-            For Each Tmp In Templates.Where(Function(i) i.Activated = True).Select(Function(i) i.GetTemplate).ToList
-                Task.Factory.StartNew(Sub() RunCalculate(Tmp))
-            Next
-        End Sub
-        Private Sub RunCalculate(tmp As Template)
-            Dim Stopwatch As New Stopwatch
-            Stopwatch.Start()
-            Using Context As New AbcAnalysisEntities
-                Dim InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
-                Dim FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
-                Dim Calculator As New ParallelTestCalculator With {
-                    .Temp = tmp,
-                    .InitialDate = InitialDate,
-                    .FinalDate = FinalDate,
-                    .Data = Context.TaskDatas.Where(Function(i) i.XDate <= FinalDate AndAlso tmp.Subinventories_id.Contains(i.Subinventory)).ToList}
-                Calculator.Calculate()
-            End Using
-            Stopwatch.Stop()
-            MsgBox(Stopwatch.Elapsed.TotalSeconds)
-        End Sub
-        <JsonIgnore>
-        Public ReadOnly Property CmdAddNewTemplate As ICommand = New RelayCommand(Sub() Templates.Add(New TemplateVM(True) With {.Parent = Me}))
+        Public ReadOnly Property CmdAddNewTemplate As ICommand = New RelayCommand(Sub()
+                                                                                      Dim NewTemplateVM = New TemplateVM(True) With {.Parent = Me}
+                                                                                      Templates.Add(NewTemplateVM)
+                                                                                      CurrentTemplate = NewTemplateVM
+                                                                                  End Sub)
 #End Region
 #End Region
 
 
         Public Sub UpdateTemplates()
             For Each Tmp In Templates
-                Tmp.UpdateLists()
+                Tmp.UpdateSubinventories()
+                Tmp.UpdateUserPositionTypesAndCategoryes()
             Next
         End Sub
 

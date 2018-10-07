@@ -1,4 +1,6 @@
 ﻿Imports System.Collections.ObjectModel
+Imports System.Data.Entity.SqlServer
+Imports ABCAnalysis.AbcCalculator
 Imports FirstFloor.ModernUI.Presentation
 Imports Newtonsoft.Json
 
@@ -16,7 +18,7 @@ Namespace Pages
 
 
         Public Sub New(withUpdate As Boolean)
-            If withUpdate Then UpdateLists()
+            If withUpdate Then UpdateSubinventories()
         End Sub
 
 
@@ -47,9 +49,9 @@ Namespace Pages
 
 
 #Region "Filters"
-        Public Property Subinventories As New ObservableCollection(Of Named(Of Integer))
-        Public Property UserPositionTypes As New ObservableCollection(Of Named(Of String))
-        Public Property Categoryes As New ObservableCollection(Of Named(Of String))
+        Public Property Subinventories As New ObservableCollection(Of NamedInt)
+        Public Property UserPositionTypes As New ObservableCollection(Of Named)
+        Public Property Categoryes As New ObservableCollection(Of Named)
         <JsonIgnore>
         Public Overrides ReadOnly Property Subinventories_id As IEnumerable(Of Integer)
             Get
@@ -73,45 +75,73 @@ Namespace Pages
 
 #Region "Commands"
         <JsonIgnore>
+        Public ReadOnly Property CmdRunCalculate As ICommand = New RelayCommand(AddressOf CalculateExecute)
+        Private Sub CalculateExecute(parameter As Object)
+            Using Context As New AbcAnalysisEntities
+                Dim InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
+                Dim FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
+                Dim Calculator As New ParallelTestCalculator With {
+                    .Temp = Me,
+                    .InitialDate = InitialDate,
+                    .FinalDate = FinalDate,
+                    .Data = Context.TaskDatas.Where(Function(i) i.XDate <= FinalDate AndAlso Subinventories_id.Contains(i.Subinventory)).ToList}
+                Calculator.Calculate()
+            End Using
+        End Sub
+        <JsonIgnore>
         Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(Sub() Parent.Templates.Remove(Me))
 #End Region
 
 
-        Public Sub UpdateLists()
+        Public Sub UpdateSubinventories()
             Using Context As New AbcAnalysisEntities
-                LoadAndSort(Context.Subinventories,
-                            Subinventories,
-                            Function(i, Item) i.Name = Item.Name,
-                            Function(Item) New Named(Of Integer) With {.Name = Item.Name})
-
-                LoadAndSort(Context.UserPositionTypes,
-                            UserPositionTypes,
-                            Function(i, Item) i.Name = Item.Name,
-                            Function(Item) New Named(Of String) With {.Id = Item.Id, .Name = Item.Name})
-
-                LoadAndSort(Context.Categories,
-                            Categoryes,
-                            Function(i, Item) i.Name = Item.Name,
-                            Function(Item) New Named(Of String) With {.Id = Item.Id, .Name = Item.Name})
+                For Each Item In Context.Subinventories
+                    If Not Subinventories.Any(Function(i) i.Name = Item.Name) Then
+                        Subinventories.Add(New NamedInt With {.Parent = Me, .Name = Item.Name})
+                    End If
+                Next
             End Using
         End Sub
 
 
-        Private Sub LoadAndSort(Of TData, TKey As IComparable)(sourceCollection As IQueryable(Of TData),
-                                                           targetCollection As ObservableCollection(Of Named(Of TKey)),
-                                                           existFunc As Func(Of Named(Of TKey), TData, Boolean),
-                                                           createFunc As Func(Of TData, Named(Of TKey)))
-            For Each Item In sourceCollection
-                If Not targetCollection.Any(Function(i) existFunc(i, Item)) Then
-                    targetCollection.Add(createFunc(Item))
-                End If
-            Next
+        Public Sub UpdateUserPositionTypesAndCategoryes()
+            Using Context As New AbcAnalysisEntities
+                Dim Data = (From td In Context.TaskDatas
+                            Join upt In Context.UserPositionTypes On upt.Id Equals td.UserPositionType_Id
+                            Where Subinventories_id.Contains(td.Subinventory)
+                            Group By upt.Id, upt.Name Into Sum(td.Orders)
+                            Select New DataItem With {.Id = Id, .Name = Name, .Value = Sum}).ToList
+                UpdateCollection(Data, UserPositionTypes)
+
+                Data = (From td In Context.TaskDatas
+                        Join c In Context.Categories On c.Id Equals td.Category_Id
+                        Where Subinventories_id.Contains(td.Subinventory)
+                        Group By c.Id, c.Name Into Sum(td.Orders)
+                        Select New DataItem With {.Id = Id, .Name = Name, .Value = Sum}).ToList
+                UpdateCollection(Data, Categoryes)
+            End Using
         End Sub
 
 
-        Public Function GetTemplate() As Template
-            Return Me
-        End Function
+        Private Sub UpdateCollection(data As IEnumerable(Of DataItem), targetCollection As ObservableCollection(Of Named))
+            Dim TempCollection As New List(Of Named)
+            For Each Item In data
+                Dim Tc = targetCollection.SingleOrDefault(Function(i) i.Name = Item.Name)
+                If Tc Is Nothing Then
+                    targetCollection.Add(New Named With {.Id = Item.Id, .Name = Item.Name, .Value = Item.Value})
+                Else
+                    Tc.Value = Item.Value
+                End If
+            Next
+            For Each Item In targetCollection
+                If Not data.Any(Function(i) i.Name = Item.Name) Then
+                    TempCollection.Add(Item)
+                End If
+            Next
+            For Each Item In TempCollection
+                targetCollection.Remove(Item)
+            Next
+        End Sub
 
     End Class
 End Namespace

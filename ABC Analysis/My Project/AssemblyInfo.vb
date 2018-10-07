@@ -13,7 +13,7 @@ Imports System.Windows
 
 <Assembly: AssemblyTitle("ABC Analysis")>
 <Assembly: AssemblyDescription("")>
-<Assembly: AssemblyCompany("")>
+<Assembly: AssemblyCompany("NetApps")>
 <Assembly: AssemblyProduct("ABC Analysis")>
 <Assembly: AssemblyCopyright("Copyright ©  2018")>
 <Assembly: AssemblyTrademark("")>

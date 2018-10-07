@@ -5,81 +5,73 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:local="clr-namespace:ABCAnalysis.Pages"
-             mc:Ignorable="d" d:DesignHeight="430" d:DesignWidth="885">
+             mc:Ignorable="d" d:DesignHeight="350" d:DesignWidth="700">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
 
-
-        <Grid Margin="{StaticResource HeaderMargin}" HorizontalAlignment="Right" VerticalAlignment="Top">
-            <StackPanel Orientation="Horizontal">
-                <StackPanel.Resources>
-                    <Style TargetType="mui:ModernButton">
-                        <Setter Property="Margin" Value="0,0,8,8"/>
-                        <Setter Property="IconHeight" Value="20"/>
-                        <Setter Property="IconWidth" Value="20"/>
-                        <Setter Property="EllipseDiameter" Value="34"/>
-                        <Setter Property="EllipseStrokeThickness" Value="0"/>
-                    </Style>
-                </StackPanel.Resources>
-                <mui:ModernButton Command="{Binding CmdSave}" ToolTip="Сохранить" IconHeight="18" IconWidth="18"
-                                  IconData="F1 M 20.5833,20.5833L 55.4167,20.5833L 55.4167,55.4167L 45.9167,55.4167L 45.9167,44.3333L 30.0833,44.3333L 30.0833,55.4167L 20.5833,55.4167L 20.5833,20.5833 Z M 33.25,55.4167L 33.25,50.6667L 39.5833,50.6667L 39.5833,55.4167L 33.25,55.4167 Z M 26.9167,23.75L 26.9167,33.25L 49.0833,33.25L 49.0833,23.75L 26.9167,23.75 Z"/>
-                <mui:ModernButton Command="{Binding CmdRunCalculate}" ToolTip="Выполнить расчет"
-                                  IconData="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z"/>
-            </StackPanel>
+        <Grid Grid.Column="1" Margin="{StaticResource HeaderMargin}" HorizontalAlignment="Right" VerticalAlignment="Top">
+            <mui:ModernButton Command="{Binding CmdSave}" ToolTip="Сохранить" IconHeight="18" IconWidth="18" EllipseStrokeThickness="0"
+                              EllipseDiameter="34" IconData="F1 M 20.5833,20.5833L 55.4167,20.5833L 55.4167,55.4167L 45.9167,55.4167L 45.9167,44.3333L 30.0833,44.3333L 30.0833,55.4167L 20.5833,55.4167L 20.5833,20.5833 Z M 33.25,55.4167L 33.25,50.6667L 39.5833,50.6667L 39.5833,55.4167L 33.25,55.4167 Z M 26.9167,23.75L 26.9167,33.25L 49.0833,33.25L 49.0833,23.75L 26.9167,23.75 Z"/>
         </Grid>
 
-
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
-            </Grid.ColumnDefinitions>
-
-
+        <Grid>
             <Border BorderBrush="{DynamicResource SeparatorBackground}" BorderThickness="0,0,1,0" Margin="0,0,16,0">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
 
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Шаблоны" Style="{StaticResource Heading1}"/>
-                        <mui:ModernButton Command="{Binding CmdAddNewTemplate}" ToolTip="Добавить" EllipseStrokeThickness="0" Margin="16,0"
-                                          IconData="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z"/>
-                    </StackPanel>
+                    <TextBlock Text="Шаблоны" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
 
-                    <DataGrid Grid.Row="1" ItemsSource="{Binding Templates}" Margin="0,8,0,0"
-                              SelectedItem="{Binding CurrentTemplate}"
-                              AutoGenerateColumns="False" HeadersVisibility="Column"
-                              CanUserSortColumns="False" CanUserReorderColumns="False"
-                              CanUserResizeColumns="False" CanUserAddRows="False"
-                              CanUserDeleteRows="False" CanUserResizeRows="False">
+                    <mui:ModernButton Grid.Row="1" Grid.Column="1" Command="{Binding CmdAddNewTemplate}" ToolTip="Добавить" EllipseStrokeThickness="0" Margin="8,4,8,0" VerticalAlignment="Top" IconData="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z"/>
+
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Templates}"
+                          SelectedItem="{Binding CurrentTemplate}"
+                          AutoGenerateColumns="False" HeadersVisibility="Column"
+                          CanUserSortColumns="False" CanUserReorderColumns="False"
+                          CanUserResizeColumns="False" CanUserAddRows="False"
+                          CanUserDeleteRows="False" CanUserResizeRows="False">
                         <DataGrid.Columns>
-                            <mui:DataGridCheckBoxColumn Header="Активен" Binding="{Binding Activated}"/>
+                            <DataGridTemplateColumn Header="Расчет">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <mui:ModernButton Command="{Binding CmdRunCalculate}" IconHeight="12" IconWidth="12" EllipseStrokeThickness="0"
+                                                      IconData="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z" HorizontalAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                             <mui:DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
                             <DataGridTemplateColumn Header="Удалить">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0" EllipseDiameter="16"
-                                                          IconData="M 50.2708,42.3542L 54.625,38L 50.2708,33.6458L 52.6458,31.2708L 57,35.625L 61.3542,31.2708L 63.7291,33.6458L 59.375,38L 63.7292,42.3542L 61.3542,44.7292L 57,40.375L 52.6458,44.7292L 50.2708,42.3542 Z" HorizontalAlignment="Center"/>
+                                        <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0"
+                                                      IconData="M 50.2708,42.3542L 54.625,38L 50.2708,33.6458L 52.6458,31.2708L 57,35.625L 61.3542,31.2708L 63.7291,33.6458L 59.375,38L 63.7292,42.3542L 61.3542,44.7292L 57,40.375L 52.6458,44.7292L 50.2708,42.3542 Z" HorizontalAlignment="Center"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
-
                 </Grid>
             </Border>
+        </Grid>
 
+        <Grid Grid.Column="1" Margin="0,0,16,0" Grid.IsSharedSizeScope="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
 
-            <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,16,0">
+            <StackPanel Orientation="Vertical" Margin="0,0,16,0">
                 <StackPanel.Resources>
                     <Style TargetType="StackPanel">
                         <Setter Property="Orientation" Value="Horizontal"/>
@@ -129,57 +121,79 @@
                 </StackPanel>
             </StackPanel>
 
+            <StackPanel Grid.Row="1" Margin="0,0,0,8">
+                <TextBlock Text="Фильтры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition SharedSizeGroup="Col1"/>
+                        <ColumnDefinition SharedSizeGroup="Col2"/>
+                        <ColumnDefinition SharedSizeGroup="Col3"/>
+                    </Grid.ColumnDefinitions>
 
-            <Grid Grid.Column="2" Margin="0,0,16,0" Grid.IsSharedSizeScope="True">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <StackPanel Margin="0,0,0,8">
-                    <TextBlock Text="Фильтры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition SharedSizeGroup="Col1"/>
-                            <ColumnDefinition SharedSizeGroup="Col2"/>
-                            <ColumnDefinition SharedSizeGroup="Col3"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="Зона" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
-                        <TextBlock Grid.Column="1" Text="ТПП" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
-                        <TextBlock Grid.Column="2" Text="Категория" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
-                    </Grid>
-                </StackPanel>
-                <ScrollViewer Grid.Row="1">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition SharedSizeGroup="Col1"/>
-                            <ColumnDefinition SharedSizeGroup="Col2"/>
-                            <ColumnDefinition SharedSizeGroup="Col3"/>
-                        </Grid.ColumnDefinitions>
-                        <ListBox Margin="0,0,8,0" ItemsSource="{Binding CurrentTemplate.Subinventories}" MinWidth="50" MinHeight="100" >
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                        <ListBox Grid.Column="1" Margin="8,0" ItemsSource="{Binding CurrentTemplate.UserPositionTypes}" MinWidth="50" MinHeight="100" >
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                        <ListBox Grid.Column="2" Margin="8,0,0,0" ItemsSource="{Binding CurrentTemplate.Categoryes}" MinWidth="50" MinHeight="100" >
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <CheckBox Content="{Binding Name}" IsChecked="{Binding IsChecked}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Grid>
-                </ScrollViewer>
-            </Grid>
+                    <TextBlock Text="Зона" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
+                    <TextBlock Grid.Column="1" Text="ТПП" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
+                    <TextBlock Grid.Column="2" Text="Категория" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
+                </Grid>
+            </StackPanel>
 
+            <ScrollViewer Grid.Row="2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition SharedSizeGroup="Col1"/>
+                        <ColumnDefinition SharedSizeGroup="Col2"/>
+                        <ColumnDefinition SharedSizeGroup="Col3"/>
+                    </Grid.ColumnDefinitions>
+
+                    <ListBox x:Name="Subinventory" Margin="0,0,8,0" ItemsSource="{Binding CurrentTemplate.Subinventories}" MinWidth="50" MinHeight="100">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <CheckBox IsChecked="{Binding IsChecked}" Command="{Binding Change}"/>
+                                    <TextBlock Text="{Binding Name}" Margin="8,0"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <ListBox x:Name="UserPositionType" Grid.Column="1" Margin="8,0" ItemsSource="{Binding CurrentTemplate.UserPositionTypes}" MinWidth="50" MinHeight="100">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition SharedSizeGroup="Col4"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <CheckBox IsChecked="{Binding IsChecked}"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0" MinWidth="115"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Value}" TextAlignment="Right"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                    <ListBox x:Name="Category" Grid.Column="2" Margin="8,0,0,0" ItemsSource="{Binding CurrentTemplate.Categoryes}" MinWidth="50" MinHeight="100" >
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition SharedSizeGroup="Col4"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <CheckBox IsChecked="{Binding IsChecked}"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0" MinWidth="115"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Value}" TextAlignment="Right"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                </Grid>
+            </ScrollViewer>
         </Grid>
+
     </Grid>
 </UserControl>
