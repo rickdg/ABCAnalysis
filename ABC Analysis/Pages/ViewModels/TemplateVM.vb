@@ -49,7 +49,7 @@ Namespace Pages
 
 
 #Region "Filters"
-        Public Property Subinventories As New ObservableCollection(Of NamedInt)
+        Public Property Subinventories As New ObservableCollection(Of SubinventoryItem)
         Public Property UserPositionTypes As New ObservableCollection(Of Named)
         Public Property Categoryes As New ObservableCollection(Of Named)
         <JsonIgnore>
@@ -75,12 +75,13 @@ Namespace Pages
 
 #Region "Commands"
         <JsonIgnore>
-        Public ReadOnly Property CmdRunCalculate As ICommand = New RelayCommand(AddressOf CalculateExecute)
-        Private Sub CalculateExecute(parameter As Object)
+        Public ReadOnly Property CmdRunCalculate As ICommand = New RelayCommand(Sub() Task.Factory.StartNew(Sub() CalculateExecute()))
+        Private Sub CalculateExecute()
             Using Context As New AbcAnalysisEntities
+                If Context.TaskDatas.FirstOrDefault Is Nothing Then Return
                 Dim InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                 Dim FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
-                Dim Calculator As New ParallelTestCalculator With {
+                Dim Calculator As New Heuristics With {
                     .Temp = Me,
                     .InitialDate = InitialDate,
                     .FinalDate = FinalDate,
@@ -95,10 +96,20 @@ Namespace Pages
 
         Public Sub UpdateSubinventories()
             Using Context As New AbcAnalysisEntities
-                For Each Item In Context.Subinventories
+                Dim TempCollection As New List(Of SubinventoryItem)
+                Dim Data = Context.Subinventories.ToList
+                For Each Item In Data
                     If Not Subinventories.Any(Function(i) i.Name = Item.Name) Then
-                        Subinventories.Add(New NamedInt With {.Parent = Me, .Name = Item.Name})
+                        Subinventories.Add(New SubinventoryItem With {.Parent = Me, .Name = Item.Name})
                     End If
+                Next
+                For Each Item In Subinventories
+                    If Not Data.Any(Function(i) i.Name = Item.Name) Then
+                        TempCollection.Add(Item)
+                    End If
+                Next
+                For Each Item In TempCollection
+                    Subinventories.Remove(Item)
                 Next
             End Using
         End Sub
@@ -113,11 +124,18 @@ Namespace Pages
                             Select New DataItem With {.Id = Id, .Name = Name, .Value = Sum}).ToList
                 UpdateCollection(Data, UserPositionTypes)
 
-                Data = (From td In Context.TaskDatas
-                        Join c In Context.Categories On c.Id Equals td.Category_Id
-                        Where Subinventories_id.Contains(td.Subinventory)
-                        Group By c.Id, c.Name Into Sum(td.Orders)
-                        Select New DataItem With {.Id = Id, .Name = Name, .Value = Sum}).ToList
+                UpdateCategoryes()
+            End Using
+        End Sub
+
+
+        Public Sub UpdateCategoryes()
+            Using Context As New AbcAnalysisEntities
+                Dim Data = (From td In Context.TaskDatas
+                            Join c In Context.Categories On c.Id Equals td.Category_Id
+                            Where Subinventories_id.Contains(td.Subinventory) AndAlso UserPositionTypes_id.Contains(td.UserPositionType_Id)
+                            Group By c.Id, c.Name Into Sum(td.Orders)
+                            Select New DataItem With {.Id = Id, .Name = Name, .Value = Sum}).ToList
                 UpdateCollection(Data, Categoryes)
             End Using
         End Sub
@@ -128,7 +146,7 @@ Namespace Pages
             For Each Item In data
                 Dim Tc = targetCollection.SingleOrDefault(Function(i) i.Name = Item.Name)
                 If Tc Is Nothing Then
-                    targetCollection.Add(New Named With {.Id = Item.Id, .Name = Item.Name, .Value = Item.Value})
+                    targetCollection.Add(New Named With {.Parent = Me, .Id = Item.Id, .Name = Item.Name, .Value = Item.Value})
                 Else
                     Tc.Value = Item.Value
                 End If

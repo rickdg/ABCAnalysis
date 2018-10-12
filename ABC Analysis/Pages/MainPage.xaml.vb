@@ -15,6 +15,9 @@ Namespace Pages
             Else
                 Model = New MainPageVM With {.SerializeFileName = SerializeFileName}
             End If
+
+            Subinventory.Items.IsLiveSorting = True
+            Subinventory.Items.LiveSortingProperties.Add("Name")
             Subinventory.Items.SortDescriptions.Add(New SortDescription("Name", ListSortDirection.Ascending))
 
             UserPositionType.Items.IsLiveSorting = True

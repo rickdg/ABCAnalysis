@@ -1,6 +1,4 @@
 ﻿Imports System.Collections.ObjectModel
-Imports System.Data.Entity.SqlServer
-Imports ABCAnalysis.AbcCalculator
 Imports ABCAnalysis.Content
 Imports FirstFloor.ModernUI.Presentation
 Imports Newtonsoft.Json
@@ -47,6 +45,7 @@ Namespace Pages
         <JsonIgnore>
         Public ReadOnly Property CmdAddNewTemplate As ICommand = New RelayCommand(Sub()
                                                                                       Dim NewTemplateVM = New TemplateVM(True) With {.Parent = Me}
+                                                                                      NewTemplateVM.ReductionPickPercent.Value2 = 0.01
                                                                                       Templates.Add(NewTemplateVM)
                                                                                       CurrentTemplate = NewTemplateVM
                                                                                   End Sub)

@@ -5,96 +5,78 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:local="clr-namespace:ABCAnalysis.Pages"
-             mc:Ignorable="d" d:DesignHeight="350" d:DesignWidth="700">
+             mc:Ignorable="d" d:DesignHeight="350" d:DesignWidth="1000">
 
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="1" Margin="{StaticResource HeaderMargin}" HorizontalAlignment="Right" VerticalAlignment="Top">
+        <Grid Grid.Column="2" Margin="{StaticResource HeaderMargin}" HorizontalAlignment="Right" VerticalAlignment="Top">
             <mui:ModernButton Command="{Binding CmdSave}" ToolTip="Сохранить" IconHeight="18" IconWidth="18" EllipseStrokeThickness="0"
                               EllipseDiameter="34" IconData="F1 M 20.5833,20.5833L 55.4167,20.5833L 55.4167,55.4167L 45.9167,55.4167L 45.9167,44.3333L 30.0833,44.3333L 30.0833,55.4167L 20.5833,55.4167L 20.5833,20.5833 Z M 33.25,55.4167L 33.25,50.6667L 39.5833,50.6667L 39.5833,55.4167L 33.25,55.4167 Z M 26.9167,23.75L 26.9167,33.25L 49.0833,33.25L 49.0833,23.75L 26.9167,23.75 Z"/>
         </Grid>
 
-        <Grid>
-            <Border BorderBrush="{DynamicResource SeparatorBackground}" BorderThickness="0,0,1,0" Margin="0,0,16,0">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
+        <Border BorderBrush="{DynamicResource SeparatorBackground}" BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
 
-                    <TextBlock Text="Шаблоны" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Шаблоны" Style="{StaticResource Heading1}"/>
+                    <mui:ModernButton Grid.Column="1" Command="{Binding CmdAddNewTemplate}" ToolTip="Добавить" EllipseStrokeThickness="0" Margin="8,0" VerticalAlignment="Center" IconData="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z"/>
+                </StackPanel>
 
-                    <mui:ModernButton Grid.Row="1" Grid.Column="1" Command="{Binding CmdAddNewTemplate}" ToolTip="Добавить" EllipseStrokeThickness="0" Margin="8,4,8,0" VerticalAlignment="Top" IconData="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z"/>
-
-                    <DataGrid Grid.Row="1" ItemsSource="{Binding Templates}"
+                <DataGrid Grid.Row="1" ItemsSource="{Binding Templates}"
                           SelectedItem="{Binding CurrentTemplate}"
                           AutoGenerateColumns="False" HeadersVisibility="Column"
                           CanUserSortColumns="False" CanUserReorderColumns="False"
                           CanUserResizeColumns="False" CanUserAddRows="False"
                           CanUserDeleteRows="False" CanUserResizeRows="False">
-                        <DataGrid.Columns>
-                            <DataGridTemplateColumn Header="Расчет">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <mui:ModernButton Command="{Binding CmdRunCalculate}" IconHeight="12" IconWidth="12" EllipseStrokeThickness="0"
-                                                      IconData="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z" HorizontalAlignment="Center"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                            <mui:DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
-                            <DataGridTemplateColumn Header="Удалить">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0"
+                    <DataGrid.Columns>
+                        <mui:DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
+                        <DataGridTemplateColumn Header="Удалить">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0"
                                                       IconData="M 50.2708,42.3542L 54.625,38L 50.2708,33.6458L 52.6458,31.2708L 57,35.625L 61.3542,31.2708L 63.7291,33.6458L 59.375,38L 63.7292,42.3542L 61.3542,44.7292L 57,40.375L 52.6458,44.7292L 50.2708,42.3542 Z" HorizontalAlignment="Center"/>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </Border>
-        </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
 
-        <Grid Grid.Column="1" Margin="0,0,16,0" Grid.IsSharedSizeScope="True">
+        <Grid Grid.Column="1" Grid.IsSharedSizeScope="True" Margin="16,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Vertical" Margin="0,0,16,0">
+            <StackPanel Orientation="Vertical">
                 <StackPanel.Resources>
                     <Style TargetType="StackPanel">
                         <Setter Property="Orientation" Value="Horizontal"/>
-                        <Setter Property="Margin" Value="0,0,0,4" />
+                        <Setter Property="Margin" Value="0,0,0,4"/>
                     </Style>
                     <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                        <Setter Property="Width" Value="180"/>
+                        <Setter Property="Width" Value="200"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
                     </Style>
                     <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                         <Setter Property="Width" Value="170"/>
+                        <Setter Property="TextAlignment" Value="Right"/>
                     </Style>
                     <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
                         <Setter Property="Width" Value="170"/>
                     </Style>
-                    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}">
-                        <Setter Property="Padding" Value="0,3"/>
-                    </Style>
-                    <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
-                        <Setter Property="Padding" Value="0,3"/>
-                    </Style>
                 </StackPanel.Resources>
-
                 <TextBlock Text="Параметры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
                 <StackPanel>
                     <TextBlock Text="Группа АВС"/>
@@ -104,20 +86,16 @@
                               SelectedValuePath="Entity.Id"/>
                 </StackPanel>
                 <StackPanel>
-                    <TextBlock Text="Интервал запуска (дн)"/>
-                    <TextBox Text="{Binding CurrentTemplate.RunInterval}" IsReadOnly="True"/>
-                </StackPanel>
-                <StackPanel>
-                    <TextBlock Text="Расчетный период (дн)"/>
-                    <TextBox Text="{Binding CurrentTemplate.BillingPeriod}" IsReadOnly="True"/>
-                </StackPanel>
-                <StackPanel>
                     <TextBlock Text="Кол-во позиций класса А"/>
                     <TextBox Text="{Binding CurrentTemplate.QuantityAClass}"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Кол-во позиций класса В"/>
                     <TextBox Text="{Binding CurrentTemplate.QuantityBClass}"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Снижение процента отбора"/>
+                    <TextBox Text="{Binding CurrentTemplate.ReductionPickPercent.Text}"/>
                 </StackPanel>
             </StackPanel>
 
@@ -129,7 +107,6 @@
                         <ColumnDefinition SharedSizeGroup="Col2"/>
                         <ColumnDefinition SharedSizeGroup="Col3"/>
                     </Grid.ColumnDefinitions>
-
                     <TextBlock Text="Зона" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
                     <TextBlock Grid.Column="1" Text="ТПП" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
                     <TextBlock Grid.Column="2" Text="Категория" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
@@ -161,30 +138,30 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition SharedSizeGroup="Col5"/>
                                         <ColumnDefinition SharedSizeGroup="Col4"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <CheckBox IsChecked="{Binding IsChecked}"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0" MinWidth="115"/>
+                                    <CheckBox IsChecked="{Binding IsChecked}" Command="{Binding Change}"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0"/>
                                     <TextBlock Grid.Column="2" Text="{Binding Value}" TextAlignment="Right"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
 
-                    <ListBox x:Name="Category" Grid.Column="2" Margin="8,0,0,0" ItemsSource="{Binding CurrentTemplate.Categoryes}" MinWidth="50" MinHeight="100" >
+                    <ListBox x:Name="Category" Grid.Column="2" Margin="8,0,16,0" ItemsSource="{Binding CurrentTemplate.Categoryes}" MinWidth="50" MinHeight="100" >
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition SharedSizeGroup="Col5"/>
                                         <ColumnDefinition SharedSizeGroup="Col4"/>
                                     </Grid.ColumnDefinitions>
 
                                     <CheckBox IsChecked="{Binding IsChecked}"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0" MinWidth="115"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0"/>
                                     <TextBlock Grid.Column="2" Text="{Binding Value}" TextAlignment="Right"/>
                                 </Grid>
                             </DataTemplate>
@@ -194,6 +171,42 @@
                 </Grid>
             </ScrollViewer>
         </Grid>
+
+        <StackPanel Grid.Column="2" Margin="0,16,0,0">
+            <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                <Button Content="Рассчитать интервал и период" Command="{Binding CurrentTemplate.CmdRunCalculate}"/>
+            </StackPanel>
+            <Grid>
+                <Grid.Resources>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="8,4,8,0"/>
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Интервал"/>
+                <TextBlock Grid.Row="1" Text="{Binding CurrentTemplate.RunInterval}"/>
+
+                <TextBlock Grid.Column="1" Text="Период"/>
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding CurrentTemplate.BillingPeriod}"/>
+
+                <TextBlock Grid.Column="2" Text="Процент отбора"/>
+                <TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding CurrentTemplate.AvgPickPercent, StringFormat={}{0:P2}}"/>
+
+                <TextBlock Grid.Column="3" Text="Изменения классов АВ"/>
+                <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding CurrentTemplate.Transition}"/>
+            </Grid>
+        </StackPanel>
 
     </Grid>
 </UserControl>

@@ -2,7 +2,7 @@
 Imports Newtonsoft.Json
 
 Namespace Pages
-    Public Class NamedInt
+    Public Class SubinventoryItem
 
         Public Property Parent As TemplateVM
         <JsonIgnore>
