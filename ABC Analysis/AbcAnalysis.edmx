@@ -59,7 +59,7 @@
           <Property Name="Name" Type="nvarchar" MaxLength="30" Nullable="false" />
         </EntityType>
         <!--Ошибки, обнаруженные при создании:
-предупреждение 6002: В таблице или представлении "F:\GD\VISUAL STUDIO\PROJECTS\ABC ANALYSIS\ABC ANALYSIS\ABCANALYSIS.MDF.dbo.Subinventory" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.-->
+предупреждение 6002: В таблице или представлении "F:\ONEDRIVE\VISUAL STUDIO\PROJECTS\ABC ANALYSIS\ABC ANALYSIS\ABCANALYSIS.MDF.dbo.Subinventory" не определен первичный ключ. Ключ был выведен, а определение таблицы или представления было создано в режиме только для чтения.-->
         <EntityType Name="Subinventory">
           <Key>
             <PropertyRef Name="Name" />
@@ -69,6 +69,9 @@
         <Function Name="DeleteTasks" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="StartDate" Type="datetime2" Mode="In" />
           <Parameter Name="EndDate" Type="datetime2" Mode="In" />
+        </Function>
+        <Function Name="LoadAbc" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AbcGroup_id" Type="int" Mode="In" />
         </Function>
         <Function Name="LoadTasks" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="Хранилище AbcAnalysisModelContainer">
@@ -101,7 +104,10 @@
           <EntitySet Name="TaskDatas" EntityType="AbcAnalysisModel.TaskData" />
           <EntitySet Name="UserPositionTypes" EntityType="AbcAnalysisModel.UserPositionType" />
           <EntitySet Name="Subinventories" EntityType="AbcAnalysisModel.Subinventory" />
-        </EntityContainer>
+          <FunctionImport Name="LoadAbc">
+            <Parameter Name="AbcGroup_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          </EntityContainer>
         <EntityType Name="AbcClass_Static">
           <Key>
             <PropertyRef Name="Id" />
@@ -235,7 +241,8 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-        </EntityContainerMapping>
+          <FunctionImportMapping FunctionImportName="LoadAbc" FunctionName="Хранилище AbcAnalysisModel.LoadAbc" />
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>

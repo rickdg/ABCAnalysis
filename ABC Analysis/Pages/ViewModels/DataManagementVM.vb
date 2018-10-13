@@ -52,15 +52,16 @@ Namespace Pages
         Public Property MonthMapper As New CartesianMapper(Of MeasureModel)
 
 
-        Public ReadOnly Property CmdViewData As ICommand = New RelayCommand(AddressOf ViewDataExecute)
-        Private Sub ViewDataExecute(parameter As Object)
-            Dim ViewTask As New Task(Sub() ViewData(CType(parameter, LoadType)))
-            ViewTask.Start()
-        End Sub
         Public ReadOnly Property CmdLoadTasks As ICommand = New RelayCommand(AddressOf LoadTasksExecute)
         Private Sub LoadTasksExecute(parameter As Object)
             Dim Dlg As New ModernDialog
-            Dlg.Content = New DataLoader(Dlg)
+            Dlg.Content = New DataLoader(Dlg) With {
+                .LoadType = CType(parameter, LoadType),
+                .CmdParameters = {},
+                .ProcParameters = New StoredProcedureParameters With {
+                    .CommandText = "dbo.LoadTasks",
+                    .ParameterName = "@ExcelTasks",
+                    .TypeName = "TaskExcelTable"}}
             Dlg.ShowDialog()
             If Dlg.DialogResult Then
                 RefreshSeriesCollection()
@@ -110,23 +111,23 @@ Namespace Pages
         Private Function GetStackedColumnSeriesMonth() As IEnumerable(Of StackedColumnSeries)
             Dim TmpData = GetDataByMonth()
             Return (From t In TmpData
-                    Group New MeasureModel(New DateTime(t.YearNum, t.MonthNum, 1), t.Tasks) By t Into List = ToList
+                    Group New MeasureModel(New DateTime(t.YearNum, t.MonthNum, 1), t.Tasks) By t Into ToList
                     Select New StackedColumnSeries With {
                         .Tag = 1,
                         .Fill = ConvertIntToBrush(1),
                         .StackMode = StackMode,
                         .Configuration = MonthMapper,
                         .Title = "Задачи",
-                        .Values = New ChartValues(Of MeasureModel)(List.OrderBy(Function(m) m.XDate))}).Concat(
+                        .Values = New ChartValues(Of MeasureModel)(ToList.OrderBy(Function(m) m.XDate))}).Concat(
                         From t In TmpData
-                        Group New MeasureModel(New DateTime(t.YearNum, t.MonthNum, 1), t.Orders) By t Into List = ToList
+                        Group New MeasureModel(New DateTime(t.YearNum, t.MonthNum, 1), t.Orders) By t Into ToList
                         Select New StackedColumnSeries With {
                             .Tag = 2,
                             .Fill = ConvertIntToBrush(2),
                             .StackMode = StackMode,
                             .Configuration = MonthMapper,
                             .Title = "ЗнП",
-                            .Values = New ChartValues(Of MeasureModel)(List.OrderBy(Function(m) m.XDate))}).ToList
+                            .Values = New ChartValues(Of MeasureModel)(ToList.OrderBy(Function(m) m.XDate))}).ToList
         End Function
 
 

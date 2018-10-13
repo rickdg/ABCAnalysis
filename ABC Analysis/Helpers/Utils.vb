@@ -65,7 +65,7 @@ Public Module Utils
             .Formatting = Formatting.Indented,
             .PreserveReferencesHandling = PreserveReferencesHandling.Objects,
             .ReferenceLoopHandling = ReferenceLoopHandling.Serialize}
-        Serializer.Converters.Add(New Converters.JavaScriptDateTimeConverter())
+        Serializer.Converters.Add(New Converters.XmlNodeConverter())
         Using StreamWriter As New StreamWriter(FullPath)
             Using Writer As New JsonTextWriter(StreamWriter)
                 Serializer.Serialize(Writer, value)

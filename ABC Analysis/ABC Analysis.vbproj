@@ -232,18 +232,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AbcAnalysis.Context.tt</DependentUpon>
     </Compile>
-    <Compile Include="AbcAnalysis.Designer.vb">
+    <None Include="AbcAnalysis.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AbcAnalysis.edmx</DependentUpon>
-    </Compile>
+    </None>
     <Compile Include="AbcAnalysis.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
     <Compile Include="AbcCalculator\BaseCalculator.vb" />
-    <Compile Include="AbcCalculator\Heuristics.vb" />
     <Compile Include="AbcCalculator\TestCalculator.vb" />
     <Compile Include="AbcCalculator\Models\AbcClass.vb" />
     <Compile Include="AbcCalculator\Models\AbcItem.vb" />
@@ -268,13 +267,18 @@
     <Compile Include="Category.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
+    <Compile Include="AbcCalculator\Content\Heuristics.xaml.vb">
+      <DependentUpon>Heuristics.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Content\DeleteTasks.xaml.vb">
       <DependentUpon>DeleteTasks.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Content\SettingsAbcGroups.xaml.vb">
-      <DependentUpon>SettingsAbcGroups.xaml</DependentUpon>
+    <Compile Include="Helpers\ExcelConnection\Models\StoredProcedureParameters.vb" />
+    <Compile Include="Helpers\ExcelConnection\Models\CommandParameter.vb" />
+    <Compile Include="Pages\AbcManagement.xaml.vb">
+      <DependentUpon>AbcManagement.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Content\EntityViewModels\AbcGroupVM.vb" />
+    <Compile Include="Pages\EntityViewModels\AbcGroupVM.vb" />
     <Compile Include="Helpers\DatabaseAdmin.vb" />
     <Compile Include="Pages\Models\MeasureModel.vb" />
     <Compile Include="Pages\DataManagement.xaml.vb">
@@ -331,6 +335,10 @@
     <Compile Include="UserPositionType.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
+    <Page Include="AbcCalculator\Content\Heuristics.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Content\DataLoader.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -347,7 +355,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Content\SettingsAbcGroups.xaml">
+    <Page Include="Pages\AbcManagement.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -497,6 +505,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Content\EntityViewModels\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Import Project="..\packages\Microsoft.SqlServer.SqlManagementObjects.140.17283.0\build\net40\Microsoft.SqlServer.SqlManagementObjects.targets" Condition="Exists('..\packages\Microsoft.SqlServer.SqlManagementObjects.140.17283.0\build\net40\Microsoft.SqlServer.SqlManagementObjects.targets')" />

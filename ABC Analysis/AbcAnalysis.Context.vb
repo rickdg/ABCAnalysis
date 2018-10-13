@@ -44,4 +44,10 @@ Partial Public Class AbcAnalysisEntities
         Return DirectCast(Me, IObjectContextAdapter).ObjectContext.ExecuteFunction("DeleteTasks", startDateParameter, endDateParameter)
     End Function
 
+    Public Overridable Function LoadAbc(abcGroup_id As Nullable(Of Integer)) As Integer
+        Dim abcGroup_idParameter As ObjectParameter = If(abcGroup_id.HasValue, New ObjectParameter("AbcGroup_id", abcGroup_id), New ObjectParameter("AbcGroup_id", GetType(Integer)))
+
+        Return DirectCast(Me, IObjectContextAdapter).ObjectContext.ExecuteFunction("LoadAbc", abcGroup_idParameter)
+    End Function
+
 End Class

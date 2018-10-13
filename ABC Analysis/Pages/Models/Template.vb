@@ -15,6 +15,8 @@ Namespace Pages
 
 #Region "ABC parameters"
         Public Property AbcGroup_id As Integer
+        Public Property FinalDate As Date
+        Public Property NextFinalDate As Date
         Public Property RunInterval As Byte
             Get
                 Return _RunInterval

@@ -8,10 +8,12 @@ Namespace AbcCalculator
 
 #Region "Input"
         Public Property Temp As Template
+#End Region
+
+
         Public Property InitialDate As Date
         Public Property FinalDate As Date
         Public Property Data As IEnumerable(Of TaskData)
-#End Region
 
 
 #Region "MasterData"

@@ -1,0 +1,11 @@
+﻿<UserControl x:Class="AbcCalculator.Heuristics"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="100" d:DesignWidth="200">
+    <StackPanel Orientation="Vertical">
+        <ProgressBar Minimum="0" Maximum="156" Value="{Binding ProgressValue}" Height="16" IsIndeterminate="False" Margin="0,30,0,0"/>
+    </StackPanel>
+</UserControl>

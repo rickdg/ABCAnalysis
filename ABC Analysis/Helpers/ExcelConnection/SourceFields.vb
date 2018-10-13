@@ -15,6 +15,12 @@ Namespace ExcelConnection
         End Function
 
 
+        Private Function GetAbcDataFields() As IEnumerable(Of Column)
+            Return {New Column("Позиция", AdoEnums.adDouble),
+                New Column("Класс ABC", AdoEnums.adWChar)}
+        End Function
+
+
         Public Function CheckColumns(loadType As LoadType, verifiable As IEnumerable(Of Column)) As String
             Dim Result As New StringBuilder
             Dim Original As IEnumerable(Of Column)
@@ -22,6 +28,8 @@ Namespace ExcelConnection
             Select Case loadType
                 Case LoadType.PickTasks
                     Original = GetPickTasksFields()
+                Case LoadType.AbcData
+                    Original = GetAbcDataFields()
                 Case Else
                     Throw New ArgumentException("Тип загружаемого файла не определен")
             End Select

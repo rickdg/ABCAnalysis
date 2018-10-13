@@ -1,7 +1,7 @@
 ﻿Imports System.Collections.ObjectModel
-Imports System.Data.Entity.SqlServer
 Imports ABCAnalysis.AbcCalculator
 Imports FirstFloor.ModernUI.Presentation
+Imports FirstFloor.ModernUI.Windows.Controls
 Imports Newtonsoft.Json
 
 Namespace Pages
@@ -75,19 +75,17 @@ Namespace Pages
 
 #Region "Commands"
         <JsonIgnore>
-        Public ReadOnly Property CmdRunCalculate As ICommand = New RelayCommand(Sub() Task.Factory.StartNew(Sub() CalculateExecute()))
-        Private Sub CalculateExecute()
-            Using Context As New AbcAnalysisEntities
-                If Context.TaskDatas.FirstOrDefault Is Nothing Then Return
-                Dim InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
-                Dim FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
-                Dim Calculator As New Heuristics With {
-                    .Temp = Me,
-                    .InitialDate = InitialDate,
-                    .FinalDate = FinalDate,
-                    .Data = Context.TaskDatas.Where(Function(i) i.XDate <= FinalDate AndAlso Subinventories_id.Contains(i.Subinventory)).ToList}
-                Calculator.Calculate()
-            End Using
+        Public ReadOnly Property CmdRunHeuristics As ICommand = New RelayCommand(AddressOf HeuristicsExecute)
+        Private Sub HeuristicsExecute(parameter As Object)
+            Dim Dlg As New ModernDialog
+            Dlg.Content = New Heuristics(Dlg) With {.Temp = Me}
+            Dlg.ShowDialog()
+        End Sub
+        <JsonIgnore>
+        Public ReadOnly Property CmdRunCalculateAbc As ICommand = New RelayCommand(AddressOf CalculateAbcExecute)
+        Private Sub CalculateAbcExecute(parameter As Object)
+            Dim c As New Calculator With {.Temp = Me}
+            c.Calculate()
         End Sub
         <JsonIgnore>
         Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(Sub() Parent.Templates.Remove(Me))

@@ -5,8 +5,17 @@
             Select Case loadType
                 Case LoadType.PickTasks
                     Return GetPickTasksScript(table)
+                Case LoadType.AbcData
+                    Return GetAbcDataScript(table)
             End Select
             Return ""
+        End Function
+
+
+        Private Function GetAbcDataScript(table As String) As String
+            Return $"SELECT [Позиция] AS CodeItem,
+                   [Класс ABC] AS ClassABC
+                   FROM [{table}]"
         End Function
 
 

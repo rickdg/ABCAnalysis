@@ -2,7 +2,7 @@
 Imports System.Data.Entity
 Imports FirstFloor.ModernUI.Presentation
 
-Namespace Content
+Namespace Pages
     Public Class AbcGroupVM
 
         Public Property ParentCollection As ObservableCollection(Of AbcGroupVM)

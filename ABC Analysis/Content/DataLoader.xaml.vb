@@ -19,8 +19,7 @@ Namespace Content
 
             Dim DialogWindow As New OpenFileDialog With {.Title = "Выбрать файл"}
             If DialogWindow.ShowDialog Then
-                Dim LoadTask As New Task(Sub() LoadTasks(DialogWindow.FileName))
-                LoadTask.Start()
+                Task.Factory.StartNew(Sub() LoadTasks(DialogWindow.FileName))
                 Dialog.Title = "Запрос"
                 Dialog.Buttons.First.Visibility = Visibility.Collapsed
             Else
@@ -28,6 +27,11 @@ Namespace Content
                 ProgressRing.IsActive = False
             End If
         End Sub
+
+
+        Public Property LoadType As LoadType
+        Public Property CmdParameters As IEnumerable(Of CommandParameter)
+        Public Property ProcParameters As StoredProcedureParameters
 
 
         Public Sub LoadTasks(fileName As String)
@@ -42,7 +46,6 @@ Namespace Content
                                  Where TableName.EndsWith("$")
                                  Select New Table(TableName) With {.Columns = Columns}).First
 
-                    Dim LoadType = ExcelConnection.LoadType.PickTasks
                     Dim SQL = GetScript(LoadType, Table.Name)
                     Dim CheckResult = CheckColumns(LoadType, Table.Columns)
                     If CheckResult <> "" Then Throw New ArgumentException(CheckResult)
@@ -58,7 +61,7 @@ Namespace Content
                     End Using
                 End Using
 
-                ExecuteStoredProcedure("dbo.LoadTasks", "@ExcelTasks", "TaskExcelTable", ExcelTable)
+                ExecuteStoredProcedure(ExcelTable)
 
                 Dispatcher.Invoke(Sub()
                                       Dialog.Title = "Завершено"
@@ -81,15 +84,18 @@ Namespace Content
         End Sub
 
 
-        Private Sub ExecuteStoredProcedure(commandText As String, parameterName As String, typeName As String, parameterValue As DataTable)
+        Private Sub ExecuteStoredProcedure(parameterValue As DataTable)
             Using Connection As New SqlConnection(My.Settings.AbcAnalysisConnectionString)
                 Connection.Open()
                 Using Command = Connection.CreateCommand()
                     Command.CommandTimeout = 1800
-                    Command.CommandText = commandText
+                    Command.CommandText = ProcParameters.CommandText
                     Command.CommandType = CommandType.StoredProcedure
-                    Command.Parameters.Add(parameterName, SqlDbType.Structured).TypeName = typeName
-                    Command.Parameters(parameterName).Value = parameterValue
+                    For Each Item In CmdParameters
+                        Command.Parameters.Add(Item.Name, Item.SqlDbType).Value = Item.Value
+                    Next
+                    Command.Parameters.Add(ProcParameters.ParameterName, SqlDbType.Structured).TypeName = ProcParameters.TypeName
+                    Command.Parameters(ProcParameters.ParameterName).Value = parameterValue
                     Command.ExecuteReader()
                 End Using
             End Using

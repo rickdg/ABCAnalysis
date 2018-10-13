@@ -23,7 +23,8 @@
         
         <mui:LinkGroup DisplayName="Данные">
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="" Source="/Pages/DataManagement.xaml"/>
+                <mui:Link DisplayName="Задачи" Source="/Pages/DataManagement.xaml"/>
+                <mui:Link DisplayName="АВС" Source="/Pages/AbcManagement.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         

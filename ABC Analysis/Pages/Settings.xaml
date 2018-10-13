@@ -8,9 +8,8 @@
              d:DesignHeight="300" d:DesignWidth="300">
     
     <Grid Style="{StaticResource ContentRoot}" Margin="0,-8,0,0">
-        <mui:ModernTab SelectedSource="/Content/SettingsAbcGroups.xaml" Layout="List">
+        <mui:ModernTab SelectedSource="/Content/SettingsAppearance.xaml" Layout="List">
             <mui:ModernTab.Links>
-                <mui:Link DisplayName="Группы АВС" Source="/Content/SettingsAbcGroups.xaml"/>
                 <mui:Link DisplayName="Внешний вид" Source="/Content/SettingsAppearance.xaml"/>
             </mui:ModernTab.Links>
         </mui:ModernTab>

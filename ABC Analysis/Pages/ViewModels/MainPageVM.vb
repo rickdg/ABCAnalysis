@@ -1,5 +1,4 @@
 ﻿Imports System.Collections.ObjectModel
-Imports ABCAnalysis.Content
 Imports FirstFloor.ModernUI.Presentation
 Imports Newtonsoft.Json
 
@@ -13,7 +12,7 @@ Namespace Pages
         Public Sub New()
             Using Context As New AbcAnalysisEntities
                 For Each AbcGroup In Context.AbcGroups
-                    AbcGroups.Add(New AbcGroupVM() With {.Entity = AbcGroup})
+                    AbcGroups.Add(New AbcGroupVM() With {.ParentCollection = AbcGroups, .Entity = AbcGroup})
                 Next
             End Using
         End Sub
