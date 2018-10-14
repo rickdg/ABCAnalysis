@@ -24,6 +24,7 @@ Namespace Pages
         Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(AddressOf RemoveExecute)
         Private Sub RemoveExecute(parameter As Object)
             Using Context As New AbcAnalysisEntities
+                Context.DeleteAbc(Entity.Id)
                 Context.Entry(Entity).State = EntityState.Deleted
                 Context.SaveChanges()
                 ParentCollection.Remove(Me)

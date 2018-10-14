@@ -275,6 +275,7 @@
     </Compile>
     <Compile Include="Helpers\ExcelConnection\Models\StoredProcedureParameters.vb" />
     <Compile Include="Helpers\ExcelConnection\Models\CommandParameter.vb" />
+    <Compile Include="Pages\Models\AbcGroup_Count.vb" />
     <Compile Include="Pages\AbcManagement.xaml.vb">
       <DependentUpon>AbcManagement.xaml</DependentUpon>
     </Compile>
@@ -506,9 +507,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\EntityViewModels\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Import Project="..\packages\Microsoft.SqlServer.SqlManagementObjects.140.17283.0\build\net40\Microsoft.SqlServer.SqlManagementObjects.targets" Condition="Exists('..\packages\Microsoft.SqlServer.SqlManagementObjects.140.17283.0\build\net40\Microsoft.SqlServer.SqlManagementObjects.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

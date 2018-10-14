@@ -66,6 +66,9 @@
           </Key>
           <Property Name="Name" Type="int" Nullable="false" />
         </EntityType>
+        <Function Name="DeleteAbc" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AbcGroup_id" Type="int" Mode="In" />
+        </Function>
         <Function Name="DeleteTasks" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="StartDate" Type="datetime2" Mode="In" />
           <Parameter Name="EndDate" Type="datetime2" Mode="In" />
@@ -105,6 +108,9 @@
           <EntitySet Name="UserPositionTypes" EntityType="AbcAnalysisModel.UserPositionType" />
           <EntitySet Name="Subinventories" EntityType="AbcAnalysisModel.Subinventory" />
           <FunctionImport Name="LoadAbc">
+          <Parameter Name="AbcGroup_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="DeleteAbc">
             <Parameter Name="AbcGroup_id" Mode="In" Type="Int32" />
           </FunctionImport>
           </EntityContainer>
@@ -242,6 +248,7 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="LoadAbc" FunctionName="Хранилище AbcAnalysisModel.LoadAbc" />
+          <FunctionImportMapping FunctionImportName="DeleteAbc" FunctionName="Хранилище AbcAnalysisModel.DeleteAbc" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

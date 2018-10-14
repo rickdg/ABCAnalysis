@@ -1,26 +1,46 @@
 ﻿Imports System.Collections.ObjectModel
+Imports System.Collections.Specialized
+Imports System.ComponentModel
 Imports System.Data
 Imports ABCAnalysis.Content
 Imports ABCAnalysis.ExcelConnection
 Imports FirstFloor.ModernUI.Presentation
 Imports FirstFloor.ModernUI.Windows.Controls
 Imports LiveCharts
-Imports LiveCharts.Wpf
+Imports LiveCharts.Configurations
 
 Namespace Pages
     Partial Public Class AbcManagement
         Inherits UserControl
+        Implements INotifyPropertyChanged
+
+        Private _Labels As String()
+
 
         Public Sub New()
             InitializeComponent()
+            Dim Mapper = Mappers.Xy(Of AbcGroup_Count).
+                X(Function(i, index) index).
+                Y(Function(i) i.CountItem)
+            Charting.[For](Of AbcGroup_Count)(Mapper)
             DataContext = Me
+            RefreshAbcGroupsSeries()
+            AddHandler AbcGroups.CollectionChanged, AddressOf CollectionChanged
         End Sub
 
 
-        Public Property EntitiesCollection As ObservableCollection(Of AbcGroupVM) = MainPage.Model.AbcGroups
+        Public Property AbcGroups As ObservableCollection(Of AbcGroupVM) = MainPage.Model.AbcGroups
         Public Property AbcGroup_id As Integer
-        Public Property SeriesCollection As New SeriesCollection
-        Public Property StackMode As StackMode
+        Public Property AbcGroupsSeries As New ChartValues(Of AbcGroup_Count)
+        Public Property Labels As String()
+            Get
+                Return _Labels
+            End Get
+            Set
+                _Labels = Value
+                RaisePropertyChanged("Labels")
+            End Set
+        End Property
 
 
         Public ReadOnly Property CmdAddNewEntity As ICommand = New RelayCommand(AddressOf AddNewEntityExecute)
@@ -28,14 +48,14 @@ Namespace Pages
             Using Context As New AbcAnalysisEntities
                 Dim NewEntity = Context.AbcGroups.Add(New AbcGroup)
                 Context.SaveChanges()
-                EntitiesCollection.Add(New AbcGroupVM With {.ParentCollection = EntitiesCollection, .Entity = NewEntity})
+                AbcGroups.Add(New AbcGroupVM With {.ParentCollection = AbcGroups, .Entity = NewEntity})
             End Using
         End Sub
-        Public ReadOnly Property CmdLoadTasks As ICommand = New RelayCommand(AddressOf LoadTasksExecute)
-        Private Sub LoadTasksExecute(parameter As Object)
+        Public ReadOnly Property CmdLoadAbc As ICommand = New RelayCommand(AddressOf LoadAbcExecute)
+        Private Sub LoadAbcExecute(parameter As Object)
             Dim Dlg As New ModernDialog
             Dlg.Content = New DataLoader(Dlg) With {
-                .LoadType = CType(parameter, LoadType),
+                .LoadType = LoadType.AbcData,
                 .CmdParameters = {New CommandParameter With {
                     .Name = "@AbcGroup_id",
                     .SqlDbType = SqlDbType.Int,
@@ -45,59 +65,41 @@ Namespace Pages
                     .ParameterName = "@ExcelTable",
                     .TypeName = "ExcelAbcTable"}}
             Dlg.ShowDialog()
-            If Dlg.DialogResult Then RefreshSeriesCollection()
+            If Dlg.DialogResult Then RefreshAbcGroupsSeries()
         End Sub
 
 
-        Private Sub RefreshSeriesCollection()
-            SeriesCollection.Clear()
-            SeriesCollection.AddRange(GetStackedColumnSeriesMonth())
+        Private Sub CollectionChanged(sender As Object, e As NotifyCollectionChangedEventArgs)
+            If e.Action = NotifyCollectionChangedAction.Remove Then RefreshAbcGroupsSeries()
         End Sub
 
 
-        Private Function GetDataByMonth() As IEnumerable(Of Month_Tasks_Orders)
+        Private Sub RefreshAbcGroupsSeries()
+            AbcGroupsSeries.Clear()
+            Dim Data = GetData()
+            For Each Item In Data
+                AbcGroupsSeries.Add(Item)
+            Next
+            Labels = Data.Select(Function(i) i.Title).ToArray
+        End Sub
+
+
+        Private Function GetData() As IEnumerable(Of AbcGroup_Count)
             Using Context As New AbcAnalysisEntities
-                Return (From Task In Context.TaskDatas
-                        Group Task By Task.YearNum, Task.MonthNum Into SumTasks = Sum(Task.Tasks), SumOrders = Sum(Task.Orders)
-                        Select New Month_Tasks_Orders With {.YearNum = YearNum, .MonthNum = MonthNum, .Tasks = SumTasks, .Orders = SumOrders}).ToList
+                Return (From Abc In Context.AbcCodeItems
+                        Join AbcGroup In Context.AbcGroups On AbcGroup.Id Equals Abc.AbcGroup_id
+                        Group By AbcGroup.Name Into Count
+                        Select New AbcGroup_Count With {.Title = Name, .CountItem = Count}).ToList
             End Using
         End Function
 
 
-        Private Function GetStackedColumnSeriesMonth() As IEnumerable(Of StackedColumnSeries)
-            Dim TmpData = GetDataByMonth()
-            Return (From t In TmpData
-                    Group New MeasureModel(New DateTime(t.YearNum, t.MonthNum, 1), t.Tasks) By t Into ToList
-                    Select New StackedColumnSeries With {
-                        .Tag = 1,
-                        .Fill = ConvertIntToBrush(1),
-                        .StackMode = StackMode,
-                        .Title = "Задачи",
-                        .Values = New ChartValues(Of MeasureModel)(ToList.OrderBy(Function(m) m.XDate))}).Concat(
-                        From t In TmpData
-                        Group New MeasureModel(New DateTime(t.YearNum, t.MonthNum, 1), t.Orders) By t Into ToList
-                        Select New StackedColumnSeries With {
-                            .Tag = 2,
-                            .Fill = ConvertIntToBrush(2),
-                            .StackMode = StackMode,
-                            .Title = "ЗнП",
-                            .Values = New ChartValues(Of MeasureModel)(ToList.OrderBy(Function(m) m.XDate))}).ToList
-        End Function
+        Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
 
-        Private Function ConvertIntToBrush(int As Integer) As Brush
-            Dim Color = AppearanceManager.Current.AccentColor
-            Select Case int
-                Case 1
-                    Color = Color.Multiply(Color, 0.2)
-                Case 2
-
-                Case Else
-                    Return Brushes.Black
-            End Select
-            Color.A = 200
-            Return New SolidColorBrush(Color)
-        End Function
+        Private Sub RaisePropertyChanged(ByVal propName As String)
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propName))
+        End Sub
 
     End Class
 End Namespace

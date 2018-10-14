@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-             xmlns:en="clr-namespace:ABCAnalysis.ExcelConnection"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="800">
 
@@ -18,12 +17,12 @@
         <Grid Grid.Column="1" Margin="{StaticResource HeaderMargin}" HorizontalAlignment="Right" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Группа АВС" VerticalAlignment="Center" Margin="0,0,16,0"/>
-                <ComboBox ItemsSource="{Binding EntitiesCollection}" VerticalAlignment="Center" Margin="0,0,16,0"
+                <ComboBox ItemsSource="{Binding AbcGroups}" VerticalAlignment="Center" Margin="0,0,16,0"
                           SelectedValue="{Binding AbcGroup_id}"
                           DisplayMemberPath="Name"
                           SelectedValuePath="Entity.Id"/>
-                <mui:ModernButton Command="{Binding CmdLoadTasks}" ToolTip="Загрузка" IconHeight="20" IconWidth="20"
-                                  CommandParameter="{x:Static en:LoadType.AbcData}" EllipseDiameter="34" EllipseStrokeThickness="0" IconData="F1 M 25,52L 51,52L 51,57L 25,57L 25,52 Z M 35,16L 41,16L 41,36.5L 49,27L 49,36.5L 38,49L 27,36.5L 27,27L 35,36.5L 35,16 Z"/>
+                <mui:ModernButton Command="{Binding CmdLoadAbc}" ToolTip="Загрузка" IconHeight="20" IconWidth="20"
+                                  EllipseDiameter="34" EllipseStrokeThickness="0" IconData="F1 M 25,52L 51,52L 51,57L 25,57L 25,52 Z M 35,16L 41,16L 41,36.5L 49,27L 49,36.5L 38,49L 27,36.5L 27,27L 35,36.5L 35,16 Z"/>
             </StackPanel>
         </Grid>
 
@@ -40,7 +39,7 @@
                                       Margin="8,0" IconData="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z"/>
                 </StackPanel>
 
-                <DataGrid Grid.Row="1" ItemsSource="{Binding EntitiesCollection}"
+                <DataGrid Grid.Row="1" ItemsSource="{Binding AbcGroups}"
                           AutoGenerateColumns="False" HeadersVisibility="Column"
                           CanUserSortColumns="False" CanUserReorderColumns="False"
                           CanUserResizeColumns="False" CanUserAddRows="False"
@@ -62,19 +61,22 @@
         </Border>
 
         <Grid Grid.Column="1" Margin="{StaticResource ContentMargin}">
-            <lvc:CartesianChart Series="{Binding SeriesCollection}" LegendLocation="None" Zoom="X">
+            <lvc:CartesianChart>
                 <lvc:CartesianChart.DataTooltip>
-                    <lvc:DefaultTooltip Background="{DynamicResource ButtonBackground}"/>
+                    <lvc:DefaultTooltip Background="{DynamicResource ButtonBackground}" ShowSeries="False"/>
                 </lvc:CartesianChart.DataTooltip>
+                <lvc:CartesianChart.Series>
+                    <lvc:StackedColumnSeries Values="{Binding AbcGroupsSeries}" Fill="{DynamicResource Accent}"/>
+                </lvc:CartesianChart.Series>
                 <lvc:CartesianChart.AxisX>
-                    <lvc:Axis x:Name="AxisX" Title="АВС" LabelFormatter="{Binding XFormatter}">
+                    <lvc:Axis Labels="{Binding Labels}">
                         <lvc:Axis.Separator>
                             <lvc:Separator IsEnabled="False"/>
                         </lvc:Axis.Separator>
                     </lvc:Axis>
                 </lvc:CartesianChart.AxisX>
                 <lvc:CartesianChart.AxisY>
-                    <lvc:Axis Title="Позиции" LabelFormatter="{Binding YFormatter}">
+                    <lvc:Axis Title="Позиции">
                         <lvc:Axis.Separator>
                             <lvc:Separator StrokeThickness="1" Stroke="{DynamicResource SeparatorBackground}"/>
                         </lvc:Axis.Separator>

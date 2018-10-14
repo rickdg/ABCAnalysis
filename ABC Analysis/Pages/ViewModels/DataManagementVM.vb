@@ -20,8 +20,8 @@ Namespace Pages
 
 
         Public Sub New()
-            MonthMapper.X(Function(m) m.XDate.Ticks / (TimeSpan.FromDays(1).Ticks * 30.44))
-            MonthMapper.Y(Function(m) m.Value)
+            Mapper.X(Function(m) m.XDate.Ticks / (TimeSpan.FromDays(1).Ticks * 30.44))
+            Mapper.Y(Function(m) m.Value)
             YFormatter = NFormatter
             XFormatter = MonthFormatter
             StackMode = StackMode.Values
@@ -49,14 +49,14 @@ Namespace Pages
             End Set
         End Property
         Public Property StackMode As StackMode
-        Public Property MonthMapper As New CartesianMapper(Of MeasureModel)
+        Public Property Mapper As New CartesianMapper(Of MeasureModel)
 
 
         Public ReadOnly Property CmdLoadTasks As ICommand = New RelayCommand(AddressOf LoadTasksExecute)
         Private Sub LoadTasksExecute(parameter As Object)
             Dim Dlg As New ModernDialog
             Dlg.Content = New DataLoader(Dlg) With {
-                .LoadType = CType(parameter, LoadType),
+                .LoadType = LoadType.PickTasks,
                 .CmdParameters = {},
                 .ProcParameters = New StoredProcedureParameters With {
                     .CommandText = "dbo.LoadTasks",
@@ -99,24 +99,24 @@ Namespace Pages
         End Sub
 
 
-        Private Function GetDataByMonth() As IEnumerable(Of Month_Tasks_Orders)
+        Private Function GetData() As IEnumerable(Of Month_Tasks_Orders)
             Using Context As New AbcAnalysisEntities
                 Return (From Task In Context.TaskDatas
-                        Group Task By Task.YearNum, Task.MonthNum Into SumTasks = Sum(Task.Tasks), SumOrders = Sum(Task.Orders)
+                        Group By Task.YearNum, Task.MonthNum Into SumTasks = Sum(Task.Tasks), SumOrders = Sum(Task.Orders)
                         Select New Month_Tasks_Orders With {.YearNum = YearNum, .MonthNum = MonthNum, .Tasks = SumTasks, .Orders = SumOrders}).ToList
             End Using
         End Function
 
 
         Private Function GetStackedColumnSeriesMonth() As IEnumerable(Of StackedColumnSeries)
-            Dim TmpData = GetDataByMonth()
+            Dim TmpData = GetData()
             Return (From t In TmpData
                     Group New MeasureModel(New DateTime(t.YearNum, t.MonthNum, 1), t.Tasks) By t Into ToList
                     Select New StackedColumnSeries With {
                         .Tag = 1,
                         .Fill = ConvertIntToBrush(1),
                         .StackMode = StackMode,
-                        .Configuration = MonthMapper,
+                        .Configuration = Mapper,
                         .Title = "Задачи",
                         .Values = New ChartValues(Of MeasureModel)(ToList.OrderBy(Function(m) m.XDate))}).Concat(
                         From t In TmpData
@@ -125,7 +125,7 @@ Namespace Pages
                             .Tag = 2,
                             .Fill = ConvertIntToBrush(2),
                             .StackMode = StackMode,
-                            .Configuration = MonthMapper,
+                            .Configuration = Mapper,
                             .Title = "ЗнП",
                             .Values = New ChartValues(Of MeasureModel)(ToList.OrderBy(Function(m) m.XDate))}).ToList
         End Function
