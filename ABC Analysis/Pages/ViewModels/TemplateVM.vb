@@ -82,6 +82,12 @@ Namespace Pages
             Dlg.ShowDialog()
         End Sub
         <JsonIgnore>
+        Public ReadOnly Property CmdRunCalculateStatisticsAbc As ICommand = New RelayCommand(AddressOf CalculateStatisticsAbcExecute)
+        Private Sub CalculateStatisticsAbcExecute(parameter As Object)
+            Dim c As New StatisticsCalculator With {.Temp = Me}
+            c.Calculate()
+        End Sub
+        <JsonIgnore>
         Public ReadOnly Property CmdRunCalculateAbc As ICommand = New RelayCommand(AddressOf CalculateAbcExecute)
         Private Sub CalculateAbcExecute(parameter As Object)
             Dim c As New Calculator With {.Temp = Me}

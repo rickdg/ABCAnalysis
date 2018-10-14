@@ -214,6 +214,9 @@
                 </Grid>
                 <StackPanel Margin="0,16,0,0">
                     <TextBlock Text="АВС" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <Button Content="Статистика АВС" Command="{Binding CurrentTemplate.CmdRunCalculateStatisticsAbc}"/>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <Button Content="Рассчитать АВС" Command="{Binding CurrentTemplate.CmdRunCalculateAbc}"/>
                     </StackPanel>

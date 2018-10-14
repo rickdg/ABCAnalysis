@@ -242,7 +242,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
+    <Compile Include="AbcCalculator\Models\Statistics\AbcPercent.vb" />
+    <Compile Include="AbcCalculator\Models\Statistics\AbcQtyTasks.vb" />
+    <Compile Include="AbcCalculator\Models\Statistics\AbcQtyCode.vb" />
     <Compile Include="AbcCalculator\BaseCalculator.vb" />
+    <Compile Include="AbcCalculator\Models\Statistics\PickPercent.vb" />
+    <Compile Include="AbcCalculator\StatisticsCalculator.vb" />
     <Compile Include="AbcCalculator\TestCalculator.vb" />
     <Compile Include="AbcCalculator\Models\AbcClass.vb" />
     <Compile Include="AbcCalculator\Models\AbcItem.vb" />
@@ -250,7 +255,7 @@
     <Compile Include="AbcCalculator\Models\DataItem.vb" />
     <Compile Include="AbcCalculator\Models\Statistics\DirectionItem.vb" />
     <Compile Include="AbcCalculator\Models\Statistics\ResultCalculation.vb" />
-    <Compile Include="AbcCalculator\Models\Statistics\AbcValue.vb" />
+    <Compile Include="AbcCalculator\Models\Statistics\PickValue.vb" />
     <Compile Include="AbcCalculator\Models\Statistics\GenericTransition.vb" />
     <Compile Include="AbcCalculator\Models\Statistics\Transition.vb" />
     <Compile Include="AbcCalculator\Models\Statistics\StatItem.vb" />
@@ -322,6 +327,7 @@
     <Compile Include="Pages\ViewModels\MainPageVM.vb" />
     <Compile Include="Pages\Models\SubinventoryItem.vb" />
     <Compile Include="Pages\ViewModels\TemplateVM.vb" />
+    <Compile Include="Reports\WorksheetHelper.vb" />
     <Compile Include="Subinventory.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>

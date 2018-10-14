@@ -8,7 +8,7 @@
         End Sub
 
 
-        Public Property PickQtyTasks As New List(Of AbcValue)
+        Public Property PickQtyTasks As New List(Of PickValue)
         Public Property ClassChange As New List(Of Transition)
 
 
@@ -28,7 +28,7 @@
                                Group By prev = cd.Value(CurIter - 1), cur = cd.Value(CurIter) Into Count
                                Select New DirectionItem(prev, cur) With {.QtyCode = Count}).ToList
 
-            PickQtyTasks.Add(New AbcValue(FinalInterval, Pick, Function(i) i.QtyTasks))
+            PickQtyTasks.Add(New PickValue(FinalInterval, Pick, Function(i) i.QtyTasks))
             Me.ClassChange.Add(New Transition(FinalBillingPeriod, ClassChange))
         End Sub
 

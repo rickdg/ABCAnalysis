@@ -53,6 +53,7 @@ Namespace Pages
         End Sub
         Public ReadOnly Property CmdLoadAbc As ICommand = New RelayCommand(AddressOf LoadAbcExecute)
         Private Sub LoadAbcExecute(parameter As Object)
+            If AbcGroup_id = 0 Then Return
             Dim Dlg As New ModernDialog
             Dlg.Content = New DataLoader(Dlg) With {
                 .LoadType = LoadType.AbcData,

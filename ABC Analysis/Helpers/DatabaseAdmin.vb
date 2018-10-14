@@ -54,11 +54,11 @@ Module DatabaseAdmin
     End Function
 
 
-    'Public Function GetContext() As WarehouseDataEntities
-    '    Dim Context As New WarehouseDataEntities
-    '    Context.Database.Connection.ConnectionString = $"data source={srvName};attachdbfilename={DbTarget};integrated security=True;MultipleActiveResultSets=True;App=EntityFramework"
-    '    Return Context
-    'End Function
+    Public Function GetContext() As AbcAnalysisEntities
+        Dim Context As New AbcAnalysisEntities
+        Context.Database.Connection.ConnectionString = $"data source={srvName};attachdbfilename={DbTarget};integrated security=True;MultipleActiveResultSets=True;App=EntityFramework"
+        Return Context
+    End Function
 
 
     Public Function GetSqlConnectionString() As String
