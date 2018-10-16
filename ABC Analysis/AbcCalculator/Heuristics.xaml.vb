@@ -48,14 +48,24 @@ Namespace AbcCalculator
         Public Sub Calculate()
             Dim InitialDate As Date
             Dim FinalDate As Date
-            Dim Data As IEnumerable(Of TaskData)
+            Dim Data As IEnumerable(Of TaskDataExtend)
 
             Try
                 Using Context As New AbcAnalysisEntities
                     If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
                     InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                     FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
-                    Data = Context.TaskDatas.Where(Function(i) i.XDate <= FinalDate AndAlso Temp.Subinventories_id.Contains(i.Subinventory)).ToList
+                    Data = (From td In Context.TaskDatas
+                            Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
+                            Where td.XDate <= FinalDate AndAlso Temp.Subinventories_id.Contains(td.Subinventory)
+                            Select New TaskDataExtend With {
+                                .XDate = td.XDate,
+                                .Code = td.Code,
+                                .Category_Id = ci.Category_Id,
+                                .UserPositionType_Id = ci.UserPositionType_Id,
+                                .SalesOrder = td.SalesOrder,
+                                .Orders = td.Orders,
+                                .Tasks = td.Tasks}).ToList
                 End Using
 
                 Dim CalculationData = (From d In Data

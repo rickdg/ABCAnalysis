@@ -35,6 +35,15 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="30" Nullable="false" />
         </EntityType>
+        <EntityType Name="CodeItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="bigint" Nullable="false" />
+          <Property Name="Category_Id" Type="int" Nullable="false" />
+          <Property Name="UserPositionType_Id" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="TaskData">
           <Key>
             <PropertyRef Name="Id" />
@@ -45,8 +54,7 @@
           <Property Name="MonthNum" Type="int" Nullable="false" />
           <Property Name="Subinventory" Type="int" Nullable="false" />
           <Property Name="Code" Type="bigint" Nullable="false" />
-          <Property Name="Category_Id" Type="int" Nullable="false" />
-          <Property Name="UserPositionType_Id" Type="int" Nullable="false" />
+          <Property Name="CodeItem_id" Type="int" Nullable="false" />
           <Property Name="SalesOrder" Type="bit" Nullable="false" />
           <Property Name="Orders" Type="int" Nullable="false" />
           <Property Name="Tasks" Type="int" Nullable="false" />
@@ -85,6 +93,7 @@
           <EntitySet Name="AbcCodeItem" EntityType="Self.AbcCodeItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AbcGroup" EntityType="Self.AbcGroup" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Category" EntityType="Self.Category" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CodeItem" EntityType="Self.CodeItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TaskData" EntityType="Self.TaskData" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserPositionType" EntityType="Self.UserPositionType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Subinventory" EntityType="Self.Subinventory" store:Type="Views" store:Schema="dbo">
@@ -103,13 +112,6 @@
             <Parameter Name="StartDate" Mode="In" Type="DateTime" />
             <Parameter Name="EndDate" Mode="In" Type="DateTime" />
           </FunctionImport>
-          <EntitySet Name="AbcClass_Static" EntityType="AbcAnalysisModel.AbcClass_Static" />
-          <EntitySet Name="AbcCodeItems" EntityType="AbcAnalysisModel.AbcCodeItem" />
-          <EntitySet Name="AbcGroups" EntityType="AbcAnalysisModel.AbcGroup" />
-          <EntitySet Name="Categories" EntityType="AbcAnalysisModel.Category" />
-          <EntitySet Name="TaskDatas" EntityType="AbcAnalysisModel.TaskData" />
-          <EntitySet Name="UserPositionTypes" EntityType="AbcAnalysisModel.UserPositionType" />
-          <EntitySet Name="Subinventories" EntityType="AbcAnalysisModel.Subinventory" />
           <FunctionImport Name="LoadAbc">
           <Parameter Name="AbcGroup_id" Mode="In" Type="Int32" />
           </FunctionImport>
@@ -117,8 +119,16 @@
           <Parameter Name="AbcGroup_id" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="UpdateAbc">
-            <Parameter Name="AbcGroup_id" Mode="In" Type="Int32" />
+          <Parameter Name="AbcGroup_id" Mode="In" Type="Int32" />
           </FunctionImport>
+          <EntitySet Name="AbcClass_Static" EntityType="AbcAnalysisModel.AbcClass_Static" />
+          <EntitySet Name="AbcCodeItems" EntityType="AbcAnalysisModel.AbcCodeItem" />
+          <EntitySet Name="AbcGroups" EntityType="AbcAnalysisModel.AbcGroup" />
+          <EntitySet Name="Categories" EntityType="AbcAnalysisModel.Category" />
+          <EntitySet Name="CodeItems" EntityType="AbcAnalysisModel.CodeItem" />
+          <EntitySet Name="TaskDatas" EntityType="AbcAnalysisModel.TaskData" />
+          <EntitySet Name="UserPositionTypes" EntityType="AbcAnalysisModel.UserPositionType" />
+          <EntitySet Name="Subinventories" EntityType="AbcAnalysisModel.Subinventory" />
           </EntityContainer>
         <EntityType Name="AbcClass_Static">
           <Key>
@@ -150,6 +160,15 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="CodeItem">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="Int64" Nullable="false" />
+          <Property Name="Category_Id" Type="Int32" Nullable="false" />
+          <Property Name="UserPositionType_Id" Type="Int32" Nullable="false" />
+        </EntityType>
         <EntityType Name="TaskData">
           <Key>
             <PropertyRef Name="Id" />
@@ -160,8 +179,7 @@
           <Property Name="MonthNum" Type="Int32" Nullable="false" />
           <Property Name="Subinventory" Type="Int32" Nullable="false" />
           <Property Name="Code" Type="Int64" Nullable="false" />
-          <Property Name="Category_Id" Type="Int32" Nullable="false" />
-          <Property Name="UserPositionType_Id" Type="Int32" Nullable="false" />
+          <Property Name="CodeItem_id" Type="Int32" Nullable="false" />
           <Property Name="SalesOrder" Type="Boolean" Nullable="false" />
           <Property Name="Orders" Type="Int32" Nullable="false" />
           <Property Name="Tasks" Type="Int32" Nullable="false" />
@@ -187,6 +205,9 @@
         <EntityContainerMapping StorageEntityContainer="Хранилище AbcAnalysisModelContainer" CdmEntityContainer="AbcAnalysisEntities">
           <FunctionImportMapping FunctionImportName="LoadTasks" FunctionName="Хранилище AbcAnalysisModel.LoadTasks" />
           <FunctionImportMapping FunctionImportName="DeleteTasks" FunctionName="Хранилище AbcAnalysisModel.DeleteTasks" />
+          <FunctionImportMapping FunctionImportName="LoadAbc" FunctionName="Хранилище AbcAnalysisModel.LoadAbc" />
+          <FunctionImportMapping FunctionImportName="DeleteAbc" FunctionName="Хранилище AbcAnalysisModel.DeleteAbc" />
+          <FunctionImportMapping FunctionImportName="UpdateAbc" FunctionName="Хранилище AbcAnalysisModel.UpdateAbc" />
           <EntitySetMapping Name="AbcClass_Static">
             <EntityTypeMapping TypeName="AbcAnalysisModel.AbcClass_Static">
               <MappingFragment StoreEntitySet="AbcClass_Static">
@@ -221,14 +242,23 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="CodeItems">
+            <EntityTypeMapping TypeName="AbcAnalysisModel.CodeItem">
+              <MappingFragment StoreEntitySet="CodeItem">
+                <ScalarProperty Name="UserPositionType_Id" ColumnName="UserPositionType_Id" />
+                <ScalarProperty Name="Category_Id" ColumnName="Category_Id" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="TaskDatas">
             <EntityTypeMapping TypeName="AbcAnalysisModel.TaskData">
               <MappingFragment StoreEntitySet="TaskData">
                 <ScalarProperty Name="Tasks" ColumnName="Tasks" />
                 <ScalarProperty Name="Orders" ColumnName="Orders" />
                 <ScalarProperty Name="SalesOrder" ColumnName="SalesOrder" />
-                <ScalarProperty Name="UserPositionType_Id" ColumnName="UserPositionType_Id" />
-                <ScalarProperty Name="Category_Id" ColumnName="Category_Id" />
+                <ScalarProperty Name="CodeItem_id" ColumnName="CodeItem_id" />
                 <ScalarProperty Name="Code" ColumnName="Code" />
                 <ScalarProperty Name="Subinventory" ColumnName="Subinventory" />
                 <ScalarProperty Name="MonthNum" ColumnName="MonthNum" />
@@ -253,9 +283,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <FunctionImportMapping FunctionImportName="LoadAbc" FunctionName="Хранилище AbcAnalysisModel.LoadAbc" />
-          <FunctionImportMapping FunctionImportName="DeleteAbc" FunctionName="Хранилище AbcAnalysisModel.DeleteAbc" />
-          <FunctionImportMapping FunctionImportName="UpdateAbc" FunctionName="Хранилище AbcAnalysisModel.UpdateAbc" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -11,7 +11,8 @@ Namespace Pages
 
         Private _QuantityAClass As Integer
         Private _QuantityBClass As Integer
-        Private _ByOrders As Boolean
+        Private _IsStatisticsAbcProcessing As Boolean
+        Private _IsCalculateAbcProcessing As Boolean
 
 
         Public Sub New()
@@ -23,8 +24,25 @@ Namespace Pages
         End Sub
 
 
-        Public Property Activated As Boolean
         Public Property Parent As MainPageVM
+        Public Property IsStatisticsAbcProcessing As Boolean
+            Get
+                Return _IsStatisticsAbcProcessing
+            End Get
+            Set
+                _IsStatisticsAbcProcessing = Value
+                OnPropertyChanged("IsStatisticsAbcProcessing")
+            End Set
+        End Property
+        Public Property IsCalculateAbcProcessing As Boolean
+            Get
+                Return _IsCalculateAbcProcessing
+            End Get
+            Set
+                _IsCalculateAbcProcessing = Value
+                OnPropertyChanged("IsCalculateAbcProcessing")
+            End Set
+        End Property
 
 
 #Region "ABC parameters"
@@ -85,6 +103,8 @@ Namespace Pages
         <JsonIgnore>
         Public ReadOnly Property CmdRunCalculateStatisticsAbc As ICommand = New RelayCommand(AddressOf CalculateStatisticsAbcExecuteAsync)
         Private Async Sub CalculateStatisticsAbcExecuteAsync(parameter As Object)
+            If IsStatisticsAbcProcessing Then Return
+            IsStatisticsAbcProcessing = True
             Try
                 Await Task.Factory.StartNew(Sub()
                                                 Dim c As New StatisticsCalculator With {.Temp = Me}
@@ -93,11 +113,15 @@ Namespace Pages
             Catch ex As Exception
                 Dim Dlg As New ModernDialog With {.Title = "Ошибка", .Content = New ErrorMessage(ex)}
                 Dlg.ShowDialog()
+            Finally
+                IsStatisticsAbcProcessing = False
             End Try
         End Sub
         <JsonIgnore>
         Public ReadOnly Property CmdRunCalculateAbc As ICommand = New RelayCommand(AddressOf CalculateAbcExecuteAsync)
         Private Async Sub CalculateAbcExecuteAsync(parameter As Object)
+            If IsCalculateAbcProcessing Then Return
+            IsCalculateAbcProcessing = True
             Try
                 Await Task.Factory.StartNew(Sub()
                                                 Dim c As New Calculator With {.Temp = Me}
@@ -107,6 +131,8 @@ Namespace Pages
             Catch ex As Exception
                 Dim Dlg As New ModernDialog With {.Title = "Ошибка", .Content = New ErrorMessage(ex)}
                 Dlg.ShowDialog()
+            Finally
+                IsCalculateAbcProcessing = False
             End Try
         End Sub
         <JsonIgnore>
@@ -138,7 +164,8 @@ Namespace Pages
         Public Sub UpdateUserPositionTypesAndCategoryes()
             Using Context As New AbcAnalysisEntities
                 Dim Data = (From td In Context.TaskDatas
-                            Join upt In Context.UserPositionTypes On upt.Id Equals td.UserPositionType_Id
+                            Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
+                            Join upt In Context.UserPositionTypes On upt.Id Equals ci.UserPositionType_Id
                             Where Subinventories_id.Contains(td.Subinventory)
                             Group By upt.Id, upt.Name Into Sum(td.Orders)
                             Select New DataItem With {.Id = Id, .Name = Name, .Value = Sum}).ToList
@@ -152,8 +179,9 @@ Namespace Pages
         Public Sub UpdateCategoryes()
             Using Context As New AbcAnalysisEntities
                 Dim Data = (From td In Context.TaskDatas
-                            Join c In Context.Categories On c.Id Equals td.Category_Id
-                            Where Subinventories_id.Contains(td.Subinventory) AndAlso UserPositionTypes_id.Contains(td.UserPositionType_Id)
+                            Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
+                            Join c In Context.Categories On c.Id Equals ci.Category_Id
+                            Where Subinventories_id.Contains(td.Subinventory) AndAlso UserPositionTypes_id.Contains(ci.UserPositionType_Id)
                             Group By c.Id, c.Name Into Sum(td.Orders)
                             Select New DataItem With {.Id = Id, .Name = Name, .Value = Sum}).ToList
                 UpdateCollection(Data, Categoryes)

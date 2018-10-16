@@ -247,6 +247,7 @@
     <Compile Include="AbcCalculator\Models\Statistics\AbcQtyCode.vb" />
     <Compile Include="AbcCalculator\BaseCalculator.vb" />
     <Compile Include="AbcCalculator\Models\Statistics\PickPercent.vb" />
+    <Compile Include="AbcCalculator\Models\TaskDataExtend.vb" />
     <Compile Include="AbcCalculator\StatisticsCalculator.vb" />
     <Compile Include="AbcCalculator\TestCalculator.vb" />
     <Compile Include="AbcCalculator\Models\AbcClass.vb" />
@@ -274,6 +275,9 @@
     </Compile>
     <Compile Include="AbcCalculator\Heuristics.xaml.vb">
       <DependentUpon>Heuristics.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CodeItem.vb">
+      <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
     <Compile Include="Content\DeleteTasks.xaml.vb">
       <DependentUpon>DeleteTasks.xaml</DependentUpon>

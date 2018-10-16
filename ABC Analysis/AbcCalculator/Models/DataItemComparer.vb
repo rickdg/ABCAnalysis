@@ -1,13 +1,13 @@
 ﻿Namespace AbcCalculator
     Public Class TaskDataComparer
-        Implements IEqualityComparer(Of TaskData)
+        Implements IEqualityComparer(Of TaskDataExtend)
 
-        Public Function Equals1(x As TaskData, y As TaskData) As Boolean Implements IEqualityComparer(Of TaskData).Equals
+        Public Function Equals1(x As TaskDataExtend, y As TaskDataExtend) As Boolean Implements IEqualityComparer(Of TaskDataExtend).Equals
             Return x.Code.Equals(y.Code)
         End Function
 
 
-        Public Function GetHashCode1(obj As TaskData) As Integer Implements IEqualityComparer(Of TaskData).GetHashCode
+        Public Function GetHashCode1(obj As TaskDataExtend) As Integer Implements IEqualityComparer(Of TaskDataExtend).GetHashCode
             Return obj.Code.GetHashCode
         End Function
 

@@ -57,6 +57,7 @@ Namespace Pages
                 Tmp.UpdateSubinventories()
                 Tmp.UpdateUserPositionTypesAndCategoryes()
             Next
+            CmdSave.Execute(Nothing)
         End Sub
 
     End Class

@@ -4,6 +4,7 @@ Namespace Pages
     Public Class Template
         Inherits NotifyPropertyChanged
 
+        Private _FinalDate As Date
         Private _RunInterval As Integer
         Private _BillingPeriod As Integer
         Private _AvgPickPercent As Double
@@ -16,7 +17,19 @@ Namespace Pages
 #Region "ABC parameters"
         Public Property AbcGroup_id As Integer
         Public Property FinalDate As Date
-        Public Property NextFinalDate As Date
+            Get
+                Return _FinalDate
+            End Get
+            Set
+                _FinalDate = Value
+                OnPropertyChanged("NextFinalDate")
+            End Set
+        End Property
+        Public ReadOnly Property NextFinalDate As Date
+            Get
+                Return FinalDate.AddDays(_RunInterval)
+            End Get
+        End Property
         Public Property IsCalculated As Boolean
         Public Property RunInterval As Integer
             Get
@@ -25,6 +38,7 @@ Namespace Pages
             Set
                 _RunInterval = Value
                 OnPropertyChanged("RunInterval")
+                OnPropertyChanged("NextFinalDate")
             End Set
         End Property
         Public Property BillingPeriod As Integer

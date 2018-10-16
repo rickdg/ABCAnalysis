@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
-             mc:Ignorable="d" d:DesignHeight="350" d:DesignWidth="1000">
+             mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="1000">
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -116,7 +116,7 @@
                             <Setter Property="Margin" Value="16,0"/>
                         </Style>
                     </Grid.Resources>
-                    
+
                     <TextBlock Text="Зона"/>
                     <TextBlock Grid.Column="1" Text="ТПП"/>
                     <TextBlock Grid.Column="2" Text="Категория"/>
@@ -136,7 +136,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <CheckBox IsChecked="{Binding IsChecked}" Command="{Binding Change}"/>
-                                    <TextBlock Text="{Binding Name}" Margin="8,0"/>
+                                    <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="8,0"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -153,8 +153,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <CheckBox IsChecked="{Binding IsChecked}" Command="{Binding Change}"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding Value}" TextAlignment="Right"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name, Mode=OneWay}" Margin="8,0"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Value, Mode=OneWay}" TextAlignment="Right"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -171,8 +171,8 @@
                                     </Grid.ColumnDefinitions>
 
                                     <CheckBox IsChecked="{Binding IsChecked}"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="8,0"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding Value}" TextAlignment="Right"/>
+                                    <TextBlock Grid.Column="1" Text="{Binding Name, Mode=OneWay}" Margin="8,0"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Value, Mode=OneWay}" TextAlignment="Right"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
@@ -190,11 +190,11 @@
                         <Setter Property="Margin" Value="0,0,0,4"/>
                     </Style>
                     <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                        <Setter Property="Width" Value="280"/>
+                        <Setter Property="Width" Value="270"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
                     </Style>
                     <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                        <Setter Property="Width" Value="50"/>
+                        <Setter Property="Width" Value="80"/>
                         <Setter Property="TextAlignment" Value="Right"/>
                     </Style>
                 </StackPanel.Resources>
@@ -206,32 +206,50 @@
                     <TextBox Text="{Binding CurrentTemplate.ReductionPickPercent.Text}"/>
                 </StackPanel>
                 <StackPanel>
-                    <Button Content="Найти оптимальный интервал и период" Command="{Binding CurrentTemplate.CmdRunHeuristics}" Width="330" Margin="0,8"/>
+                    <Button Content="Найти оптимальный интервал и период" Command="{Binding CurrentTemplate.CmdRunHeuristics}" Width="350" Margin="0,8"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Интервал запуска (дн)"/>
-                    <TextBox Text="{Binding CurrentTemplate.RunInterval}" IsReadOnly="True"/>
+                    <TextBox Text="{Binding CurrentTemplate.RunInterval, Mode=OneWay}" IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Расчетный период (дн)"/>
-                    <TextBox Text="{Binding CurrentTemplate.BillingPeriod}" IsReadOnly="True"/>
+                    <TextBox Text="{Binding CurrentTemplate.BillingPeriod, Mode=OneWay}" IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Средний процент отбора"/>
-                    <TextBox Text="{Binding CurrentTemplate.AvgPickPercent, StringFormat={}{0:P0}}" IsReadOnly="True"/>
+                    <TextBox Text="{Binding CurrentTemplate.AvgPickPercent, Mode=OneWay, StringFormat={}{0:P0}}" IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Изменения классов АВ"/>
-                    <TextBox Text="{Binding CurrentTemplate.Transition}" IsReadOnly="True"/>
+                    <TextBox Text="{Binding CurrentTemplate.Transition, Mode=OneWay}" IsReadOnly="True"/>
                 </StackPanel>
 
                 <TextBlock Text="АВС" Style="{StaticResource Heading1}" Margin="0,12,0,4"/>
 
                 <StackPanel>
-                    <Button Content="Статистика АВС" Command="{Binding CurrentTemplate.CmdRunCalculateStatisticsAbc}" Width="330"/>
+                    <Button Command="{Binding CurrentTemplate.CmdRunCalculateStatisticsAbc}" Width="350" Padding="0">
+                        <Button.Content>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="Статистика АВС" TextAlignment="Center"/>
+                                <ProgressBar x:Name="StatisticsAbcProcessing" IsIndeterminate="{Binding CurrentTemplate.IsStatisticsAbcProcessing}"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
                 </StackPanel>
                 <StackPanel>
-                    <Button Content="Рассчитать АВС" Command="{Binding CurrentTemplate.CmdRunCalculateAbc}" Width="330"/>
+                    <Button Command="{Binding CurrentTemplate.CmdRunCalculateAbc}" Width="350" Padding="0" Margin="0,0,0,8">
+                        <Button.Content>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="Рассчитать АВС" TextAlignment="Center"/>
+                                <ProgressBar x:Name="CalculateAbcProcessing" IsIndeterminate="{Binding CurrentTemplate.IsCalculateAbcProcessing}"/>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Дата следующего пересчета"/>
+                    <TextBox Text="{Binding CurrentTemplate.NextFinalDate, Mode=OneWay, StringFormat=\{0:d\}}" IsReadOnly="True"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

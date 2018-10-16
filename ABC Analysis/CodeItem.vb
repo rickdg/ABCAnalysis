@@ -10,15 +10,10 @@
 Imports System
 Imports System.Collections.Generic
 
-Partial Public Class TaskData
+Partial Public Class CodeItem
     Public Property Id As Integer
-    Public Property XDate As Date
-    Public Property YearNum As Integer
-    Public Property MonthNum As Integer
-    Public Property Subinventory As Integer
     Public Property Code As Long
-    Public Property CodeItem_id As Integer
-    Public Property SalesOrder As Boolean
-    Public Property Orders As Integer
-    Public Property Tasks As Integer
+    Public Property Category_Id As Integer
+    Public Property UserPositionType_Id As Integer
+
 End Class

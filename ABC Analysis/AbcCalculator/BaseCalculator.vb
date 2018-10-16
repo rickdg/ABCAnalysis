@@ -13,7 +13,7 @@ Namespace AbcCalculator
 
         Public Property InitialDate As Date
         Public Property FinalDate As Date
-        Public Property Data As IEnumerable(Of TaskData)
+        Public Property Data As IEnumerable(Of TaskDataExtend)
 
 
 #Region "MasterData"

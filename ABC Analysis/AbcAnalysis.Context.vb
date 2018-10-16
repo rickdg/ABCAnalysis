@@ -28,6 +28,7 @@ Partial Public Class AbcAnalysisEntities
     Public Overridable Property AbcCodeItems() As DbSet(Of AbcCodeItem)
     Public Overridable Property AbcGroups() As DbSet(Of AbcGroup)
     Public Overridable Property Categories() As DbSet(Of Category)
+    Public Overridable Property CodeItems() As DbSet(Of CodeItem)
     Public Overridable Property TaskDatas() As DbSet(Of TaskData)
     Public Overridable Property UserPositionTypes() As DbSet(Of UserPositionType)
     Public Overridable Property Subinventories() As DbSet(Of Subinventory)

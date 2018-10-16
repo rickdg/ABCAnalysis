@@ -1,5 +1,4 @@
 ﻿Imports System.Data
-Imports System.Data.Entity.SqlServer
 Imports System.Data.SqlClient
 Imports System.Text
 Imports ABCAnalysis.DataLoad
@@ -14,22 +13,33 @@ Namespace AbcCalculator
             Using Context As New AbcAnalysisEntities
                 If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
 
-                FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
-                Dim LastFriday = GetLastFriday()
+                FinalDate = GetLastFriday()
+                Dim TempDate = FinalDate.AddDays(-4)
+                Dim CheckTasks = Context.TaskDatas.Where(Function(i) i.XDate >= TempDate AndAlso i.XDate <= FinalDate).ToList.Count
+                If CheckTasks = 0 Then Throw New Exception("Недостаточно данных для расчета.")
 
-
-                If LastFriday <> FinalDate Then Throw New Exception("")
-
-
-
+                'Temp.RunInterval
+                'Temp.BillingPeriod
+                'Temp.FinalDate
+                'Temp.NextFinalDate
 
 
                 If Temp.IsCalculated Then
-
+                    InitialDate = Temp.FinalDate.AddDays(-Temp.BillingPeriod)
                 Else
                     InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                 End If
-                Data = Context.TaskDatas.Where(Function(i) i.XDate <= FinalDate AndAlso Temp.Subinventories_id.Contains(i.Subinventory)).ToList
+                Data = (From td In Context.TaskDatas
+                        Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
+                        Where td.XDate >= InitialDate AndAlso td.XDate <= FinalDate AndAlso Temp.Subinventories_id.Contains(td.Subinventory)
+                        Select New TaskDataExtend With {
+                            .XDate = td.XDate,
+                            .Code = td.Code,
+                            .Category_Id = ci.Category_Id,
+                            .UserPositionType_Id = ci.UserPositionType_Id,
+                            .SalesOrder = td.SalesOrder,
+                            .Orders = td.Orders,
+                            .Tasks = td.Tasks}).ToList
                 CurrentAbc = Context.AbcCodeItems.Where(Function(i) i.AbcGroup_id = Temp.AbcGroup_id).ToList
             End Using
 
@@ -58,6 +68,7 @@ Namespace AbcCalculator
             Process.Start(NewFile.FullName)
             UpdateAbc(Table)
 
+            Temp.FinalDate = FinalDate
             Temp.IsCalculated = True
         End Sub
 
@@ -65,7 +76,7 @@ Namespace AbcCalculator
         Private Function GetLastFriday() As Date
             Dim StartDate = Today.AddDays(-7)
             While StartDate <= Today
-                If Weekday(StartDate, FirstDayOfWeek.Monday) = 5 Then Return StartDate
+                If Weekday(StartDate, FirstDayOfWeek.Monday) = DayOfWeek.Friday Then Return StartDate
                 StartDate = StartDate.AddDays(1)
             End While
         End Function
