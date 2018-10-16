@@ -92,6 +92,7 @@ Namespace Pages
         Private Sub CalculateAbcExecute(parameter As Object)
             Dim c As New Calculator With {.Temp = Me}
             c.Calculate()
+            MainPage.Model.CmdSave.Execute(Nothing)
         End Sub
         <JsonIgnore>
         Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(Sub() Parent.Templates.Remove(Me))

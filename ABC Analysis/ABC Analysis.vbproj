@@ -278,6 +278,8 @@
     <Compile Include="Content\DeleteTasks.xaml.vb">
       <DependentUpon>DeleteTasks.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DataLoad\DLStringBuilder.vb" />
+    <Compile Include="Helpers\DataLoad\DLWriter.vb" />
     <Compile Include="Helpers\ExcelConnection\Models\StoredProcedureParameters.vb" />
     <Compile Include="Helpers\ExcelConnection\Models\CommandParameter.vb" />
     <Compile Include="Pages\Models\AbcGroup_Count.vb" />
@@ -327,7 +329,7 @@
     <Compile Include="Pages\ViewModels\MainPageVM.vb" />
     <Compile Include="Pages\Models\SubinventoryItem.vb" />
     <Compile Include="Pages\ViewModels\TemplateVM.vb" />
-    <Compile Include="Reports\WorksheetHelper.vb" />
+    <Compile Include="Helpers\WorksheetHelper.vb" />
     <Compile Include="Subinventory.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>

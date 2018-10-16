@@ -51,50 +51,58 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Column="1" Grid.IsSharedSizeScope="True" Margin="16,0">
+        <Grid Grid.Column="1" Grid.IsSharedSizeScope="True" Margin="32,0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Vertical">
-                <StackPanel.Resources>
-                    <Style TargetType="StackPanel">
-                        <Setter Property="Orientation" Value="Horizontal"/>
-                        <Setter Property="Margin" Value="0,0,0,4"/>
-                    </Style>
+            <TextBlock Text="Параметры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.Resources>
                     <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                        <Setter Property="Width" Value="200"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="0,0,16,0"/>
                     </Style>
                     <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
                         <Setter Property="Width" Value="170"/>
                         <Setter Property="TextAlignment" Value="Right"/>
+                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                        <Setter Property="Margin" Value="0,2"/>
                     </Style>
                     <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
                         <Setter Property="Width" Value="170"/>
+                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                        <Setter Property="Margin" Value="0,2"/>
                     </Style>
-                </StackPanel.Resources>
-                <TextBlock Text="Параметры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
-                <StackPanel>
-                    <TextBlock Text="Группа АВС"/>
-                    <ComboBox ItemsSource="{Binding AbcGroups}"
-                              SelectedValue="{Binding CurrentTemplate.AbcGroup_id}"
-                              DisplayMemberPath="Name"
-                              SelectedValuePath="Entity.Id"/>
-                </StackPanel>
-                <StackPanel>
-                    <TextBlock Text="Кол-во позиций класса А"/>
-                    <TextBox Text="{Binding CurrentTemplate.QuantityAClass}"/>
-                </StackPanel>
-                <StackPanel>
-                    <TextBlock Text="Кол-во позиций класса В"/>
-                    <TextBox Text="{Binding CurrentTemplate.QuantityBClass}"/>
-                </StackPanel>
-            </StackPanel>
+                </Grid.Resources>
 
-            <StackPanel Grid.Row="1" Margin="0,0,0,8">
+                <TextBlock Text="Группа АВС" VerticalAlignment="Center"/>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding AbcGroups}"
+                          SelectedValue="{Binding CurrentTemplate.AbcGroup_id}"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="Entity.Id"/>
+
+                <TextBlock Grid.Row="1" Text="Кол-во позиций класса А"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CurrentTemplate.QuantityAClass}"/>
+
+                <TextBlock Grid.Row="2" Text="Кол-во позиций класса В"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding CurrentTemplate.QuantityBClass}"/>
+            </Grid>
+
+            <StackPanel Grid.Row="2" Margin="0,14,0,8">
                 <TextBlock Text="Фильтры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -102,13 +110,20 @@
                         <ColumnDefinition SharedSizeGroup="Col2"/>
                         <ColumnDefinition SharedSizeGroup="Col3"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Text="Зона" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
-                    <TextBlock Grid.Column="1" Text="ТПП" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
-                    <TextBlock Grid.Column="2" Text="Категория" HorizontalAlignment="Center" Style="{StaticResource Heading2}"/>
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource Heading2}">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="Margin" Value="16,0"/>
+                        </Style>
+                    </Grid.Resources>
+                    
+                    <TextBlock Text="Зона"/>
+                    <TextBlock Grid.Column="1" Text="ТПП"/>
+                    <TextBlock Grid.Column="2" Text="Категория"/>
                 </Grid>
             </StackPanel>
 
-            <ScrollViewer Grid.Row="2">
+            <ScrollViewer Grid.Row="3">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition SharedSizeGroup="Col1"/>
@@ -116,7 +131,7 @@
                         <ColumnDefinition SharedSizeGroup="Col3"/>
                     </Grid.ColumnDefinitions>
 
-                    <ListBox x:Name="Subinventory" Margin="0,0,8,0" ItemsSource="{Binding CurrentTemplate.Subinventories}" MinWidth="50" MinHeight="100">
+                    <ListBox x:Name="Subinventory" ItemsSource="{Binding CurrentTemplate.Subinventories}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
@@ -127,7 +142,7 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
 
-                    <ListBox x:Name="UserPositionType" Grid.Column="1" Margin="8,0" ItemsSource="{Binding CurrentTemplate.UserPositionTypes}" MinWidth="50" MinHeight="100">
+                    <ListBox x:Name="UserPositionType" Grid.Column="1" Margin="16,0" ItemsSource="{Binding CurrentTemplate.UserPositionTypes}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -145,7 +160,7 @@
                         </ListBox.ItemTemplate>
                     </ListBox>
 
-                    <ListBox x:Name="Category" Grid.Column="2" Margin="8,0,16,0" ItemsSource="{Binding CurrentTemplate.Categoryes}" MinWidth="50" MinHeight="100" >
+                    <ListBox x:Name="Category" Grid.Column="2" Margin="0,0,16,0" ItemsSource="{Binding CurrentTemplate.Categoryes}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -168,58 +183,55 @@
         </Grid>
 
         <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-
             <StackPanel Orientation="Vertical">
+                <StackPanel.Resources>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Orientation" Value="Horizontal"/>
+                        <Setter Property="Margin" Value="0,0,0,4"/>
+                    </Style>
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                        <Setter Property="Width" Value="280"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                    </Style>
+                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                        <Setter Property="Width" Value="50"/>
+                        <Setter Property="TextAlignment" Value="Right"/>
+                    </Style>
+                </StackPanel.Resources>
+
                 <TextBlock Text="Эвристика" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Допустимое снижение процента отбора" VerticalAlignment="Center"/>
-                    <TextBox Text="{Binding CurrentTemplate.ReductionPickPercent.Text}" Width="50" TextAlignment="Right" Margin="16,0"/>
-                </StackPanel>
-            </StackPanel>
 
-            <StackPanel Grid.Row="1" Margin="0,16,0,0">
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                    <Button Content="Найти оптимальный интервал и период" Command="{Binding CurrentTemplate.CmdRunHeuristics}"/>
+                <StackPanel>
+                    <TextBlock Text="Допустимое снижение процента отбора"/>
+                    <TextBox Text="{Binding CurrentTemplate.ReductionPickPercent.Text}"/>
                 </StackPanel>
-                <Grid>
-                    <Grid.Resources>
-                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="Margin" Value="8,4,8,0"/>
-                        </Style>
-                    </Grid.Resources>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
+                <StackPanel>
+                    <Button Content="Найти оптимальный интервал и период" Command="{Binding CurrentTemplate.CmdRunHeuristics}" Width="330" Margin="0,8"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Интервал запуска (дн)"/>
+                    <TextBox Text="{Binding CurrentTemplate.RunInterval}" IsReadOnly="True"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Расчетный период (дн)"/>
+                    <TextBox Text="{Binding CurrentTemplate.BillingPeriod}" IsReadOnly="True"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Средний процент отбора"/>
+                    <TextBox Text="{Binding CurrentTemplate.AvgPickPercent, StringFormat={}{0:P0}}" IsReadOnly="True"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Изменения классов АВ"/>
+                    <TextBox Text="{Binding CurrentTemplate.Transition}" IsReadOnly="True"/>
+                </StackPanel>
 
-                    <TextBlock Text="Интервал"/>
-                    <TextBlock Grid.Row="1" Text="{Binding CurrentTemplate.RunInterval}"/>
-                    <TextBlock Grid.Column="1" Text="Период"/>
-                    <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding CurrentTemplate.BillingPeriod}"/>
-                    <TextBlock Grid.Column="2" Text="Процент отбора"/>
-                    <TextBlock Grid.Column="2" Grid.Row="1" Text="{Binding CurrentTemplate.AvgPickPercent, StringFormat={}{0:P2}}"/>
-                    <TextBlock Grid.Column="3" Text="Изменения классов АВ"/>
-                    <TextBlock Grid.Column="3" Grid.Row="1" Text="{Binding CurrentTemplate.Transition}"/>
-                </Grid>
-                <StackPanel Margin="0,16,0,0">
-                    <TextBlock Text="АВС" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
-                        <Button Content="Статистика АВС" Command="{Binding CurrentTemplate.CmdRunCalculateStatisticsAbc}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Button Content="Рассчитать АВС" Command="{Binding CurrentTemplate.CmdRunCalculateAbc}"/>
-                    </StackPanel>
+                <TextBlock Text="АВС" Style="{StaticResource Heading1}" Margin="0,12,0,4"/>
+
+                <StackPanel>
+                    <Button Content="Статистика АВС" Command="{Binding CurrentTemplate.CmdRunCalculateStatisticsAbc}" Width="330"/>
+                </StackPanel>
+                <StackPanel>
+                    <Button Content="Рассчитать АВС" Command="{Binding CurrentTemplate.CmdRunCalculateAbc}" Width="330"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

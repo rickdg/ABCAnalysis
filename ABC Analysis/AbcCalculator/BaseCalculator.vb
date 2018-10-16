@@ -23,6 +23,14 @@ Namespace AbcCalculator
         Public Property CodeDict As Dictionary(Of Long, AbcClass())
 
 
+        Public Sub SetCalculationData()
+            CalculationData = (From d In Data
+                               Where Temp.UserPositionTypes_id.Contains(d.UserPositionType_Id) AndAlso
+                                   Temp.Categoryes_id.Contains(d.Category_Id) AndAlso d.SalesOrder
+                               Select New DataItem With {.XDate = d.XDate, .Code = d.Code, .Value = d.Orders}).ToList
+        End Sub
+
+
         Public Sub SetMasterData()
             Iterations = CInt(Fix((DateDiff("d", InitialDate, FinalDate) - Temp.BillingPeriod) / Temp.RunInterval))
             StartDate = FinalDate.AddDays(-((Iterations * Temp.RunInterval) + Temp.BillingPeriod))
@@ -32,7 +40,7 @@ Namespace AbcCalculator
 #End Region
 
 
-#Region "IterationData"
+#Region "Iterations"
         Public Property CurIter As Integer
         Private Property StartBillingPeriod As Date
         Public Property FinalBillingPeriod As Date

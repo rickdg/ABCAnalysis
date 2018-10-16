@@ -7,19 +7,14 @@ Namespace AbcCalculator
         Inherits BaseCalculator
 
         Public Overrides Sub Calculate()
-            Dim CurrentAbc As IEnumerable(Of AbcCodeItem)
             Using Context As New AbcAnalysisEntities
-                If Context.TaskDatas.FirstOrDefault Is Nothing Then Return
+                If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
                 InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                 FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
                 Data = Context.TaskDatas.Where(Function(i) i.XDate <= FinalDate AndAlso Temp.Subinventories_id.Contains(i.Subinventory)).ToList
-                CurrentAbc = Context.AbcCodeItems.Where(Function(i) i.AbcGroup_id = Temp.AbcGroup_id).ToList
             End Using
 
-            CalculationData = (From d In Data
-                               Where Temp.UserPositionTypes_id.Contains(d.UserPositionType_Id) AndAlso
-                                   Temp.Categoryes_id.Contains(d.Category_Id) AndAlso d.SalesOrder
-                               Select New DataItem With {.XDate = d.XDate, .Code = d.Code, .Value = d.Orders}).ToList
+            SetCalculationData()
             SetMasterData()
             RunIterations()
             CreateReport()
@@ -35,9 +30,7 @@ Namespace AbcCalculator
         Private Property PickPercentQtyCode As New List(Of PickPercent)
         Private Property PickPercentQtyTasks As New List(Of PickPercent)
         Private Property ClassChange As New List(Of Transition)
-
-
-        Public Property Worksheets As ExcelWorksheets
+        Private Property Worksheets As ExcelWorksheets
 
 
         Public Overrides Sub RecordStatistics(abcTable As IEnumerable(Of AbcItem))
@@ -76,7 +69,7 @@ Namespace AbcCalculator
         End Sub
 
 
-        Public Sub CreateReport()
+        Private Sub CreateReport()
             Dim NewFile = GetInBaseFileInfo(GetInBaseDirectoryInfo("Reports"), "Статистика.xlsx")
             Using Package As New ExcelPackage(NewFile)
                 Worksheets = Package.Workbook.Worksheets
@@ -99,7 +92,7 @@ Namespace AbcCalculator
         End Sub
 
 
-        Public Function AddWorksheet(name As String) As WorksheetHelper
+        Private Function AddWorksheet(name As String) As WorksheetHelper
             Return New WorksheetHelper With {.Sheet = Worksheets.Add(name)}
         End Function
 

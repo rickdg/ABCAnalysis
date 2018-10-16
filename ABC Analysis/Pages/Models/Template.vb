@@ -17,6 +17,7 @@ Namespace Pages
         Public Property AbcGroup_id As Integer
         Public Property FinalDate As Date
         Public Property NextFinalDate As Date
+        Public Property IsCalculated As Boolean
         Public Property RunInterval As Byte
             Get
                 Return _RunInterval

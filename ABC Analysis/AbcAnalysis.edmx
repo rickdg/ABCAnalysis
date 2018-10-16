@@ -77,6 +77,9 @@
           <Parameter Name="AbcGroup_id" Type="int" Mode="In" />
         </Function>
         <Function Name="LoadTasks" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="UpdateAbc" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AbcGroup_id" Type="int" Mode="In" />
+        </Function>
         <EntityContainer Name="Хранилище AbcAnalysisModelContainer">
           <EntitySet Name="AbcClass_Static" EntityType="Self.AbcClass_Static" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AbcCodeItem" EntityType="Self.AbcCodeItem" Schema="dbo" store:Type="Tables" />
@@ -111,6 +114,9 @@
           <Parameter Name="AbcGroup_id" Mode="In" Type="Int32" />
           </FunctionImport>
           <FunctionImport Name="DeleteAbc">
+          <Parameter Name="AbcGroup_id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="UpdateAbc">
             <Parameter Name="AbcGroup_id" Mode="In" Type="Int32" />
           </FunctionImport>
           </EntityContainer>
@@ -249,6 +255,7 @@
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="LoadAbc" FunctionName="Хранилище AbcAnalysisModel.LoadAbc" />
           <FunctionImportMapping FunctionImportName="DeleteAbc" FunctionName="Хранилище AbcAnalysisModel.DeleteAbc" />
+          <FunctionImportMapping FunctionImportName="UpdateAbc" FunctionName="Хранилище AbcAnalysisModel.UpdateAbc" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

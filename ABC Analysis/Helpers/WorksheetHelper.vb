@@ -13,8 +13,8 @@ Public Class WorksheetHelper
 
 
     Public Property Sheet As ExcelWorksheet
-    Public Property Column As Integer
-    Public Property RowPosition As Integer
+    Private Property Column As Integer
+    Private Property RowPosition As Integer
         Get
             Return _RowPosition
         End Get
@@ -24,7 +24,7 @@ Public Class WorksheetHelper
             End If
         End Set
     End Property
-    Public Property ColumnPosition As Integer
+    Private Property ColumnPosition As Integer
         Get
             Return _ColumnPosition
         End Get
@@ -36,24 +36,21 @@ Public Class WorksheetHelper
             End If
         End Set
     End Property
-    Public Property IsEndChartLine As Boolean
-    Public ReadOnly Property CurrentAddress As String
-        Get
-            Return ExcelAddress.GetAddress(1, Column)
-        End Get
-    End Property
+    Private Property IsEndChartLine As Boolean
 
 
     Public Sub AddLineChart(Of T)(collection As IEnumerable(Of T), chartTitle As String, Optional endChartLine As Boolean = False,
                                   Optional width As Integer = 896, Optional height As Integer = 380)
         IsEndChartLine = endChartLine
-        Dim DataRange = LoadFromCollection(collection)
+        Dim DataRange = Sheet.Cells(ExcelAddress.GetAddress(1, Column)).LoadFromCollection(collection)
+        Column += GetType(T).GetProperties.Count
         Dim Chart = Sheet.Drawings.AddChart(chartTitle, eChartType.Line)
         Chart.Title.Text = chartTitle
         Chart.SetPosition(RowPosition, 0, ColumnPosition, 0)
         Chart.SetSize(width, height)
+        Chart.Border.Fill.Transparancy = 100
         ColumnPosition += CInt(width / 64)
-        RowPosition += cint(height / 20)
+        RowPosition += CInt(height / 20)
         Dim Index = 0
         For Each Prop In GetType(T).GetProperties
             If Index = 0 Then
@@ -63,15 +60,7 @@ Public Class WorksheetHelper
             End If
             Index += 1
         Next
-        Chart.Border.Fill.Transparancy = 100
         IsEndChartLine = False
     End Sub
-
-
-    Public Function LoadFromCollection(Of T)(Collection As IEnumerable(Of T)) As ExcelRangeBase
-        Dim Result = Sheet.Cells(CurrentAddress).LoadFromCollection(Collection)
-        Column += GetType(T).GetProperties.Count
-        Return Result
-    End Function
 
 End Class

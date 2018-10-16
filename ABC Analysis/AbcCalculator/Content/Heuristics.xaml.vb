@@ -50,7 +50,7 @@ Namespace AbcCalculator
             Dim Data As IEnumerable(Of TaskData)
 
             Using Context As New AbcAnalysisEntities
-                If Context.TaskDatas.FirstOrDefault Is Nothing Then Return
+                If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
                 InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                 FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
                 Data = Context.TaskDatas.Where(Function(i) i.XDate <= FinalDate AndAlso Temp.Subinventories_id.Contains(i.Subinventory)).ToList
