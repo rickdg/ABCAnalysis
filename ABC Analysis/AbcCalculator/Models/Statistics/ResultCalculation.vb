@@ -14,8 +14,8 @@ Namespace AbcCalculator
         End Sub
 
 
-        Public Property Interval As Byte
-        Public Property Period As Byte
+        Public Property Interval As Integer
+        Public Property Period As Integer
         Public Property AvgPickPercent As Double
         Public Property Transition As Integer
 

@@ -272,7 +272,7 @@
     <Compile Include="Category.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
-    <Compile Include="AbcCalculator\Content\Heuristics.xaml.vb">
+    <Compile Include="AbcCalculator\Heuristics.xaml.vb">
       <DependentUpon>Heuristics.xaml</DependentUpon>
     </Compile>
     <Compile Include="Content\DeleteTasks.xaml.vb">
@@ -344,7 +344,7 @@
     <Compile Include="UserPositionType.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
-    <Page Include="AbcCalculator\Content\Heuristics.xaml">
+    <Page Include="AbcCalculator\Heuristics.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

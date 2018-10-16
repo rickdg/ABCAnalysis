@@ -4,8 +4,8 @@ Namespace Pages
     Public Class Template
         Inherits NotifyPropertyChanged
 
-        Private _RunInterval As Byte
-        Private _BillingPeriod As Byte
+        Private _RunInterval As Integer
+        Private _BillingPeriod As Integer
         Private _AvgPickPercent As Double
         Private _Transition As Integer
 
@@ -18,7 +18,7 @@ Namespace Pages
         Public Property FinalDate As Date
         Public Property NextFinalDate As Date
         Public Property IsCalculated As Boolean
-        Public Property RunInterval As Byte
+        Public Property RunInterval As Integer
             Get
                 Return _RunInterval
             End Get
@@ -27,7 +27,7 @@ Namespace Pages
                 OnPropertyChanged("RunInterval")
             End Set
         End Property
-        Public Property BillingPeriod As Byte
+        Public Property BillingPeriod As Integer
             Get
                 Return _BillingPeriod
             End Get

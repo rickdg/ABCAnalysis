@@ -1,5 +1,6 @@
 ﻿Imports System.Collections.ObjectModel
 Imports ABCAnalysis.AbcCalculator
+Imports ABCAnalysis.Content
 Imports FirstFloor.ModernUI.Presentation
 Imports FirstFloor.ModernUI.Windows.Controls
 Imports Newtonsoft.Json
@@ -82,17 +83,31 @@ Namespace Pages
             Dlg.ShowDialog()
         End Sub
         <JsonIgnore>
-        Public ReadOnly Property CmdRunCalculateStatisticsAbc As ICommand = New RelayCommand(AddressOf CalculateStatisticsAbcExecute)
-        Private Sub CalculateStatisticsAbcExecute(parameter As Object)
-            Dim c As New StatisticsCalculator With {.Temp = Me}
-            c.Calculate()
+        Public ReadOnly Property CmdRunCalculateStatisticsAbc As ICommand = New RelayCommand(AddressOf CalculateStatisticsAbcExecuteAsync)
+        Private Async Sub CalculateStatisticsAbcExecuteAsync(parameter As Object)
+            Try
+                Await Task.Factory.StartNew(Sub()
+                                                Dim c As New StatisticsCalculator With {.Temp = Me}
+                                                c.Calculate()
+                                            End Sub)
+            Catch ex As Exception
+                Dim Dlg As New ModernDialog With {.Title = "Ошибка", .Content = New ErrorMessage(ex)}
+                Dlg.ShowDialog()
+            End Try
         End Sub
         <JsonIgnore>
-        Public ReadOnly Property CmdRunCalculateAbc As ICommand = New RelayCommand(AddressOf CalculateAbcExecute)
-        Private Sub CalculateAbcExecute(parameter As Object)
-            Dim c As New Calculator With {.Temp = Me}
-            c.Calculate()
-            MainPage.Model.CmdSave.Execute(Nothing)
+        Public ReadOnly Property CmdRunCalculateAbc As ICommand = New RelayCommand(AddressOf CalculateAbcExecuteAsync)
+        Private Async Sub CalculateAbcExecuteAsync(parameter As Object)
+            Try
+                Await Task.Factory.StartNew(Sub()
+                                                Dim c As New Calculator With {.Temp = Me}
+                                                c.Calculate()
+                                                MainPage.Model.CmdSave.Execute(Nothing)
+                                            End Sub)
+            Catch ex As Exception
+                Dim Dlg As New ModernDialog With {.Title = "Ошибка", .Content = New ErrorMessage(ex)}
+                Dlg.ShowDialog()
+            End Try
         End Sub
         <JsonIgnore>
         Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(Sub() Parent.Templates.Remove(Me))
