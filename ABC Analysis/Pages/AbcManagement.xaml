@@ -22,7 +22,7 @@
                           DisplayMemberPath="Name"
                           SelectedValuePath="Entity.Id"/>
                 <mui:ModernButton Command="{Binding CmdLoadAbc}" ToolTip="Загрузка" IconHeight="20" IconWidth="20"
-                                  EllipseDiameter="34" EllipseStrokeThickness="0" IconData="F1 M 25,52L 51,52L 51,57L 25,57L 25,52 Z M 35,16L 41,16L 41,36.5L 49,27L 49,36.5L 38,49L 27,36.5L 27,27L 35,36.5L 35,16 Z"/>
+                                  EllipseDiameter="34" EllipseStrokeThickness="0" IconData="{StaticResource Load}"/>
             </StackPanel>
         </Grid>
 
@@ -36,7 +36,7 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Группы АВС" Style="{StaticResource Heading1}"/>
                     <mui:ModernButton Command="{Binding CmdAddNewEntity}" ToolTip="Добавить группу" EllipseStrokeThickness="0" VerticalAlignment="Center"
-                                      Margin="8,0" IconData="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z"/>
+                                      Margin="8,0" IconData="{StaticResource AddItem}"/>
                 </StackPanel>
 
                 <DataGrid Grid.Row="1" ItemsSource="{Binding AbcGroups}"
@@ -50,8 +50,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0" EllipseDiameter="16"
-                                                  HorizontalAlignment="Center"
-                                                  IconData="M 50.2708,42.3542L 54.625,38L 50.2708,33.6458L 52.6458,31.2708L 57,35.625L 61.3542,31.2708L 63.7291,33.6458L 59.375,38L 63.7292,42.3542L 61.3542,44.7292L 57,40.375L 52.6458,44.7292L 50.2708,42.3542 Z"/>
+                                                      HorizontalAlignment="Center" IconData="{StaticResource RemoveItem}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

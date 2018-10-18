@@ -70,7 +70,7 @@ Namespace Content
                                   End Sub)
             Catch ex As Exception
                 Dispatcher.Invoke(Sub()
-                                      Dialog.Title = "Ошибка"
+                                      Dialog.Title = "Сообщение"
                                       Message.BBCode = GetInnerException(ex)
                                       Warning.Visibility = Visibility.Visible
                                   End Sub)

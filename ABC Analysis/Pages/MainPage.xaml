@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             xmlns:local="clr-namespace:ABCAnalysis"
              mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="1000">
 
     <Grid>
@@ -15,7 +16,7 @@
 
         <Grid Grid.Column="2" Margin="{StaticResource HeaderMargin}" HorizontalAlignment="Right" VerticalAlignment="Top">
             <mui:ModernButton Command="{Binding CmdSave}" ToolTip="Сохранить" IconHeight="18" IconWidth="18" EllipseStrokeThickness="0"
-                              EllipseDiameter="34" IconData="F1 M 20.5833,20.5833L 55.4167,20.5833L 55.4167,55.4167L 45.9167,55.4167L 45.9167,44.3333L 30.0833,44.3333L 30.0833,55.4167L 20.5833,55.4167L 20.5833,20.5833 Z M 33.25,55.4167L 33.25,50.6667L 39.5833,50.6667L 39.5833,55.4167L 33.25,55.4167 Z M 26.9167,23.75L 26.9167,33.25L 49.0833,33.25L 49.0833,23.75L 26.9167,23.75 Z"/>
+                              EllipseDiameter="34" IconData="{StaticResource Save}"/>
         </Grid>
 
         <Border BorderBrush="{DynamicResource SeparatorBackground}" BorderThickness="0,0,1,0">
@@ -27,7 +28,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Шаблоны" Style="{StaticResource Heading1}"/>
-                    <mui:ModernButton Grid.Column="1" Command="{Binding CmdAddNewTemplate}" ToolTip="Добавить" EllipseStrokeThickness="0" Margin="8,0" VerticalAlignment="Center" IconData="F1 M 35,19L 41,19L 41,35L 57,35L 57,41L 41,41L 41,57L 35,57L 35,41L 19,41L 19,35L 35,35L 35,19 Z"/>
+                    <mui:ModernButton Grid.Column="1" Command="{Binding CmdAddNewTemplate}" ToolTip="Добавить" EllipseStrokeThickness="0" Margin="8,0" VerticalAlignment="Center" IconData="{StaticResource AddItem}"/>
                 </StackPanel>
 
                 <DataGrid Grid.Row="1" ItemsSource="{Binding Templates}"
@@ -42,7 +43,7 @@
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0"
-                                                      IconData="M 50.2708,42.3542L 54.625,38L 50.2708,33.6458L 52.6458,31.2708L 57,35.625L 61.3542,31.2708L 63.7291,33.6458L 59.375,38L 63.7292,42.3542L 61.3542,44.7292L 57,40.375L 52.6458,44.7292L 50.2708,42.3542 Z" HorizontalAlignment="Center"/>
+                                                      IconData="{StaticResource RemoveItem}" HorizontalAlignment="Center"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -199,14 +200,17 @@
                     </Style>
                 </StackPanel.Resources>
 
-                <TextBlock Text="Эвристика" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+                <TextBlock Text="" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+
+                <StackPanel Margin="0,0,0,8">
+                    <Button Content="Рассчитать комбинации" Command="{Binding CurrentTemplate.CmdRunHeuristics}" Width="350"/>
+                    <mui:ModernButton IconHeight="10" EllipseDiameter="18" EllipseStrokeThickness="1" IconData="{StaticResource Question}" Margin="8,0"
+                                      Command="{Binding CmdShowHint}" CommandParameter="RunHeuristics"/>
+                </StackPanel>
 
                 <StackPanel>
                     <TextBlock Text="Допустимое снижение процента отбора"/>
-                    <TextBox Text="{Binding CurrentTemplate.ReductionPickPercent.Text}"/>
-                </StackPanel>
-                <StackPanel>
-                    <Button Content="Найти оптимальный интервал и период" Command="{Binding CurrentTemplate.CmdRunHeuristics}" Width="350" Margin="0,8"/>
+                    <TextBox Text="{Binding CurrentTemplate.ReductionPickPercentText}"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Интервал запуска (дн)"/>
@@ -217,7 +221,7 @@
                     <TextBox Text="{Binding CurrentTemplate.BillingPeriod, Mode=OneWay}" IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel>
-                    <TextBlock Text="Средний процент отбора"/>
+                    <TextBlock Text="Средний процент отбора АВ"/>
                     <TextBox Text="{Binding CurrentTemplate.AvgPickPercent, Mode=OneWay, StringFormat={}{0:P0}}" IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel>
@@ -248,7 +252,7 @@
                     </Button>
                 </StackPanel>
                 <StackPanel>
-                    <TextBlock Text="Дата следующего пересчета"/>
+                    <TextBlock Text="Дата следующего расчета"/>
                     <TextBox Text="{Binding CurrentTemplate.NextFinalDate, Mode=OneWay, StringFormat=\{0:d\}}" IsReadOnly="True"/>
                 </StackPanel>
             </StackPanel>

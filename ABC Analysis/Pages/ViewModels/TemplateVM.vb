@@ -111,7 +111,7 @@ Namespace Pages
                                                 c.Calculate()
                                             End Sub)
             Catch ex As Exception
-                Dim Dlg As New ModernDialog With {.Title = "Ошибка", .Content = New ErrorMessage(ex)}
+                Dim Dlg As New ModernDialog With {.Title = "Сообщение", .Content = New ErrorMessage(ex)}
                 Dlg.ShowDialog()
             Finally
                 IsStatisticsAbcProcessing = False
@@ -129,7 +129,7 @@ Namespace Pages
                                                 MainPage.Model.CmdSave.Execute(Nothing)
                                             End Sub)
             Catch ex As Exception
-                Dim Dlg As New ModernDialog With {.Title = "Ошибка", .Content = New ErrorMessage(ex)}
+                Dim Dlg As New ModernDialog With {.Title = "Сообщение", .Content = New ErrorMessage(ex)}
                 Dlg.ShowDialog()
             Finally
                 IsCalculateAbcProcessing = False

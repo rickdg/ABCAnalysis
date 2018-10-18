@@ -1,14 +1,11 @@
-﻿Imports FirstFloor.ModernUI.Presentation
+﻿Imports ABCAnalysis.AbcCalculator
+Imports FirstFloor.ModernUI.Presentation
 
 Namespace Pages
     Public Class Template
         Inherits NotifyPropertyChanged
 
         Private _FinalDate As Date
-        Private _RunInterval As Integer
-        Private _BillingPeriod As Integer
-        Private _AvgPickPercent As Double
-        Private _Transition As Integer
 
 
         Public Property Name As String
@@ -27,55 +24,32 @@ Namespace Pages
         End Property
         Public ReadOnly Property NextFinalDate As Date
             Get
-                Return FinalDate.AddDays(_RunInterval)
+                Return FinalDate.AddDays(RunInterval)
             End Get
         End Property
         Public Property IsCalculated As Boolean
         Public Property RunInterval As Integer
-            Get
-                Return _RunInterval
-            End Get
-            Set
-                _RunInterval = Value
-                OnPropertyChanged("RunInterval")
-                OnPropertyChanged("NextFinalDate")
-            End Set
-        End Property
         Public Property BillingPeriod As Integer
-            Get
-                Return _BillingPeriod
-            End Get
-            Set
-                _BillingPeriod = Value
-                OnPropertyChanged("BillingPeriod")
-            End Set
-        End Property
         Public Overridable Property QuantityAClass As Integer
         Public Overridable Property QuantityBClass As Integer
         Public Property QuantityABClass As Integer
+        Public Property ReductionPickPercentText As String
+            Get
+                Return ReductionPickPercent.Text
+            End Get
+            Set
+                ReductionPickPercent.Text = Value
+                UpdateSettings()
+            End Set
+        End Property
         Public Property ReductionPickPercent As New Percentage
 #End Region
 
 
 #Region "Result"
         Public Property AvgPickPercent As Double
-            Get
-                Return _AvgPickPercent
-            End Get
-            Set
-                _AvgPickPercent = Value
-                OnPropertyChanged("AvgPickPercent")
-            End Set
-        End Property
         Public Property Transition As Integer
-            Get
-                Return _Transition
-            End Get
-            Set
-                _Transition = Value
-                OnPropertyChanged("Transition")
-            End Set
-        End Property
+        Public Property HeuristicsResult As IEnumerable(Of ResultCalculation)
 #End Region
 
 
@@ -84,6 +58,24 @@ Namespace Pages
         Public Overridable ReadOnly Property UserPositionTypes_id As IEnumerable(Of Integer)
         Public Overridable ReadOnly Property Categoryes_id As IEnumerable(Of Integer)
 #End Region
+
+
+        Public Sub UpdateSettings()
+            If HeuristicsResult Is Nothing Then Return
+            Dim TargetPickPercent = HeuristicsResult.Max(Function(j) j.AvgPickPercent) - ReductionPickPercent.Value2
+            Dim Result = (From Rc In HeuristicsResult
+                          Where Rc.AvgPickPercent >= TargetPickPercent
+                          Order By Rc.Transition Ascending, Rc.AvgPickPercent Descending).First
+            RunInterval = Result.Interval
+            BillingPeriod = Result.Period
+            AvgPickPercent = Result.AvgPickPercent
+            Transition = Result.Transition
+            OnPropertyChanged("RunInterval")
+            OnPropertyChanged("BillingPeriod")
+            OnPropertyChanged("AvgPickPercent")
+            OnPropertyChanged("Transition")
+            OnPropertyChanged("NextFinalDate")
+        End Sub
 
     End Class
 End Namespace

@@ -3,6 +3,10 @@
 Namespace AbcCalculator
     Public Class ResultCalculation
 
+        Public Sub New()
+        End Sub
+
+
         Public Sub New(temp As Template, pickQtyTasks As IEnumerable(Of PickValue), classChange As IEnumerable(Of Transition))
             Interval = temp.RunInterval
             Period = temp.BillingPeriod

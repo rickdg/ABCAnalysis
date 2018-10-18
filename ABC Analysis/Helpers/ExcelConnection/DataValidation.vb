@@ -41,7 +41,7 @@ Namespace ExcelConnection
                     Process.Start(NewFile.FullName)
                 End Using
             Catch ex As Exception
-                Dim Dlg As New ModernDialog With {.Title = "Ошибка", .Content = New ErrorMessage(ex)}
+                Dim Dlg As New ModernDialog With {.Title = "Сообщение", .Content = New ErrorMessage(ex)}
                 Dlg.ShowDialog()
             End Try
         End Sub

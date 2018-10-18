@@ -48,6 +48,8 @@ Namespace Pages
                                                                                       Templates.Add(NewTemplateVM)
                                                                                       CurrentTemplate = NewTemplateVM
                                                                                   End Sub)
+        <JsonIgnore>
+        Public ReadOnly Property CmdShowHint As ICommand = New RelayCommand(AddressOf ShowHintExecute)
 #End Region
 #End Region
 

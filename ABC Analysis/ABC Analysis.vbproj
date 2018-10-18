@@ -282,10 +282,14 @@
     <Compile Include="Content\DeleteTasks.xaml.vb">
       <DependentUpon>DeleteTasks.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Content\HintMessage.xaml.vb">
+      <DependentUpon>HintMessage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\DataLoad\DLStringBuilder.vb" />
     <Compile Include="Helpers\DataLoad\DLWriter.vb" />
     <Compile Include="Helpers\ExcelConnection\Models\StoredProcedureParameters.vb" />
     <Compile Include="Helpers\ExcelConnection\Models\CommandParameter.vb" />
+    <Compile Include="Helpers\HintHelper.vb" />
     <Compile Include="Pages\Models\AbcGroup_Count.vb" />
     <Compile Include="Pages\AbcManagement.xaml.vb">
       <DependentUpon>AbcManagement.xaml</DependentUpon>
@@ -360,6 +364,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Content\HintMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Content\ErrorMessage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -397,6 +405,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\Updates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Icons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\HintData.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -508,6 +524,7 @@
       <DependentUpon>AbcAnalysis.mdf</DependentUpon>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Resource Include="Resources\Hint.png" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

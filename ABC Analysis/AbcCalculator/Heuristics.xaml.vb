@@ -25,7 +25,6 @@ Namespace AbcCalculator
 
 
         Public Property Temp As Template
-        Private Property ResultCalculation As New BlockingCollection(Of ResultCalculation)
         Public Property ProgressValue As Integer
             Get
                 Return _ProgressValue
@@ -49,6 +48,7 @@ Namespace AbcCalculator
             Dim InitialDate As Date
             Dim FinalDate As Date
             Dim Data As IEnumerable(Of TaskDataExtend)
+            Dim HeuristicsResult As New BlockingCollection(Of ResultCalculation)
 
             Try
                 Using Context As New AbcAnalysisEntities
@@ -83,22 +83,15 @@ Namespace AbcCalculator
                                      .CalculationData = CalculationData}
 
                                      Calculator.Calculate()
-                                     ResultCalculation.Add(New ResultCalculation(Calculator.Temp, Calculator.PickQtyTasks, Calculator.ClassChange))
+                                     HeuristicsResult.Add(New ResultCalculation(Calculator.Temp, Calculator.PickQtyTasks, Calculator.ClassChange))
                                      ProgressValue += 1
                                  End Sub)
 
-                Dim TargetPickPercent = ResultCalculation.Max(Function(j) j.AvgPickPercent) - Temp.ReductionPickPercent.Value2
-                Dim Result = (From Rc In ResultCalculation
-                              Where Rc.AvgPickPercent >= TargetPickPercent
-                              Order By Rc.Transition Ascending, Rc.AvgPickPercent Descending).First
-                Temp.RunInterval = Result.Interval
-                Temp.BillingPeriod = Result.Period
-                Temp.AvgPickPercent = Result.AvgPickPercent
-                Temp.Transition = Result.Transition
-
+                Temp.HeuristicsResult = HeuristicsResult.ToList
+                Temp.UpdateSettings()
             Catch ex As Exception
                 Dispatcher.Invoke(Sub()
-                                      Dialog.Title = "Ошибка"
+                                      Dialog.Title = "Сообщение"
                                       Message.BBCode = GetInnerException(ex)
                                       Warning.Visibility = Visibility.Visible
                                       Indicator.Visibility = Visibility.Collapsed
@@ -109,9 +102,9 @@ Namespace AbcCalculator
         End Sub
 
 
-        Private Function GetTemplates() As IEnumerable(Of Template) ' 156 комбинаций
+        Private Function GetTemplates() As IEnumerable(Of Template)
             Return (From RunInterval In {7, 14, 21, 28, 35, 42}
-                    From BillingPeriod In {21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, 105, 112, 119, 126, 133, 140, 147, 154, 161, 168, 175, 182, 189, 196}
+                    From BillingPeriod In {21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, 105, 112, 119, 126, 133, 140, 147, 154, 161, 168, 175, 182, 189, 196, 203}
                     Select New Template With {
                        .RunInterval = RunInterval,
                        .BillingPeriod = BillingPeriod,
