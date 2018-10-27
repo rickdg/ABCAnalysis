@@ -1,5 +1,5 @@
 ﻿Namespace Pages
-    Partial Public Class DataManagement
+    Partial Public Class DataManager
         Inherits UserControl
 
         Public Sub New()
@@ -9,7 +9,7 @@
         End Sub
 
 
-        Public Shared Property Model As New DataManagementVM
+        Public Shared Property Model As New DataManagerVM
 
     End Class
 End Namespace

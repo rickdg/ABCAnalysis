@@ -28,8 +28,10 @@
                                Group By prev = cd.Value(CurIter - 1), cur = cd.Value(CurIter) Into Count
                                Select New DirectionItem(prev, cur) With {.QtyCode = Count}).ToList
 
-            PickQtyTasks.Add(New PickValue(FinalInterval, Pick, Function(i) i.QtyTasks))
             Me.ClassChange.Add(New Transition(FinalBillingPeriod, ClassChange))
+
+            If CurIter = Iterations Then Return
+            PickQtyTasks.Add(New PickValue(FinalInterval, Pick, Function(i) i.QtyTasks))
         End Sub
 
     End Class

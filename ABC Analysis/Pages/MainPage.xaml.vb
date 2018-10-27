@@ -12,6 +12,9 @@ Namespace Pages
             InitializeComponent()
             If FileExists(SerializeFileName) Then
                 Model = Deserialize(Of MainPageVM)(SerializeFileName)
+                For Each Temp In Model.Templates
+                    AddHandler Temp.AbcChanged, Sub() Model.RaiseAbcChanged()
+                Next
             Else
                 Model = New MainPageVM With {.SerializeFileName = SerializeFileName}
             End If

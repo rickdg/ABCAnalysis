@@ -1,6 +1,6 @@
 ﻿Imports System.Text
 
-Namespace ExcelConnection
+Namespace Connection.Excel
     Module SourceFields
 
         Public Function GetPickTasksFields() As IEnumerable(Of Column)

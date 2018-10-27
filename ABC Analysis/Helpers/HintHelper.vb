@@ -8,7 +8,8 @@ Module HintHelper
             .WindowStartupLocation = WindowStartupLocation.CenterScreen,
             .Style = CType(Application.Current.Resources("BlankWindow"), Style),
             .Content = New HintMessage(GetContent(resourceKey)),
-            .Width = 740}
+            .Width = 760,
+            .Height = 840}
         wnd.ShowDialog()
     End Sub
 

@@ -1,4 +1,6 @@
-﻿Imports System.Reflection
+﻿Imports System.Collections.ObjectModel
+Imports System.Reflection
+Imports ABCAnalysis.Connection.SqlServer
 Imports FirstFloor.ModernUI.Presentation
 Imports Newtonsoft.Json
 
@@ -64,5 +66,9 @@ Public Class MainWindowVM
     Public Property WindowState As WindowState
     Public Property Left As Double
     Public Property Top As Double
+
+
+    Public Property Databases As New ObservableCollection(Of DataBaseVM)
+    Public Property DatabaseCount As Integer
 
 End Class

@@ -1,6 +1,6 @@
 ﻿Imports System.Data
 
-Namespace ExcelConnection
+Namespace Connection.SqlServer
     Public Class CommandParameter
 
         Public Property Name As String

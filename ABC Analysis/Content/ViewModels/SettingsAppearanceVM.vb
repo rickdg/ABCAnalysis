@@ -41,7 +41,7 @@ Namespace Content
                     _SelectedAccentColor = Value
                     MainWindow.Model.AccentColor = Value
                     OnPropertyChanged("SelectedAccentColor")
-                    DataManagement.Model.RefreshColorSeries()
+                    DataManager.Model.RefreshColorSeries()
                 End If
             End Set
         End Property

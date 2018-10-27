@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Pages.AbcManagement"
+﻿<UserControl x:Class="Pages.AbcManager"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -35,7 +35,7 @@
 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Группы АВС" Style="{StaticResource Heading1}"/>
-                    <mui:ModernButton Command="{Binding CmdAddNewEntity}" ToolTip="Добавить группу" EllipseStrokeThickness="0" VerticalAlignment="Center"
+                    <mui:ModernButton Command="{Binding CmdAddNewEntity}" ToolTip="Добавить" EllipseStrokeThickness="0" VerticalAlignment="Center"
                                       Margin="8,0" IconData="{StaticResource AddItem}"/>
                 </StackPanel>
 

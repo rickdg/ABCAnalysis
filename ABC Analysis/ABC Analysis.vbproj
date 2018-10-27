@@ -36,6 +36,7 @@
     <ApplicationVersion>4.0.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>false</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -273,46 +274,49 @@
     <Compile Include="Category.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
-    <Compile Include="AbcCalculator\Heuristics.xaml.vb">
-      <DependentUpon>Heuristics.xaml</DependentUpon>
+    <Compile Include="AbcCalculator\Combinatorics.xaml.vb">
+      <DependentUpon>Combinatorics.xaml</DependentUpon>
     </Compile>
     <Compile Include="CodeItem.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
-    <Compile Include="Content\DeleteTasks.xaml.vb">
-      <DependentUpon>DeleteTasks.xaml</DependentUpon>
+    <Compile Include="Content\RemoveData.xaml.vb">
+      <DependentUpon>RemoveData.xaml</DependentUpon>
     </Compile>
     <Compile Include="Content\HintMessage.xaml.vb">
       <DependentUpon>HintMessage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DataLoad\DLStringBuilder.vb" />
     <Compile Include="Helpers\DataLoad\DLWriter.vb" />
-    <Compile Include="Helpers\ExcelConnection\Models\StoredProcedureParameters.vb" />
-    <Compile Include="Helpers\ExcelConnection\Models\CommandParameter.vb" />
+    <Compile Include="Helpers\DataToBrushConverter.vb" />
+    <Compile Include="Helpers\Connection\SqlServer\Models\StoredProcedureParameter.vb" />
+    <Compile Include="Helpers\Connection\SqlServer\Models\CommandParameter.vb" />
     <Compile Include="Helpers\HintHelper.vb" />
+    <Compile Include="Pages\DatabaseManager.xaml.vb">
+      <DependentUpon>DatabaseManager.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Models\AbcGroup_Count.vb" />
-    <Compile Include="Pages\AbcManagement.xaml.vb">
-      <DependentUpon>AbcManagement.xaml</DependentUpon>
+    <Compile Include="Pages\AbcManager.xaml.vb">
+      <DependentUpon>AbcManager.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\EntityViewModels\AbcGroupVM.vb" />
-    <Compile Include="Helpers\DatabaseAdmin.vb" />
     <Compile Include="Pages\Models\MeasureModel.vb" />
-    <Compile Include="Pages\DataManagement.xaml.vb">
-      <DependentUpon>DataManagement.xaml</DependentUpon>
+    <Compile Include="Pages\DataManager.xaml.vb">
+      <DependentUpon>DataManager.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Content\DataLoader.xaml.vb">
-      <DependentUpon>DataLoader.xaml</DependentUpon>
+    <Compile Include="Content\LoadData.xaml.vb">
+      <DependentUpon>LoadData.xaml</DependentUpon>
     </Compile>
     <Compile Include="Content\ErrorMessage.xaml.vb">
       <DependentUpon>ErrorMessage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\ExcelConnection\Models\AdoEnums.vb" />
-    <Compile Include="Helpers\ExcelConnection\DataValidation.vb" />
-    <Compile Include="Helpers\ExcelConnection\Models\Column.vb" />
-    <Compile Include="Helpers\ExcelConnection\Models\Table.vb" />
-    <Compile Include="Helpers\ExcelConnection\Models\LoadType.vb" />
-    <Compile Include="Helpers\ExcelConnection\SourceFields.vb" />
-    <Compile Include="Helpers\ExcelConnection\SqlScript.vb" />
+    <Compile Include="Helpers\Connection\Excel\Models\AdoEnums.vb" />
+    <Compile Include="Helpers\Connection\Excel\DataValidation.vb" />
+    <Compile Include="Helpers\Connection\Excel\Models\Column.vb" />
+    <Compile Include="Helpers\Connection\Excel\Models\Table.vb" />
+    <Compile Include="Helpers\Connection\Excel\Models\LoadType.vb" />
+    <Compile Include="Helpers\Connection\Excel\SourceFields.vb" />
+    <Compile Include="Helpers\Connection\Excel\SqlScript.vb" />
     <Compile Include="Helpers\Utils.vb" />
     <Compile Include="MainWindowVM.vb" />
     <Compile Include="Content\SettingsAppearance.xaml.vb">
@@ -333,7 +337,8 @@
       <DependentUpon>Updates.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Models\DataItem.vb" />
-    <Compile Include="Pages\ViewModels\DataManagementVM.vb" />
+    <Compile Include="Pages\ViewModels\DataBaseVM.vb" />
+    <Compile Include="Pages\ViewModels\DataManagerVM.vb" />
     <Compile Include="Pages\ViewModels\MainPageVM.vb" />
     <Compile Include="Pages\Models\SubinventoryItem.vb" />
     <Compile Include="Pages\ViewModels\TemplateVM.vb" />
@@ -352,15 +357,15 @@
     <Compile Include="UserPositionType.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
     </Compile>
-    <Page Include="AbcCalculator\Heuristics.xaml">
+    <Page Include="AbcCalculator\Combinatorics.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Content\DataLoader.xaml">
+    <Page Include="Content\LoadData.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Content\DeleteTasks.xaml">
+    <Page Include="Content\RemoveData.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -376,7 +381,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\AbcManagement.xaml">
+    <Page Include="Pages\AbcManager.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -392,7 +397,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Pages\DataManagement.xaml">
+    <Page Include="Pages\DatabaseManager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\DataManager.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -6,21 +6,23 @@ Imports ABCAnalysis.Pages
 Imports FirstFloor.ModernUI.Windows.Controls
 
 Namespace AbcCalculator
-    Partial Public Class Heuristics
+    Partial Public Class Combinatorics
         Inherits UserControl
         Implements INotifyPropertyChanged
 
         Private Dialog As ModernDialog
         Private _ProgressValue As Integer
+        Private _ProgressMaximum As Integer
 
 
         Public Sub New(dlg As ModernDialog)
             InitializeComponent()
             DataContext = Me
             Dialog = dlg
-            Dialog.Title = "Эвристический анализ"
+            Dialog.Title = "Расчет"
             Dialog.Buttons.First.Visibility = Visibility.Collapsed
             Task.Factory.StartNew(Sub() Calculate())
+            ProgressMaximum = 1
         End Sub
 
 
@@ -32,6 +34,15 @@ Namespace AbcCalculator
             Set
                 _ProgressValue = Value
                 RaisePropertyChanged("ProgressValue")
+            End Set
+        End Property
+        Public Property ProgressMaximum As Integer
+            Get
+                Return _ProgressMaximum
+            End Get
+            Set
+                _ProgressMaximum = Value
+                RaisePropertyChanged("ProgressMaximum")
             End Set
         End Property
 
@@ -51,7 +62,7 @@ Namespace AbcCalculator
             Dim HeuristicsResult As New BlockingCollection(Of ResultCalculation)
 
             Try
-                Using Context As New AbcAnalysisEntities
+                Using Context = DatabaseManager.CurrentDatabase.Context
                     If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
                     InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                     FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
@@ -73,17 +84,19 @@ Namespace AbcCalculator
                                            Temp.Categoryes_id.Contains(d.Category_Id) AndAlso d.SalesOrder
                                        Select New DataItem With {.XDate = d.XDate, .Code = d.Code, .Value = d.Orders}).ToList
 
-                Parallel.ForEach(GetTemplates,
+                Dim Templates = GetTemplates()
+                ProgressMaximum = Templates.Count
+                Parallel.ForEach(Templates,
                                  Sub(t)
-                                     Dim Calculator As New TestCalculator With {
+                                     Dim c As New TestCalculator With {
                                      .Temp = t,
                                      .InitialDate = InitialDate,
                                      .FinalDate = FinalDate,
                                      .Data = Data,
                                      .CalculationData = CalculationData}
 
-                                     Calculator.Calculate()
-                                     HeuristicsResult.Add(New ResultCalculation(Calculator.Temp, Calculator.PickQtyTasks, Calculator.ClassChange))
+                                     c.Calculate()
+                                     HeuristicsResult.Add(New ResultCalculation(c.Temp, c.PickQtyTasks, c.ClassChange))
                                      ProgressValue += 1
                                  End Sub)
 
@@ -104,7 +117,8 @@ Namespace AbcCalculator
 
         Private Function GetTemplates() As IEnumerable(Of Template)
             Return (From RunInterval In {7, 14, 21, 28, 35, 42}
-                    From BillingPeriod In {21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, 105, 112, 119, 126, 133, 140, 147, 154, 161, 168, 175, 182, 189, 196, 203}
+                    From BillingPeriod In {21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, 105,
+                        112, 119, 126, 133, 140, 147, 154, 161, 168, 175, 182, 189, 196, 203}
                     Select New Template With {
                        .RunInterval = RunInterval,
                        .BillingPeriod = BillingPeriod,

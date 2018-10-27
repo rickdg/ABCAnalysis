@@ -22,7 +22,7 @@ Partial Public Class MainWindow
             Model = Deserialize(Of MainWindowVM)(SerializeFileName)
         Else
             Model = New MainWindowVM With {
-                .Height = 525, .Width = 1012, .Top = 100, .Left = 300,
+                .Height = 525, .Width = 1155, .Top = 100, .Left = 300,
                 .AppVersion = Assembly.GetExecutingAssembly.GetName.Version}
         End If
         DataContext = Model

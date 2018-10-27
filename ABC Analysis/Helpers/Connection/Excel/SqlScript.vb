@@ -1,4 +1,4 @@
-﻿Namespace ExcelConnection
+﻿Namespace Connection.Excel
     Module SqlScript
 
         Public Function GetScript(loadType As LoadType, table As String) As String

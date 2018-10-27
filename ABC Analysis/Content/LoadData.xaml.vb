@@ -1,13 +1,13 @@
 ﻿Imports System.Data
 Imports System.Data.OleDb
-Imports System.Data.SqlClient
-Imports System.Text
-Imports ABCAnalysis.ExcelConnection
+Imports ABCAnalysis.Connection.Excel
+Imports ABCAnalysis.Connection.SqlServer
+Imports ABCAnalysis.Pages
 Imports FirstFloor.ModernUI.Windows.Controls
 Imports Microsoft.Win32
 
 Namespace Content
-    Partial Public Class DataLoader
+    Partial Public Class LoadData
         Inherits UserControl
 
         Private Dialog As ModernDialog
@@ -19,7 +19,7 @@ Namespace Content
 
             Dim DialogWindow As New OpenFileDialog With {.Title = "Выбрать файл"}
             If DialogWindow.ShowDialog Then
-                Task.Factory.StartNew(Sub() LoadTasks(DialogWindow.FileName))
+                Task.Factory.StartNew(Sub() Load(DialogWindow.FileName))
                 Dialog.Title = "Запрос"
                 Dialog.Buttons.First.Visibility = Visibility.Collapsed
             Else
@@ -31,10 +31,10 @@ Namespace Content
 
         Public Property LoadType As LoadType
         Public Property CmdParameters As IEnumerable(Of CommandParameter)
-        Public Property ProcParameters As StoredProcedureParameters
+        Public Property ProcParameter As StoredProcedureParameter
 
 
-        Public Sub LoadTasks(fileName As String)
+        Private Sub Load(fileName As String)
             Try
                 Dim ExcelTable As New DataTable
 
@@ -61,7 +61,7 @@ Namespace Content
                     End Using
                 End Using
 
-                ExecuteStoredProcedure(ExcelTable)
+                DatabaseManager.ExecuteStoredProcedure(CmdParameters, ProcParameter, ExcelTable)
 
                 Dispatcher.Invoke(Sub()
                                       Dialog.Title = "Завершено"
@@ -82,34 +82,6 @@ Namespace Content
                                   End Sub)
             End Try
         End Sub
-
-
-        Private Sub ExecuteStoredProcedure(parameterValue As DataTable)
-            Using Connection As New SqlConnection(My.Settings.AbcAnalysisConnectionString)
-                Connection.Open()
-                Using Command = Connection.CreateCommand()
-                    Command.CommandTimeout = 1800
-                    Command.CommandText = ProcParameters.CommandText
-                    Command.CommandType = CommandType.StoredProcedure
-                    For Each Item In CmdParameters
-                        Command.Parameters.Add(Item.Name, Item.SqlDbType).Value = Item.Value
-                    Next
-                    Command.Parameters.Add(ProcParameters.ParameterName, SqlDbType.Structured).TypeName = ProcParameters.TypeName
-                    Command.Parameters(ProcParameters.ParameterName).Value = parameterValue
-                    Command.ExecuteReader()
-                End Using
-            End Using
-        End Sub
-
-
-        Private Function GetInnerException(ex As Exception) As String
-            Dim Result As New StringBuilder
-            Result.Append(ex.Message & vbCrLf & vbCrLf)
-            If ex.InnerException IsNot Nothing Then
-                Result.Append(GetInnerException(ex.InnerException))
-            End If
-            Return Result.ToString
-        End Function
 
     End Class
 End Namespace

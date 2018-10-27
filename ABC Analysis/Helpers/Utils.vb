@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports System.Text
 Imports Newtonsoft.Json
 
 Public Module Utils
@@ -85,6 +86,16 @@ Public Module Utils
     Public Function FileExists(name As String) As Boolean
         Dim FullPath = Path.Combine(MyDocumentsDirectory.FullName, $"{name}.json")
         Return File.Exists(FullPath)
+    End Function
+
+
+    Public Function GetInnerException(ex As Exception) As String
+        Dim Result As New StringBuilder
+        Result.Append(ex.Message & vbCrLf & vbCrLf)
+        If ex.InnerException IsNot Nothing Then
+            Result.Append(GetInnerException(ex.InnerException))
+        End If
+        Return Result.ToString
     End Function
 
 End Module

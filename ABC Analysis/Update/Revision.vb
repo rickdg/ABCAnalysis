@@ -1,4 +1,5 @@
-﻿Imports FirstFloor.ModernUI.Windows.Controls
+﻿Imports ABCAnalysis.Pages
+Imports FirstFloor.ModernUI.Windows.Controls
 
 Public Class Revision
 
@@ -14,7 +15,12 @@ Public Class Revision
 
 
     Public Sub UpdateDateBase()
-        If IsUpdate Then ExecuteSqlCommand(GetSqlCommand)
+        If IsUpdate Then
+            Dim SqlCommand = GetSqlCommand()
+            For Each Item In DatabaseManager.Databases
+                DatabaseManager.ExecuteSqlCommand(SqlCommand, Item.SqlConnectionString)
+            Next
+        End If
     End Sub
 
 

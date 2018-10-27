@@ -1,5 +1,5 @@
-﻿Namespace ExcelConnection
-    Public Class StoredProcedureParameters
+﻿Namespace Connection.SqlServer
+    Public Class StoredProcedureParameter
 
         Public Property CommandText As String
         Public Property ParameterName As String

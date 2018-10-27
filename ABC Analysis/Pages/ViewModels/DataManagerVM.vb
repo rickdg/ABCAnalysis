@@ -1,5 +1,6 @@
-﻿Imports ABCAnalysis.Content
-Imports ABCAnalysis.ExcelConnection
+﻿Imports ABCAnalysis.Connection.Excel
+Imports ABCAnalysis.Connection.SqlServer
+Imports ABCAnalysis.Content
 Imports FirstFloor.ModernUI.Presentation
 Imports FirstFloor.ModernUI.Windows.Controls
 Imports LiveCharts
@@ -7,7 +8,7 @@ Imports LiveCharts.Configurations
 Imports LiveCharts.Wpf
 
 Namespace Pages
-    Public Class DataManagementVM
+    Public Class DataManagerVM
         Inherits NotifyPropertyChanged
 
         Private ReadOnly MonthFormatter As Func(Of Double, String) = Function(v) New DateTime(CLng(Math.Abs(v) * TimeSpan.FromDays(1).Ticks * 30.44)).ToString("MMM yyyy")
@@ -55,10 +56,10 @@ Namespace Pages
         Public ReadOnly Property CmdLoadTasks As ICommand = New RelayCommand(AddressOf LoadTasksExecute)
         Private Sub LoadTasksExecute(parameter As Object)
             Dim Dlg As New ModernDialog
-            Dlg.Content = New DataLoader(Dlg) With {
+            Dlg.Content = New LoadData(Dlg) With {
                 .LoadType = LoadType.PickTasks,
                 .CmdParameters = {},
-                .ProcParameters = New StoredProcedureParameters With {
+                .ProcParameter = New StoredProcedureParameter With {
                     .CommandText = "dbo.LoadTasks",
                     .ParameterName = "@ExcelTasks",
                     .TypeName = "TaskExcelTable"}}
@@ -72,7 +73,7 @@ Namespace Pages
         Private Sub DeleteTasksExecute(parameter As Object)
             Dim Dlg As New ModernDialog With {.Title = "Удаление данных"}
             Dlg.Buttons = {Dlg.YesButton, Dlg.CancelButton}
-            Dlg.Content = New DeleteTasks(Dlg)
+            Dlg.Content = New RemoveData(Dlg)
             If Dlg.ShowDialog() Then
                 RefreshSeriesCollection()
                 MainPage.Model.UpdateTemplates()
@@ -100,7 +101,7 @@ Namespace Pages
 
 
         Private Function GetData() As IEnumerable(Of Month_Tasks_Orders)
-            Using Context As New AbcAnalysisEntities
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 Return (From Task In Context.TaskDatas
                         Group By Task.YearNum, Task.MonthNum Into SumTasks = Sum(Task.Tasks), SumOrders = Sum(Task.Orders)
                         Select New Month_Tasks_Orders With {.YearNum = YearNum, .MonthNum = MonthNum, .Tasks = SumTasks, .Orders = SumOrders}).ToList

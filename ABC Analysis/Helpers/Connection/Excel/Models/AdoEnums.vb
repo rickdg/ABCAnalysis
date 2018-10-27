@@ -1,4 +1,4 @@
-﻿Namespace ExcelConnection
+﻿Namespace Connection.Excel
     Public Enum AdoEnums
         adEmpty
         adSmallInt = 2

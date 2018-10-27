@@ -1,7 +1,8 @@
-﻿Imports FirstFloor.ModernUI.Windows.Controls
+﻿Imports ABCAnalysis.Pages
+Imports FirstFloor.ModernUI.Windows.Controls
 
 Namespace Content
-    Partial Public Class DeleteTasks
+    Partial Public Class RemoveData
         Inherits UserControl
 
         Private _StartDate As Date = Now
@@ -16,7 +17,7 @@ Namespace Content
 
 
         Private Sub ClickYes(s As Object, e As RoutedEventArgs)
-            Using Context As New AbcAnalysisEntities
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 Context.DeleteTasks(StartDate, EndDate)
             End Using
         End Sub

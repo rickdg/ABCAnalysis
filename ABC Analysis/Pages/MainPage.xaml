@@ -6,6 +6,11 @@
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              xmlns:local="clr-namespace:ABCAnalysis"
              mc:Ignorable="d" d:DesignHeight="400" d:DesignWidth="1000">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <local:DataToBrushConverter x:Key="Converter"/>
+        </ResourceDictionary>
+    </UserControl.Resources>
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -38,12 +43,22 @@
                           CanUserResizeColumns="False" CanUserAddRows="False"
                           CanUserDeleteRows="False" CanUserResizeRows="False">
                     <DataGrid.Columns>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid >
+                                        <Border CornerRadius="6" Height="12" Width="12" Background="{DynamicResource PopupBackground}"/>
+                                        <Ellipse Height="8" Width="8" Fill="{Binding NextCalculationData, Converter={StaticResource Converter}}"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <mui:DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
                         <DataGridTemplateColumn Header="Удалить">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0"
-                                                      IconData="{StaticResource RemoveItem}" HorizontalAlignment="Center"/>
+                                                      IconData="{StaticResource RemoveItem}" HorizontalAlignment="Center" VerticalContentAlignment="Center"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -52,136 +67,138 @@
             </Grid>
         </Border>
 
-        <Grid Grid.Column="1" Grid.IsSharedSizeScope="True" Margin="32,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-
-            <TextBlock Text="Параметры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
-
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
+        <Border Grid.Column="1" BorderBrush="{DynamicResource SeparatorBackground}" BorderThickness="0,0,1,0" Margin="0,0,32,0">
+            <Grid Grid.IsSharedSizeScope="True" Margin="32,0">
                 <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
-                <Grid.Resources>
-                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="Margin" Value="0,0,16,0"/>
-                    </Style>
-                    <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                        <Setter Property="Width" Value="170"/>
-                        <Setter Property="TextAlignment" Value="Right"/>
-                        <Setter Property="HorizontalAlignment" Value="Right"/>
-                        <Setter Property="Margin" Value="0,2"/>
-                    </Style>
-                    <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
-                        <Setter Property="Width" Value="170"/>
-                        <Setter Property="HorizontalAlignment" Value="Right"/>
-                        <Setter Property="Margin" Value="0,2"/>
-                    </Style>
-                </Grid.Resources>
 
-                <TextBlock Text="Группа АВС" VerticalAlignment="Center"/>
-                <ComboBox Grid.Column="1" ItemsSource="{Binding AbcGroups}"
+                <TextBlock Text="Параметры таблицы" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Margin" Value="0,0,16,0"/>
+                        </Style>
+                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                            <Setter Property="Width" Value="170"/>
+                            <Setter Property="TextAlignment" Value="Right"/>
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                            <Setter Property="Margin" Value="0,2"/>
+                        </Style>
+                        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                            <Setter Property="Width" Value="170"/>
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                            <Setter Property="Margin" Value="0,2"/>
+                        </Style>
+                    </Grid.Resources>
+
+                    <TextBlock Text="Группа АВС" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding AbcGroups}"
                           SelectedValue="{Binding CurrentTemplate.AbcGroup_id}"
                           DisplayMemberPath="Name"
                           SelectedValuePath="Entity.Id"/>
 
-                <TextBlock Grid.Row="1" Text="Кол-во позиций класса А"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CurrentTemplate.QuantityAClass}"/>
+                    <TextBlock Grid.Row="1" Text="Кол-во позиций класса А"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CurrentTemplate.QuantityAClass}"/>
 
-                <TextBlock Grid.Row="2" Text="Кол-во позиций класса В"/>
-                <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding CurrentTemplate.QuantityBClass}"/>
+                    <TextBlock Grid.Row="2" Text="Кол-во позиций класса В"/>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding CurrentTemplate.QuantityBClass}"/>
+                </Grid>
+
+                <StackPanel Grid.Row="2" Margin="0,14,0,8">
+                    <TextBlock Text="Фильтры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="Col1"/>
+                            <ColumnDefinition SharedSizeGroup="Col2"/>
+                            <ColumnDefinition SharedSizeGroup="Col3"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Heading2}">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="16,0"/>
+                            </Style>
+                        </Grid.Resources>
+
+                        <TextBlock Text="Зона"/>
+                        <TextBlock Grid.Column="1" Text="ТПП"/>
+                        <TextBlock Grid.Column="2" Text="Категория"/>
+                    </Grid>
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="3">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="Col1"/>
+                            <ColumnDefinition SharedSizeGroup="Col2"/>
+                            <ColumnDefinition SharedSizeGroup="Col3"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ListBox x:Name="Subinventory" ItemsSource="{Binding CurrentTemplate.Subinventories}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox IsChecked="{Binding IsChecked}" Command="{Binding Change}"/>
+                                        <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="8,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <ListBox x:Name="UserPositionType" Grid.Column="1" Margin="16,0" ItemsSource="{Binding CurrentTemplate.UserPositionTypes}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition SharedSizeGroup="Col4"/>
+                                            <ColumnDefinition SharedSizeGroup="Col5"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <CheckBox IsChecked="{Binding IsChecked}" Command="{Binding Change}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Name, Mode=OneWay}" Margin="8,0"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Value, Mode=OneWay}" TextAlignment="Right"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                        <ListBox x:Name="Category" Grid.Column="2" Margin="0,0,16,0" ItemsSource="{Binding CurrentTemplate.Categoryes}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition SharedSizeGroup="Col6"/>
+                                            <ColumnDefinition SharedSizeGroup="Col7"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <CheckBox IsChecked="{Binding IsChecked}"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Name, Mode=OneWay}" Margin="8,0"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Value, Mode=OneWay}" TextAlignment="Right"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+
+                    </Grid>
+                </ScrollViewer>
             </Grid>
-
-            <StackPanel Grid.Row="2" Margin="0,14,0,8">
-                <TextBlock Text="Фильтры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition SharedSizeGroup="Col1"/>
-                        <ColumnDefinition SharedSizeGroup="Col2"/>
-                        <ColumnDefinition SharedSizeGroup="Col3"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.Resources>
-                        <Style TargetType="TextBlock" BasedOn="{StaticResource Heading2}">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="Margin" Value="16,0"/>
-                        </Style>
-                    </Grid.Resources>
-
-                    <TextBlock Text="Зона"/>
-                    <TextBlock Grid.Column="1" Text="ТПП"/>
-                    <TextBlock Grid.Column="2" Text="Категория"/>
-                </Grid>
-            </StackPanel>
-
-            <ScrollViewer Grid.Row="3">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition SharedSizeGroup="Col1"/>
-                        <ColumnDefinition SharedSizeGroup="Col2"/>
-                        <ColumnDefinition SharedSizeGroup="Col3"/>
-                    </Grid.ColumnDefinitions>
-
-                    <ListBox x:Name="Subinventory" ItemsSource="{Binding CurrentTemplate.Subinventories}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <CheckBox IsChecked="{Binding IsChecked}" Command="{Binding Change}"/>
-                                    <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="8,0"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-
-                    <ListBox x:Name="UserPositionType" Grid.Column="1" Margin="16,0" ItemsSource="{Binding CurrentTemplate.UserPositionTypes}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition SharedSizeGroup="Col4"/>
-                                        <ColumnDefinition SharedSizeGroup="Col5"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <CheckBox IsChecked="{Binding IsChecked}" Command="{Binding Change}"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding Name, Mode=OneWay}" Margin="8,0"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding Value, Mode=OneWay}" TextAlignment="Right"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-
-                    <ListBox x:Name="Category" Grid.Column="2" Margin="0,0,16,0" ItemsSource="{Binding CurrentTemplate.Categoryes}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition SharedSizeGroup="Col6"/>
-                                        <ColumnDefinition SharedSizeGroup="Col7"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <CheckBox IsChecked="{Binding IsChecked}"/>
-                                    <TextBlock Grid.Column="1" Text="{Binding Name, Mode=OneWay}" Margin="8,0"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding Value, Mode=OneWay}" TextAlignment="Right"/>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-
-                </Grid>
-            </ScrollViewer>
-        </Grid>
+        </Border>
 
         <Grid Grid.Column="2">
             <StackPanel Orientation="Vertical">
@@ -200,10 +217,10 @@
                     </Style>
                 </StackPanel.Resources>
 
-                <TextBlock Text="" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+                <TextBlock Text="Временные параметры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
 
                 <StackPanel Margin="0,0,0,8">
-                    <Button Content="Рассчитать комбинации" Command="{Binding CurrentTemplate.CmdRunHeuristics}" Width="350"/>
+                    <Button Content="Расчет временных параметров" Command="{Binding CurrentTemplate.CmdRunCombinatorics}" Width="350"/>
                     <mui:ModernButton IconHeight="10" EllipseDiameter="18" EllipseStrokeThickness="1" IconData="{StaticResource Question}" Margin="8,0"
                                       Command="{Binding CmdShowHint}" CommandParameter="RunHeuristics"/>
                 </StackPanel>
@@ -222,20 +239,20 @@
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Средний процент отбора АВ"/>
-                    <TextBox Text="{Binding CurrentTemplate.AvgPickPercent, Mode=OneWay, StringFormat={}{0:P0}}" IsReadOnly="True"/>
+                    <TextBox Foreground="{DynamicResource Accent}" Text="{Binding CurrentTemplate.AvgPickPercent, Mode=OneWay, StringFormat={}{0:P0}}" IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Изменения классов АВ"/>
-                    <TextBox Text="{Binding CurrentTemplate.Transition, Mode=OneWay}" IsReadOnly="True"/>
+                    <TextBox Foreground="{DynamicResource Accent}" Text="{Binding CurrentTemplate.Transition, Mode=OneWay}" IsReadOnly="True"/>
                 </StackPanel>
 
-                <TextBlock Text="АВС" Style="{StaticResource Heading1}" Margin="0,12,0,4"/>
+                <TextBlock Text="Результаты" Style="{StaticResource Heading1}" Margin="0,12,0,4"/>
 
                 <StackPanel>
                     <Button Command="{Binding CurrentTemplate.CmdRunCalculateStatisticsAbc}" Width="350" Padding="0">
                         <Button.Content>
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="Статистика АВС" TextAlignment="Center"/>
+                                <TextBlock Text="Статистика" TextAlignment="Center"/>
                                 <ProgressBar x:Name="StatisticsAbcProcessing" IsIndeterminate="{Binding CurrentTemplate.IsStatisticsAbcProcessing}"/>
                             </StackPanel>
                         </Button.Content>
@@ -245,15 +262,15 @@
                     <Button Command="{Binding CurrentTemplate.CmdRunCalculateAbc}" Width="350" Padding="0" Margin="0,0,0,8">
                         <Button.Content>
                             <StackPanel Orientation="Vertical">
-                                <TextBlock Text="Рассчитать АВС" TextAlignment="Center"/>
+                                <TextBlock Text="DataLoad" TextAlignment="Center"/>
                                 <ProgressBar x:Name="CalculateAbcProcessing" IsIndeterminate="{Binding CurrentTemplate.IsCalculateAbcProcessing}"/>
                             </StackPanel>
                         </Button.Content>
                     </Button>
                 </StackPanel>
                 <StackPanel>
-                    <TextBlock Text="Дата следующего расчета"/>
-                    <TextBox Text="{Binding CurrentTemplate.NextFinalDate, Mode=OneWay, StringFormat=\{0:d\}}" IsReadOnly="True"/>
+                    <TextBlock Text="Плановая дата расчета DataLoad"/>
+                    <TextBox Text="{Binding CurrentTemplate.NextCalculationData, Mode=OneWay, StringFormat=dd.MM.yyyy}" IsReadOnly="True"/>
                 </StackPanel>
             </StackPanel>
         </Grid>

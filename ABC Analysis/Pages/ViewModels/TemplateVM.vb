@@ -25,6 +25,7 @@ Namespace Pages
 
 
         Public Property Parent As MainPageVM
+        <JsonIgnore>
         Public Property IsStatisticsAbcProcessing As Boolean
             Get
                 Return _IsStatisticsAbcProcessing
@@ -34,6 +35,7 @@ Namespace Pages
                 OnPropertyChanged("IsStatisticsAbcProcessing")
             End Set
         End Property
+        <JsonIgnore>
         Public Property IsCalculateAbcProcessing As Boolean
             Get
                 Return _IsCalculateAbcProcessing
@@ -94,11 +96,12 @@ Namespace Pages
 
 #Region "Commands"
         <JsonIgnore>
-        Public ReadOnly Property CmdRunHeuristics As ICommand = New RelayCommand(AddressOf HeuristicsExecute)
-        Private Sub HeuristicsExecute(parameter As Object)
+        Public ReadOnly Property CmdRunCombinatorics As ICommand = New RelayCommand(AddressOf CombinatoricsExecute)
+        Private Sub CombinatoricsExecute(parameter As Object)
             Dim Dlg As New ModernDialog
-            Dlg.Content = New Heuristics(Dlg) With {.Temp = Me}
+            Dlg.Content = New Combinatorics(Dlg) With {.Temp = Me}
             Dlg.ShowDialog()
+            MainPage.Model.CmdSave.Execute(Nothing)
         End Sub
         <JsonIgnore>
         Public ReadOnly Property CmdRunCalculateStatisticsAbc As ICommand = New RelayCommand(AddressOf CalculateStatisticsAbcExecuteAsync)
@@ -127,6 +130,7 @@ Namespace Pages
                                                 Dim c As New Calculator With {.Temp = Me}
                                                 c.Calculate()
                                                 MainPage.Model.CmdSave.Execute(Nothing)
+                                                RaiseEvent AbcChanged(Me, New EventArgs)
                                             End Sub)
             Catch ex As Exception
                 Dim Dlg As New ModernDialog With {.Title = "Сообщение", .Content = New ErrorMessage(ex)}
@@ -141,7 +145,7 @@ Namespace Pages
 
 
         Public Sub UpdateSubinventories()
-            Using Context As New AbcAnalysisEntities
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 Dim TempCollection As New List(Of SubinventoryItem)
                 Dim Data = Context.Subinventories.ToList
                 For Each Item In Data
@@ -162,7 +166,7 @@ Namespace Pages
 
 
         Public Sub UpdateUserPositionTypesAndCategoryes()
-            Using Context As New AbcAnalysisEntities
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 Dim Data = (From td In Context.TaskDatas
                             Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
                             Join upt In Context.UserPositionTypes On upt.Id Equals ci.UserPositionType_Id
@@ -177,7 +181,7 @@ Namespace Pages
 
 
         Public Sub UpdateCategoryes()
-            Using Context As New AbcAnalysisEntities
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 Dim Data = (From td In Context.TaskDatas
                             Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
                             Join c In Context.Categories On c.Id Equals ci.Category_Id
@@ -208,6 +212,9 @@ Namespace Pages
                 targetCollection.Remove(Item)
             Next
         End Sub
+
+
+        Public Event AbcChanged As EventHandler
 
     End Class
 End Namespace

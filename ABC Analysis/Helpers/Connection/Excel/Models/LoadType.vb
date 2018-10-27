@@ -1,4 +1,4 @@
-﻿Namespace ExcelConnection
+﻿Namespace Connection.Excel
     Public Enum LoadType
         PickTasks = 1
         AbcData

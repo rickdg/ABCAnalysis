@@ -23,7 +23,7 @@ Namespace Pages
 #Region "Commands"
         Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(AddressOf RemoveExecute)
         Private Sub RemoveExecute(parameter As Object)
-            Using Context As New AbcAnalysisEntities
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 Context.DeleteAbc(Entity.Id)
                 Context.Entry(Entity).State = EntityState.Deleted
                 Context.SaveChanges()
@@ -34,7 +34,7 @@ Namespace Pages
 
 
         Private Sub EntityModifed(propertyName As String)
-            Using Context As New AbcAnalysisEntities
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 Context.AbcGroups.Attach(Entity)
                 Context.Entry(Entity).Property(propertyName).IsModified = True
                 Context.SaveChanges()

@@ -6,7 +6,7 @@ Imports Microsoft.Win32
 Imports OfficeOpenXml
 Imports OfficeOpenXml.Table
 
-Namespace ExcelConnection
+Namespace Connection.Excel
     Public Module DataValidation
 
         Public Sub ViewData(loadType As LoadType)

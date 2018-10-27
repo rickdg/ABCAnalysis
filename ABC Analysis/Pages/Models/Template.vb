@@ -1,5 +1,6 @@
 ﻿Imports ABCAnalysis.AbcCalculator
 Imports FirstFloor.ModernUI.Presentation
+Imports Newtonsoft.Json
 
 Namespace Pages
     Public Class Template
@@ -19,20 +20,28 @@ Namespace Pages
             End Get
             Set
                 _FinalDate = Value
-                OnPropertyChanged("NextFinalDate")
+                OnPropertyChanged("NextCalculationData")
             End Set
         End Property
-        Public ReadOnly Property NextFinalDate As Date
+        <JsonIgnore>
+        Public ReadOnly Property NextCalculationData As Date
             Get
-                Return FinalDate.AddDays(RunInterval)
+                Return FinalDate.AddDays(RunInterval + 3)
             End Get
         End Property
         Public Property IsCalculated As Boolean
         Public Property RunInterval As Integer
         Public Property BillingPeriod As Integer
+        <JsonIgnore>
+        Public ReadOnly Property BillingPeriodForCalculate As Integer
+            Get
+                Return BillingPeriod - 1
+            End Get
+        End Property
         Public Overridable Property QuantityAClass As Integer
         Public Overridable Property QuantityBClass As Integer
         Public Property QuantityABClass As Integer
+        <JsonIgnore>
         Public Property ReductionPickPercentText As String
             Get
                 Return ReductionPickPercent.Text

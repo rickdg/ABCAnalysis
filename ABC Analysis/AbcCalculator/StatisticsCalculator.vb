@@ -1,5 +1,6 @@
 ﻿Imports System.Data
 Imports System.Data.Entity.SqlServer
+Imports ABCAnalysis.Pages
 Imports OfficeOpenXml
 
 Namespace AbcCalculator
@@ -7,7 +8,7 @@ Namespace AbcCalculator
         Inherits BaseCalculator
 
         Public Overrides Sub Calculate()
-            Using Context As New AbcAnalysisEntities
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
                 InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                 FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
@@ -71,11 +72,13 @@ Namespace AbcCalculator
             AbcQtyTasks.Add(New AbcQtyTasks(FinalBillingPeriod, Abc))
             AbcPercentQtyCode.Add(New AbcPercent(FinalBillingPeriod, Abc, Function(i) i.QtyCode))
             AbcPercentQtyTasks.Add(New AbcPercent(FinalBillingPeriod, Abc, Function(i) i.QtyTasks))
+            Me.ClassChange.Add(New Transition(FinalBillingPeriod, ClassChange))
+
+            If CurIter = Iterations Then Return
             PickQtyCode.Add(New PickValue(FinalInterval, Pick, Function(i) i.QtyCode))
             PickQtyTasks.Add(New PickValue(FinalInterval, Pick, Function(i) i.QtyTasks))
             PickPercentQtyCode.Add(New PickPercent(FinalInterval, Pick, Function(i) i.QtyCode))
             PickPercentQtyTasks.Add(New PickPercent(FinalInterval, Pick, Function(i) i.QtyTasks))
-            Me.ClassChange.Add(New Transition(FinalBillingPeriod, ClassChange))
         End Sub
 
 

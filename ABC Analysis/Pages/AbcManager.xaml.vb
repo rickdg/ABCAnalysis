@@ -2,23 +2,22 @@
 Imports System.Collections.Specialized
 Imports System.ComponentModel
 Imports System.Data
+Imports ABCAnalysis.Connection.Excel
+Imports ABCAnalysis.Connection.SqlServer
 Imports ABCAnalysis.Content
-Imports ABCAnalysis.ExcelConnection
 Imports FirstFloor.ModernUI.Presentation
 Imports FirstFloor.ModernUI.Windows.Controls
 Imports LiveCharts
 Imports LiveCharts.Configurations
 
 Namespace Pages
-    Partial Public Class AbcManagement
+    Partial Public Class AbcManager
         Inherits UserControl
         Implements INotifyPropertyChanged
 
-        Private _Labels As String()
-
-
         Public Sub New()
             InitializeComponent()
+            AddHandler MainPage.Model.AbcChanged, Sub() RefreshAbcGroupsSeries()
             Dim Mapper = Mappers.Xy(Of AbcGroup_Count).
                 X(Function(i, index) index).
                 Y(Function(i) i.CountItem)
@@ -33,19 +32,11 @@ Namespace Pages
         Public Property AbcGroup_id As Integer
         Public Property AbcGroupsSeries As New ChartValues(Of AbcGroup_Count)
         Public Property Labels As String()
-            Get
-                Return _Labels
-            End Get
-            Set
-                _Labels = Value
-                RaisePropertyChanged("Labels")
-            End Set
-        End Property
 
 
         Public ReadOnly Property CmdAddNewEntity As ICommand = New RelayCommand(AddressOf AddNewEntityExecute)
         Private Sub AddNewEntityExecute(parameter As Object)
-            Using Context As New AbcAnalysisEntities
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 Dim NewEntity = Context.AbcGroups.Add(New AbcGroup)
                 Context.SaveChanges()
                 AbcGroups.Add(New AbcGroupVM With {.ParentCollection = AbcGroups, .Entity = NewEntity})
@@ -55,13 +46,13 @@ Namespace Pages
         Private Sub LoadAbcExecute(parameter As Object)
             If AbcGroup_id = 0 Then Return
             Dim Dlg As New ModernDialog
-            Dlg.Content = New DataLoader(Dlg) With {
+            Dlg.Content = New LoadData(Dlg) With {
                 .LoadType = LoadType.AbcData,
                 .CmdParameters = {New CommandParameter With {
                     .Name = "@AbcGroup_id",
                     .SqlDbType = SqlDbType.Int,
                     .Value = AbcGroup_id}},
-                .ProcParameters = New StoredProcedureParameters With {
+                .ProcParameter = New StoredProcedureParameter With {
                     .CommandText = "dbo.LoadAbc",
                     .ParameterName = "@ExcelTable",
                     .TypeName = "ExcelAbcTable"}}
@@ -82,11 +73,12 @@ Namespace Pages
                 AbcGroupsSeries.Add(Item)
             Next
             Labels = Data.Select(Function(i) i.Title).ToArray
+            RaisePropertyChanged("Labels")
         End Sub
 
 
         Private Function GetData() As IEnumerable(Of AbcGroup_Count)
-            Using Context As New AbcAnalysisEntities
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 Return (From Abc In Context.AbcCodeItems
                         Join AbcGroup In Context.AbcGroups On AbcGroup.Id Equals Abc.AbcGroup_id
                         Group By AbcGroup.Name Into Count
@@ -95,7 +87,7 @@ Namespace Pages
         End Function
 
 
-        Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+        Private Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
 
         Private Sub RaisePropertyChanged(ByVal propName As String)

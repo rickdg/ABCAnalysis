@@ -1,4 +1,4 @@
-﻿Namespace ExcelConnection
+﻿Namespace Connection.Excel
     Public Class Table
 
         Public Sub New(name As String)

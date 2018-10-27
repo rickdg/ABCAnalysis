@@ -10,7 +10,7 @@ Namespace Pages
 
 
         Public Sub New()
-            Using Context As New AbcAnalysisEntities
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 For Each AbcGroup In Context.AbcGroups
                     AbcGroups.Add(New AbcGroupVM() With {.ParentCollection = AbcGroups, .Entity = AbcGroup})
                 Next
@@ -44,6 +44,7 @@ Namespace Pages
         <JsonIgnore>
         Public ReadOnly Property CmdAddNewTemplate As ICommand = New RelayCommand(Sub()
                                                                                       Dim NewTemplateVM = New TemplateVM(True) With {.Parent = Me}
+                                                                                      AddHandler NewTemplateVM.AbcChanged, Sub() RaiseAbcChanged()
                                                                                       NewTemplateVM.ReductionPickPercent.Value2 = 0.01
                                                                                       Templates.Add(NewTemplateVM)
                                                                                       CurrentTemplate = NewTemplateVM
@@ -60,6 +61,14 @@ Namespace Pages
                 Tmp.UpdateUserPositionTypesAndCategoryes()
             Next
             CmdSave.Execute(Nothing)
+        End Sub
+
+
+        Public Event AbcChanged As EventHandler
+
+
+        Public Sub RaiseAbcChanged()
+            RaiseEvent AbcChanged(Me, New EventArgs)
         End Sub
 
     End Class

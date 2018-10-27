@@ -2,33 +2,54 @@
 Imports System.Data.SqlClient
 Imports System.Text
 Imports ABCAnalysis.DataLoad
+Imports ABCAnalysis.Pages
+Imports FirstFloor.ModernUI.Windows.Controls
 
 Namespace AbcCalculator
     Public Class Calculator
         Inherits BaseCalculator
 
-        Public Overrides Sub Calculate()
-            Dim CurrentAbc As IEnumerable(Of AbcCodeItem)
+        Private Property CurrentAbc As IEnumerable(Of AbcCodeItem)
 
-            Using Context As New AbcAnalysisEntities
+
+        Public Overrides Sub Calculate()
+            Using Context = DatabaseManager.CurrentDatabase.Context
                 If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
 
                 FinalDate = GetLastFriday()
                 Dim TempDate = FinalDate.AddDays(-4)
                 Dim CheckTasks = Context.TaskDatas.Where(Function(i) i.XDate >= TempDate AndAlso i.XDate <= FinalDate).ToList.Count
                 If CheckTasks = 0 Then Throw New Exception("Недостаточно данных для расчета.")
-
-                'Temp.RunInterval
-                'Temp.BillingPeriod
-                'Temp.FinalDate
-                'Temp.NextFinalDate
-
+                CurrentAbc = Context.AbcCodeItems.Where(Function(i) i.AbcGroup_id = Temp.AbcGroup_id).ToList
 
                 If Temp.IsCalculated Then
-                    InitialDate = Temp.FinalDate.AddDays(-Temp.BillingPeriod)
-                Else
-                    InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
+                    If Temp.FinalDate < FinalDate Then
+                        If DateDiff("d", Temp.FinalDate, FinalDate) Mod Temp.RunInterval = 0 Then
+
+                            InitialDate = Temp.FinalDate.AddDays(-Temp.BillingPeriodForCalculate)
+                            Data = (From td In Context.TaskDatas
+                                    Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
+                                    Where td.XDate >= InitialDate AndAlso td.XDate <= FinalDate AndAlso Temp.Subinventories_id.Contains(td.Subinventory)
+                                    Select New TaskDataExtend With {
+                                        .XDate = td.XDate,
+                                        .Code = td.Code,
+                                        .Category_Id = ci.Category_Id,
+                                        .UserPositionType_Id = ci.UserPositionType_Id,
+                                        .SalesOrder = td.SalesOrder,
+                                        .Orders = td.Orders,
+                                        .Tasks = td.Tasks}).ToList
+
+                            AlternativeCalculate()
+                            Return
+                        Else
+                            If Not IsResumeDialog("Текущая дата не совпадает с расчетной, начать новый расчет?") Then Return
+                        End If
+                    Else
+                        If Not IsResumeDialog("АВС уже был рассчитан, начать новый расчет?") Then Return
+                    End If
                 End If
+
+                InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                 Data = (From td In Context.TaskDatas
                         Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
                         Where td.XDate >= InitialDate AndAlso td.XDate <= FinalDate AndAlso Temp.Subinventories_id.Contains(td.Subinventory)
@@ -40,21 +61,88 @@ Namespace AbcCalculator
                             .SalesOrder = td.SalesOrder,
                             .Orders = td.Orders,
                             .Tasks = td.Tasks}).ToList
-                CurrentAbc = Context.AbcCodeItems.Where(Function(i) i.AbcGroup_id = Temp.AbcGroup_id).ToList
             End Using
 
             SetCalculationData()
             SetMasterData()
+            MyBase.RunIterations()
+            CalculateResult()
+
+            Temp.FinalDate = FinalBillingPeriod
+            Temp.IsCalculated = True
+        End Sub
+
+
+        Private Sub AlternativeCalculate()
+            SetCalculationData()
+            SetMasterData()
             RunIterations()
+            CalculateResult()
 
-            Dim Result = (From cd In CodeDict
-                          From ca In CurrentAbc.Where(Function(i) cd.Key = i.CodeItem).DefaultIfEmpty
-                          Where cd.Value(CurIter) <> AbcClass.NA AndAlso (ca Is Nothing OrElse cd.Value(CurIter) <> ca.AbcClass_id)
-                          Select CodeItem = cd.Key, AbcClass_id = CInt(cd.Value(CurIter)), AbcClass = cd.Value(CurIter).ToString, IsNew = ca Is Nothing).ToList
+            Temp.FinalDate = FinalBillingPeriod
+        End Sub
 
+
+        Private Overloads Sub RunIterations()
+            Dim PrevAbcTable1 As IEnumerable(Of AbcItem)
+            Dim PrevAbcTable2 As IEnumerable(Of AbcItem)
+
+            For i = 0 To Iterations
+                CurIter = i
+                StartBillingPeriod = StartDate
+                FinalBillingPeriod = StartDate.AddDays(Temp.BillingPeriodForCalculate)
+                StartDate = StartDate.AddDays(Temp.RunInterval)
+
+                Dim AbcTable = GetAbcTable()
+
+                If CurIter = 0 Then
+                    RestoreABC(AbcTable)
+                    PrevAbcTable1 = AbcTable
+                    Continue For
+                End If
+
+                If CurIter Mod 2 = 0 Then
+                    PrevAbcTable1 = AbcTable
+                    TransitionToX(PrevAbcTable2)
+                Else
+                    PrevAbcTable2 = AbcTable
+                    TransitionToX(PrevAbcTable1)
+                End If
+
+                Equalization(AbcTable)
+            Next
+        End Sub
+
+
+        Private Sub RestoreABC(abcTable As IEnumerable(Of AbcItem))
+            For Each AbcItem In abcTable
+                Dim AbcCodeItem = CurrentAbc.SingleOrDefault(Function(i) i.CodeItem = AbcItem.Code)
+                If AbcCodeItem IsNot Nothing Then
+                    AbcItem.AbcClass = CType([Enum].ToObject(GetType(AbcClass), AbcCodeItem.AbcClass_id), AbcClass)
+                    CodeDict(AbcItem.Code)(CurIter) = AbcItem.AbcClass
+                End If
+            Next
+
+            For Each Item In CodeDict
+                If Item.Value(CurIter) = AbcClass.NA Then
+                    Dim AbcCodeItem = CurrentAbc.SingleOrDefault(Function(i) i.CodeItem = Item.Key)
+                    If AbcCodeItem IsNot Nothing Then
+                        Item.Value(CurIter) = CType([Enum].ToObject(GetType(AbcClass), AbcCodeItem.AbcClass_id), AbcClass)
+                    End If
+                End If
+            Next
+        End Sub
+
+
+        Private Sub CalculateResult()
+            Dim ResultData = (From cd In CodeDict
+                              From ca In CurrentAbc.Where(Function(i) cd.Key = i.CodeItem).DefaultIfEmpty
+                              Where cd.Value(CurIter) <> AbcClass.NA AndAlso (ca Is Nothing OrElse cd.Value(CurIter) <> ca.AbcClass_id)
+                              Select CodeItem = cd.Key, AbcClass_id = CInt(cd.Value(CurIter)), AbcClass = cd.Value(CurIter).ToString, IsNew = ca Is Nothing).ToList
+            If ResultData.Count = 0 Then Return
             Dim DlData As New StringBuilder
             Dim Table = GetDataTable()
-            For Each Item In Result
+            For Each Item In ResultData
                 If Item.IsNew Then
                     DlData.AppendLine(AddAbc(Item.CodeItem, Item.AbcClass))
                 Else
@@ -67,9 +155,6 @@ Namespace AbcCalculator
             DLW.Write(DlData.ToString)
             Process.Start(NewFile.FullName)
             UpdateAbc(Table)
-
-            Temp.FinalDate = FinalDate
-            Temp.IsCalculated = True
         End Sub
 
 
@@ -104,6 +189,19 @@ Namespace AbcCalculator
                 End Using
             End Using
         End Sub
+
+
+        Private Function IsResumeDialog(content As String) As Boolean?
+            Dim Result As Boolean?
+            Application.Current.Dispatcher.Invoke(Sub()
+                                                      Dim Dlg As New ModernDialog With {
+                                                      .Title = "Сообщение",
+                                                      .Content = content}
+                                                      Dlg.Buttons = {Dlg.YesButton, Dlg.NoButton}
+                                                      Result = Dlg.ShowDialog()
+                                                  End Sub)
+            Return Result
+        End Function
 
 
         Public Overrides Sub RecordStatistics(abcTable As IEnumerable(Of AbcItem))

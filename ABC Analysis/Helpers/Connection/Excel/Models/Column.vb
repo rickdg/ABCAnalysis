@@ -1,4 +1,4 @@
-﻿Namespace ExcelConnection
+﻿Namespace Connection.Excel
     Public Class Column
 
         Public Sub New(name As String, dataType_id As Integer)

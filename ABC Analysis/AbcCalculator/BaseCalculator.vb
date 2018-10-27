@@ -17,8 +17,8 @@ Namespace AbcCalculator
 
 
 #Region "MasterData"
-        Private Property Iterations As Integer
-        Private Property StartDate As Date
+        Public Property Iterations As Integer
+        Public Property StartDate As Date
         Public Property CalculationData As IEnumerable(Of DataItem)
         Public Property CodeDict As Dictionary(Of Long, AbcClass())
 
@@ -32,9 +32,8 @@ Namespace AbcCalculator
 
 
         Public Sub SetMasterData()
-            Iterations = CInt(Fix((DateDiff("d", InitialDate, FinalDate) - Temp.BillingPeriod) / Temp.RunInterval))
-            StartDate = FinalDate.AddDays(-((Iterations * Temp.RunInterval) + Temp.BillingPeriod))
-            Iterations -= 1
+            Iterations = CInt(Fix((DateDiff("d", InitialDate, FinalDate) - Temp.BillingPeriodForCalculate) / Temp.RunInterval))
+            StartDate = FinalDate.AddDays(-((Iterations * Temp.RunInterval) + Temp.BillingPeriodForCalculate))
             CodeDict = Data.Distinct(New TaskDataComparer).ToDictionary(Function(d) d.Code, Function() New AbcClass(Iterations) {})
         End Sub
 #End Region
@@ -42,7 +41,7 @@ Namespace AbcCalculator
 
 #Region "Iterations"
         Public Property CurIter As Integer
-        Private Property StartBillingPeriod As Date
+        Public Property StartBillingPeriod As Date
         Public Property FinalBillingPeriod As Date
 
 
@@ -53,7 +52,7 @@ Namespace AbcCalculator
             For i = 0 To Iterations
                 CurIter = i
                 StartBillingPeriod = StartDate
-                FinalBillingPeriod = StartDate.AddDays(Temp.BillingPeriod)
+                FinalBillingPeriod = StartDate.AddDays(Temp.BillingPeriodForCalculate)
                 StartDate = StartDate.AddDays(Temp.RunInterval)
 
                 Dim AbcTable = GetAbcTable()
@@ -83,10 +82,10 @@ Namespace AbcCalculator
 
 
 #Region "Methods"
-        Private Function GetAbcTable() As IEnumerable(Of AbcItem)
+        Public Function GetAbcTable() As IEnumerable(Of AbcItem)
             Dim AbcTable = (From d In CalculationData
                             Where d.XDate >= StartBillingPeriod AndAlso d.XDate <= FinalBillingPeriod
-                            Group By d.Code Into Sum = Sum(d.Value)
+                            Group By d.Code Into Sum(d.Value)
                             Order By Sum Descending, Code Ascending
                             Select New AbcItem With {.Code = Code, .Value = Sum, .AbcClass = AbcClass.C}).ToList
 
@@ -134,7 +133,7 @@ Namespace AbcCalculator
 
 
 #Region "Algorithms"
-        Private Sub TransitionToX(prevAbcTable As IEnumerable(Of AbcItem))
+        Public Sub TransitionToX(prevAbcTable As IEnumerable(Of AbcItem))
             For Each Item In prevAbcTable
                 If CodeDict(Item.Code)(CurIter) = AbcClass.NA Then
                     CodeDict(Item.Code)(CurIter) = AbcClass.X
@@ -149,7 +148,7 @@ Namespace AbcCalculator
         End Sub
 
 
-        Private Sub Equalization(abcTable As IEnumerable(Of AbcItem))
+        Public Sub Equalization(abcTable As IEnumerable(Of AbcItem))
             Dim QtyA = Temp.QuantityAClass
             Dim QtyB = Temp.QuantityBClass
             Dim CurQtyA = abcTable.Count(Function(Item) Item.AbcClass = AbcClass.A)
