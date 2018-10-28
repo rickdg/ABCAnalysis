@@ -5,48 +5,50 @@ Imports Microsoft.SqlServer.Management.Smo
 Imports System.Collections.Specialized
 Imports System.Data
 Imports System.Reflection
+Imports System.Collections.ObjectModel
 
-Namespace Connection.SqlServer
-    Public Class DataBaseVM
+Namespace Pages
+    Public Class Project
         Inherits NotifyPropertyChanged
 
         Private Const srvName = "(LocalDB)\MSSQLLocalDB"
         Private Const dbMdf = "AbcAnalysis.mdf"
         Private Const dbLdf = "AbcAnalysis_log.ldf"
-        Private ReadOnly targetDbName As String = Replace(Assembly.GetExecutingAssembly.GetName.Name, " ", "")
-        Private _IsActive As Boolean
+        Private ReadOnly dbName As String = Replace(Assembly.GetExecutingAssembly.GetName.Name, " ", "")
+        Private _IsSelected As Boolean
 
 
-        Public Property Parent As MainWindowVM
-        Public Property IsActive As Boolean
+        Public Property Parent As MainWindowModel
+        Public Property IsSelected As Boolean
             Get
-                Return _IsActive
+                Return _IsSelected
             End Get
             Set
-                _IsActive = Value
-                OnPropertyChanged("IsActive")
+                _IsSelected = Value
+                OnPropertyChanged("IsSelected")
             End Set
         End Property
         Public Property Index As Integer
         Public Property Name As String
+        Public Property Templates As New ObservableCollection(Of TemplateVM)
 
 
         <JsonIgnore>
-        Private ReadOnly Property TargetName As String
+        Private ReadOnly Property TargetDbName As String
             Get
-                Return $"{targetDbName}{Index}"
+                Return $"{dbName}{Index}"
             End Get
         End Property
         <JsonIgnore>
         Private ReadOnly Property TargetMdf As String
             Get
-                Return $"{TargetName}.mdf"
+                Return $"{TargetDbName}.mdf"
             End Get
         End Property
         <JsonIgnore>
         Private ReadOnly Property TargetLdf As String
             Get
-                Return $"{TargetName}_log.ldf"
+                Return $"{TargetDbName}_log.ldf"
             End Get
         End Property
         <JsonIgnore>
@@ -65,38 +67,31 @@ Namespace Connection.SqlServer
         Public ReadOnly Property Context As AbcAnalysisEntities
             Get
                 Dim NewContext As New AbcAnalysisEntities
-                Dim Cs = $"data source={srvName};attachdbfilename={AttachDbFilename};integrated security=True;MultipleActiveResultSets=True;App=EntityFramework"
-                NewContext.Database.Connection.ConnectionString = Cs
+                Dim cs = $"data source={srvName};attachdbfilename={AttachDbFilename};integrated security=True;MultipleActiveResultSets=True;App=EntityFramework"
+                NewContext.Database.Connection.ConnectionString = cs
                 Return NewContext
             End Get
         End Property
         <JsonIgnore>
-        Public ReadOnly Property CmdActivate As ICommand = New RelayCommand(Sub()
-                                                                                For Each Item In Parent.Databases
-                                                                                    Item.IsActive = False
-                                                                                Next
-                                                                                IsActive = True
-                                                                            End Sub)
-        <JsonIgnore>
         Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(Sub()
-                                                                              Parent.Databases.Remove(Me)
-                                                                              Entity.Database.Delete(TargetName)
-                                                                              If IsActive Then
-                                                                                  Dim Item = Parent.Databases.FirstOrDefault
-                                                                                  If Item IsNot Nothing Then Item.IsActive = True
+                                                                              Parent.Projects.Remove(Me)
+                                                                              Entity.Database.Delete(TargetDbName)
+                                                                              If IsSelected Then
+                                                                                  Dim Item = Parent.Projects.FirstOrDefault
+                                                                                  If Item IsNot Nothing Then Item.IsSelected = True
                                                                               End If
                                                                           End Sub)
 
 
-        Public Sub Attach()
+        Public Sub AttachDb()
             Dim Server As New Server(srvName)
 
             For Each Item As Database In Server.Databases
-                If Item.Name = TargetName Then
+                If Item.Name = TargetDbName Then
                     If File.Exists(AttachDbFilename) Then
                         Return
                     Else
-                        Entity.Database.Delete(TargetName)
+                        Entity.Database.Delete(TargetDbName)
                     End If
                 End If
             Next
@@ -105,7 +100,7 @@ Namespace Connection.SqlServer
                     MoveFile(dbMdf, TargetMdf),
                     MoveFile(dbLdf, TargetLdf)}
 
-            Server.AttachDatabase(TargetName, sc, AttachOptions.None)
+            Server.AttachDatabase(TargetDbName, sc, AttachOptions.None)
         End Sub
 
 

@@ -61,7 +61,7 @@ Namespace Content
                     End Using
                 End Using
 
-                DatabaseManager.ExecuteStoredProcedure(CmdParameters, ProcParameter, ExcelTable)
+                ProjectManager.StoredProcedureExecute(CmdParameters, ProcParameter, ExcelTable)
 
                 Dispatcher.Invoke(Sub()
                                       Dialog.Title = "Завершено"

@@ -17,7 +17,6 @@ Namespace Pages
 
         Public Sub New()
             InitializeComponent()
-            AddHandler MainPage.Model.AbcChanged, Sub() RefreshAbcGroupsSeries()
             Dim Mapper = Mappers.Xy(Of AbcGroup_Count).
                 X(Function(i, index) index).
                 Y(Function(i) i.CountItem)
@@ -28,37 +27,37 @@ Namespace Pages
         End Sub
 
 
-        Public Property AbcGroups As ObservableCollection(Of AbcGroupVM) = MainPage.Model.AbcGroups
+        Public Property AbcGroups As ObservableCollection(Of AbcGroupModel) = MainPage.Model.AbcGroups
         Public Property AbcGroup_id As Integer
         Public Property AbcGroupsSeries As New ChartValues(Of AbcGroup_Count)
         Public Property Labels As String()
 
 
-        Public ReadOnly Property CmdAddNewEntity As ICommand = New RelayCommand(AddressOf AddNewEntityExecute)
-        Private Sub AddNewEntityExecute(parameter As Object)
-            Using Context = DatabaseManager.CurrentDatabase.Context
-                Dim NewEntity = Context.AbcGroups.Add(New AbcGroup)
-                Context.SaveChanges()
-                AbcGroups.Add(New AbcGroupVM With {.ParentCollection = AbcGroups, .Entity = NewEntity})
-            End Using
-        End Sub
-        Public ReadOnly Property CmdLoadAbc As ICommand = New RelayCommand(AddressOf LoadAbcExecute)
-        Private Sub LoadAbcExecute(parameter As Object)
-            If AbcGroup_id = 0 Then Return
-            Dim Dlg As New ModernDialog
-            Dlg.Content = New LoadData(Dlg) With {
-                .LoadType = LoadType.AbcData,
-                .CmdParameters = {New CommandParameter With {
-                    .Name = "@AbcGroup_id",
-                    .SqlDbType = SqlDbType.Int,
-                    .Value = AbcGroup_id}},
-                .ProcParameter = New StoredProcedureParameter With {
-                    .CommandText = "dbo.LoadAbc",
-                    .ParameterName = "@ExcelTable",
-                    .TypeName = "ExcelAbcTable"}}
-            Dlg.ShowDialog()
-            If Dlg.DialogResult Then RefreshAbcGroupsSeries()
-        End Sub
+        Public ReadOnly Property CmdAddNewEntity As ICommand = New RelayCommand(
+            Sub()
+                Using Context = ProjectManager.CurrentProject.Context
+                    Dim NewEntity = Context.AbcGroups.Add(New AbcGroup)
+                    Context.SaveChanges()
+                    AbcGroups.Add(New AbcGroupModel With {.ParentCollection = AbcGroups, .Entity = NewEntity})
+                End Using
+            End Sub, ProjectManager.ProjectExist)
+        Public ReadOnly Property CmdLoadAbc As ICommand = New RelayCommand(
+            Sub()
+                If AbcGroup_id = 0 Then Return
+                Dim Dlg As New ModernDialog
+                Dlg.Content = New LoadData(Dlg) With {
+                    .LoadType = LoadType.AbcData,
+                    .CmdParameters = {New CommandParameter With {
+                        .Name = "@AbcGroup_id",
+                        .SqlDbType = SqlDbType.Int,
+                        .Value = AbcGroup_id}},
+                    .ProcParameter = New StoredProcedureParameter With {
+                        .CommandText = "dbo.LoadAbc",
+                        .ParameterName = "@ExcelTable",
+                        .TypeName = "ExcelAbcTable"}}
+                Dlg.ShowDialog()
+                If Dlg.DialogResult Then RefreshAbcGroupsSeries()
+            End Sub, ProjectManager.ProjectExist)
 
 
         Private Sub CollectionChanged(sender As Object, e As NotifyCollectionChangedEventArgs)
@@ -67,6 +66,7 @@ Namespace Pages
 
 
         Private Sub RefreshAbcGroupsSeries()
+            If ProjectManager.CurrentProject Is Nothing Then Return
             AbcGroupsSeries.Clear()
             Dim Data = GetData()
             For Each Item In Data
@@ -78,7 +78,7 @@ Namespace Pages
 
 
         Private Function GetData() As IEnumerable(Of AbcGroup_Count)
-            Using Context = DatabaseManager.CurrentDatabase.Context
+            Using Context = ProjectManager.CurrentProject.Context
                 Return (From Abc In Context.AbcCodeItems
                         Join AbcGroup In Context.AbcGroups On AbcGroup.Id Equals Abc.AbcGroup_id
                         Group By AbcGroup.Name Into Count
@@ -92,6 +92,14 @@ Namespace Pages
 
         Private Sub RaisePropertyChanged(ByVal propName As String)
             RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(propName))
+        End Sub
+
+
+        Private Sub AbcManager_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
+            If ProjectManager.IsAbcDataChanged Then
+                RefreshAbcGroupsSeries()
+                ProjectManager.IsAbcDataChanged = False
+            End If
         End Sub
 
     End Class

@@ -7,7 +7,7 @@ Namespace AbcCalculator
         End Sub
 
 
-        Public Sub New(temp As Template, pickQtyTasks As IEnumerable(Of PickValue), classChange As IEnumerable(Of Transition))
+        Public Sub New(temp As TemplateBase, pickQtyTasks As IEnumerable(Of PickValue), classChange As IEnumerable(Of Transition))
             Interval = temp.RunInterval
             Period = temp.BillingPeriod
 

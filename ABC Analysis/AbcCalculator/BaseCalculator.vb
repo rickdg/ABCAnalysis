@@ -7,7 +7,7 @@ Namespace AbcCalculator
 
 
 #Region "Input"
-        Public Property Temp As Template
+        Public Property Temp As TemplateBase
 #End Region
 
 

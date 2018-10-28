@@ -3,7 +3,7 @@ Imports FirstFloor.ModernUI.Presentation
 Imports Newtonsoft.Json
 
 Namespace Pages
-    Public Class Template
+    Public Class TemplateBase
         Inherits NotifyPropertyChanged
 
         Private _FinalDate As Date

@@ -1,15 +1,15 @@
 ﻿Imports System.Collections.ObjectModel
 Imports System.Reflection
-Imports ABCAnalysis.Connection.SqlServer
+Imports ABCAnalysis.Pages
 Imports FirstFloor.ModernUI.Presentation
 Imports Newtonsoft.Json
 
-Public Class MainWindowVM
+Public Class MainWindowModel
 
+    Private ReadOnly AppName As String = Assembly.GetExecutingAssembly.GetName.Name
+    Private _AppVersion As Version
     Private _ThemeSource As Uri
     Private _AccentColor As Color
-    Private _AppVersion As Version
-    Private ReadOnly AppName As String = Assembly.GetExecutingAssembly.GetName.Name
 
 
     <JsonIgnore>
@@ -24,6 +24,9 @@ Public Class MainWindowVM
     Public Property OldRevision As Integer
     <JsonIgnore>
     Public Property NewRevision As Integer
+
+
+#Region "Serialize"
     Public Property AppVersion As Version
         Get
             Return _AppVersion
@@ -68,7 +71,8 @@ Public Class MainWindowVM
     Public Property Top As Double
 
 
-    Public Property Databases As New ObservableCollection(Of DataBaseVM)
-    Public Property DatabaseCount As Integer
+    Public Property Projects As New ObservableCollection(Of Project)
+    Public Property ProjectCounter As Integer
+#End Region
 
 End Class

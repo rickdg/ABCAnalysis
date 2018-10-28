@@ -4,20 +4,11 @@ Namespace Pages
     Partial Public Class MainPage
         Inherits UserControl
 
-        Public Shared Property Model As MainPageVM
-        Private ReadOnly SerializeFileName As String = "MainPage"
+        Public Shared Property Model As New MainPageModel
 
 
         Public Sub New()
             InitializeComponent()
-            If FileExists(SerializeFileName) Then
-                Model = Deserialize(Of MainPageVM)(SerializeFileName)
-                For Each Temp In Model.Templates
-                    AddHandler Temp.AbcChanged, Sub() Model.RaiseAbcChanged()
-                Next
-            Else
-                Model = New MainPageVM With {.SerializeFileName = SerializeFileName}
-            End If
 
             Subinventory.Items.IsLiveSorting = True
             Subinventory.Items.LiveSortingProperties.Add("Name")

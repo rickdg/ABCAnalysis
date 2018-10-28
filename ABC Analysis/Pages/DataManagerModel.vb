@@ -8,7 +8,7 @@ Imports LiveCharts.Configurations
 Imports LiveCharts.Wpf
 
 Namespace Pages
-    Public Class DataManagerVM
+    Public Class DataManagerModel
         Inherits NotifyPropertyChanged
 
         Private ReadOnly MonthFormatter As Func(Of Double, String) = Function(v) New DateTime(CLng(Math.Abs(v) * TimeSpan.FromDays(1).Ticks * 30.44)).ToString("MMM yyyy")
@@ -53,55 +53,56 @@ Namespace Pages
         Public Property Mapper As New CartesianMapper(Of MeasureModel)
 
 
-        Public ReadOnly Property CmdLoadTasks As ICommand = New RelayCommand(AddressOf LoadTasksExecute)
-        Private Sub LoadTasksExecute(parameter As Object)
-            Dim Dlg As New ModernDialog
-            Dlg.Content = New LoadData(Dlg) With {
-                .LoadType = LoadType.PickTasks,
-                .CmdParameters = {},
-                .ProcParameter = New StoredProcedureParameter With {
-                    .CommandText = "dbo.LoadTasks",
-                    .ParameterName = "@ExcelTasks",
-                    .TypeName = "TaskExcelTable"}}
-            Dlg.ShowDialog()
-            If Dlg.DialogResult Then
-                RefreshSeriesCollection()
-                MainPage.Model.UpdateTemplates()
-            End If
-        End Sub
-        Public ReadOnly Property CmdDeleteTasks As ICommand = New RelayCommand(AddressOf DeleteTasksExecute)
-        Private Sub DeleteTasksExecute(parameter As Object)
-            Dim Dlg As New ModernDialog With {.Title = "Удаление данных"}
-            Dlg.Buttons = {Dlg.YesButton, Dlg.CancelButton}
-            Dlg.Content = New RemoveData(Dlg)
-            If Dlg.ShowDialog() Then
-                RefreshSeriesCollection()
-                MainPage.Model.UpdateTemplates()
-            End If
-        End Sub
-        Public ReadOnly Property CmdChangeStackMode As ICommand = New RelayCommand(AddressOf ChangeStackModeExecute)
-        Private Sub ChangeStackModeExecute(ByVal parameter As Object)
-            If StackMode = StackMode.Values Then
-                YFormatter = PFormatter
-                StackMode = StackMode.Percentage
-            Else
-                YFormatter = NFormatter
-                StackMode = StackMode.Values
-            End If
-            For Each Series In SeriesCollection.Cast(Of StackedColumnSeries)
-                Series.StackMode = StackMode
-            Next
-        End Sub
+        Public ReadOnly Property CmdLoadTasks As ICommand = New RelayCommand(
+            Sub()
+                Dim Dlg As New ModernDialog
+                Dlg.Content = New LoadData(Dlg) With {
+                    .LoadType = LoadType.PickTasks,
+                    .CmdParameters = {},
+                    .ProcParameter = New StoredProcedureParameter With {
+                        .CommandText = "dbo.LoadTasks",
+                        .ParameterName = "@ExcelTasks",
+                        .TypeName = "TaskExcelTable"}}
+                Dlg.ShowDialog()
+                If Dlg.DialogResult Then
+                    RefreshSeriesCollection()
+                    MainPage.Model.UpdateTemplates()
+                End If
+            End Sub, ProjectManager.ProjectExist)
+        Public ReadOnly Property CmdDeleteTasks As ICommand = New RelayCommand(
+            Sub()
+                Dim Dlg As New ModernDialog With {.Title = "Удаление данных"}
+                Dlg.Buttons = {Dlg.YesButton, Dlg.CancelButton}
+                Dlg.Content = New RemoveData(Dlg)
+                If Dlg.ShowDialog() Then
+                    RefreshSeriesCollection()
+                    MainPage.Model.UpdateTemplates()
+                End If
+            End Sub, ProjectManager.ProjectExist)
+        Public ReadOnly Property CmdChangeStackMode As ICommand = New RelayCommand(
+            Sub()
+                If StackMode = StackMode.Values Then
+                    YFormatter = PFormatter
+                    StackMode = StackMode.Percentage
+                Else
+                    YFormatter = NFormatter
+                    StackMode = StackMode.Values
+                End If
+                For Each Series In SeriesCollection.Cast(Of StackedColumnSeries)
+                    Series.StackMode = StackMode
+                Next
+            End Sub)
 
 
-        Private Sub RefreshSeriesCollection()
+        Public Sub RefreshSeriesCollection()
+            If ProjectManager.CurrentProject Is Nothing Then Return
             SeriesCollection.Clear()
             SeriesCollection.AddRange(GetStackedColumnSeriesMonth())
         End Sub
 
 
         Private Function GetData() As IEnumerable(Of Month_Tasks_Orders)
-            Using Context = DatabaseManager.CurrentDatabase.Context
+            Using Context = ProjectManager.CurrentProject.Context
                 Return (From Task In Context.TaskDatas
                         Group By Task.YearNum, Task.MonthNum Into SumTasks = Sum(Task.Tasks), SumOrders = Sum(Task.Orders)
                         Select New Month_Tasks_Orders With {.YearNum = YearNum, .MonthNum = MonthNum, .Tasks = SumTasks, .Orders = SumOrders}).ToList

@@ -26,7 +26,7 @@ Namespace AbcCalculator
         End Sub
 
 
-        Public Property Temp As Template
+        Public Property Temp As TemplateBase
         Public Property ProgressValue As Integer
             Get
                 Return _ProgressValue
@@ -62,7 +62,7 @@ Namespace AbcCalculator
             Dim HeuristicsResult As New BlockingCollection(Of ResultCalculation)
 
             Try
-                Using Context = DatabaseManager.CurrentDatabase.Context
+                Using Context = ProjectManager.CurrentProject.Context
                     If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
                     InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                     FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
@@ -115,11 +115,11 @@ Namespace AbcCalculator
         End Sub
 
 
-        Private Function GetTemplates() As IEnumerable(Of Template)
+        Private Function GetTemplates() As IEnumerable(Of TemplateBase)
             Return (From RunInterval In {7, 14, 21, 28, 35, 42}
                     From BillingPeriod In {21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, 105,
                         112, 119, 126, 133, 140, 147, 154, 161, 168, 175, 182, 189, 196, 203}
-                    Select New Template With {
+                    Select New TemplateBase With {
                        .RunInterval = RunInterval,
                        .BillingPeriod = BillingPeriod,
                        .QuantityAClass = Temp.QuantityAClass,

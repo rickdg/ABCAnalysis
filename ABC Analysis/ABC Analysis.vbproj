@@ -50,6 +50,7 @@
     <DocumentationFile>ABC Analysis.xml</DocumentationFile>
     <NoWarn>42314</NoWarn>
     <WarningsAsErrors>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036</WarningsAsErrors>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -292,14 +293,14 @@
     <Compile Include="Helpers\Connection\SqlServer\Models\StoredProcedureParameter.vb" />
     <Compile Include="Helpers\Connection\SqlServer\Models\CommandParameter.vb" />
     <Compile Include="Helpers\HintHelper.vb" />
-    <Compile Include="Pages\DatabaseManager.xaml.vb">
-      <DependentUpon>DatabaseManager.xaml</DependentUpon>
+    <Compile Include="Pages\ProjectManager.xaml.vb">
+      <DependentUpon>ProjectManager.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Models\AbcGroup_Count.vb" />
     <Compile Include="Pages\AbcManager.xaml.vb">
       <DependentUpon>AbcManager.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\EntityViewModels\AbcGroupVM.vb" />
+    <Compile Include="Pages\Models\AbcGroupModel.vb" />
     <Compile Include="Pages\Models\MeasureModel.vb" />
     <Compile Include="Pages\DataManager.xaml.vb">
       <DependentUpon>DataManager.xaml</DependentUpon>
@@ -318,7 +319,7 @@
     <Compile Include="Helpers\Connection\Excel\SourceFields.vb" />
     <Compile Include="Helpers\Connection\Excel\SqlScript.vb" />
     <Compile Include="Helpers\Utils.vb" />
-    <Compile Include="MainWindowVM.vb" />
+    <Compile Include="MainWindowModel.vb" />
     <Compile Include="Content\SettingsAppearance.xaml.vb">
       <DependentUpon>SettingsAppearance.xaml</DependentUpon>
     </Compile>
@@ -329,7 +330,7 @@
     <Compile Include="Pages\Models\Month_Tasks_Orders.vb" />
     <Compile Include="Pages\Models\Named.vb" />
     <Compile Include="Pages\Models\Percentage.vb" />
-    <Compile Include="Pages\Models\Template.vb" />
+    <Compile Include="Pages\Models\TemplateBase.vb" />
     <Compile Include="Pages\Settings.xaml.vb">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
@@ -337,11 +338,11 @@
       <DependentUpon>Updates.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Models\DataItem.vb" />
-    <Compile Include="Pages\ViewModels\DataBaseVM.vb" />
-    <Compile Include="Pages\ViewModels\DataManagerVM.vb" />
-    <Compile Include="Pages\ViewModels\MainPageVM.vb" />
+    <Compile Include="Pages\Models\Project.vb" />
+    <Compile Include="Pages\DataManagerModel.vb" />
+    <Compile Include="Pages\MainPageModel.vb" />
     <Compile Include="Pages\Models\SubinventoryItem.vb" />
-    <Compile Include="Pages\ViewModels\TemplateVM.vb" />
+    <Compile Include="Pages\Models\TemplateVM.vb" />
     <Compile Include="Helpers\WorksheetHelper.vb" />
     <Compile Include="Subinventory.vb">
       <DependentUpon>AbcAnalysis.tt</DependentUpon>
@@ -397,7 +398,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Pages\DatabaseManager.xaml">
+    <Page Include="Pages\ProjectManager.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

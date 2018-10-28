@@ -17,8 +17,8 @@ Public Class Revision
     Public Sub UpdateDateBase()
         If IsUpdate Then
             Dim SqlCommand = GetSqlCommand()
-            For Each Item In DatabaseManager.Databases
-                DatabaseManager.ExecuteSqlCommand(SqlCommand, Item.SqlConnectionString)
+            For Each Item In ProjectManager.Projects
+                ProjectManager.SqlCommandExecute(SqlCommand, Item.SqlConnectionString)
             Next
         End If
     End Sub

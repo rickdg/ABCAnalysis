@@ -3,9 +3,9 @@ Imports System.Data.Entity
 Imports FirstFloor.ModernUI.Presentation
 
 Namespace Pages
-    Public Class AbcGroupVM
+    Public Class AbcGroupModel
 
-        Public Property ParentCollection As ObservableCollection(Of AbcGroupVM)
+        Public Property ParentCollection As ObservableCollection(Of AbcGroupModel)
         Public Property Entity As AbcGroup
 
 
@@ -20,21 +20,19 @@ Namespace Pages
         End Property
 
 
-#Region "Commands"
         Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(AddressOf RemoveExecute)
         Private Sub RemoveExecute(parameter As Object)
-            Using Context = DatabaseManager.CurrentDatabase.Context
+            Using Context = ProjectManager.CurrentProject.Context
                 Context.DeleteAbc(Entity.Id)
                 Context.Entry(Entity).State = EntityState.Deleted
                 Context.SaveChanges()
                 ParentCollection.Remove(Me)
             End Using
         End Sub
-#End Region
 
 
         Private Sub EntityModifed(propertyName As String)
-            Using Context = DatabaseManager.CurrentDatabase.Context
+            Using Context = ProjectManager.CurrentProject.Context
                 Context.AbcGroups.Attach(Entity)
                 Context.Entry(Entity).Property(propertyName).IsModified = True
                 Context.SaveChanges()

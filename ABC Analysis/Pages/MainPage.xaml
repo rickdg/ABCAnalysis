@@ -19,11 +19,6 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="2" Margin="{StaticResource HeaderMargin}" HorizontalAlignment="Right" VerticalAlignment="Top">
-            <mui:ModernButton Command="{Binding CmdSave}" ToolTip="Сохранить" IconHeight="18" IconWidth="18" EllipseStrokeThickness="0"
-                              EllipseDiameter="34" IconData="{StaticResource Save}"/>
-        </Grid>
-
         <Border BorderBrush="{DynamicResource SeparatorBackground}" BorderThickness="0,0,1,0">
             <Grid>
                 <Grid.RowDefinitions>

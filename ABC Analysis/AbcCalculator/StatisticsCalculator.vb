@@ -8,7 +8,7 @@ Namespace AbcCalculator
         Inherits BaseCalculator
 
         Public Overrides Sub Calculate()
-            Using Context = DatabaseManager.CurrentDatabase.Context
+            Using Context = ProjectManager.CurrentProject.Context
                 If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
                 InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                 FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)

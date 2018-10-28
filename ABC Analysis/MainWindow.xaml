@@ -3,7 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mui="http://firstfloorsoftware.com/ModernUI"
                   Title="{Binding Title, Mode=OneWay}" IsTitleVisible="True"
-                  ContentSource="/Pages/MainPage.xaml"
+                  ContentSource="/Pages/ProjectManager.xaml"
                   MinWidth="1155" MinHeight="544"
                   WindowState="{Binding WindowState}" Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}"
                   Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" Closing="ModernWindow_Closing">
@@ -14,26 +14,32 @@
     </mui:ModernWindow.TitleLinks>
 
     <mui:ModernWindow.MenuLinkGroups>
-        
+
+        <mui:LinkGroup DisplayName="Проекты">
+            <mui:LinkGroup.Links>
+                <mui:Link DisplayName="" Source="/Pages/ProjectManager.xaml"/>
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
+
         <mui:LinkGroup DisplayName="Главная">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="" Source="/Pages/MainPage.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        
+
         <mui:LinkGroup DisplayName="Данные">
             <mui:LinkGroup.Links>
-                <mui:Link DisplayName="Задачи" Source="/Pages/DataManagement.xaml"/>
-                <mui:Link DisplayName="АВС" Source="/Pages/AbcManagement.xaml"/>
+                <mui:Link DisplayName="Задачи" Source="/Pages/DataManager.xaml"/>
+                <mui:Link DisplayName="АВС" Source="/Pages/AbcManager.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        
+
         <mui:LinkGroup DisplayName="Настройки" GroupKey="settings">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="" Source="/Pages/Settings.xaml"/>
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        
+
         <mui:LinkGroup DisplayName="Обновления" GroupKey="Updates">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="" Source="/Pages/Updates.xaml"/>

@@ -1,6 +1,7 @@
 ﻿Imports System.Data
 Imports System.Data.SqlClient
 Imports System.Text
+Imports ABCAnalysis.Connection.SqlServer
 Imports ABCAnalysis.DataLoad
 Imports ABCAnalysis.Pages
 Imports FirstFloor.ModernUI.Windows.Controls
@@ -13,7 +14,7 @@ Namespace AbcCalculator
 
 
         Public Overrides Sub Calculate()
-            Using Context = DatabaseManager.CurrentDatabase.Context
+            Using Context = ProjectManager.CurrentProject.Context
                 If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
 
                 FinalDate = GetLastFriday()
@@ -154,7 +155,14 @@ Namespace AbcCalculator
             Dim DLW As New DLWriter(NewFile.FullName) With {.Description = $"АВС {Temp.Name}"}
             DLW.Write(DlData.ToString)
             Process.Start(NewFile.FullName)
-            UpdateAbc(Table)
+            ProjectManager.StoredProcedureExecute({New CommandParameter With {
+                                             .Name = "@AbcGroup_id",
+                                             .SqlDbType = SqlDbType.Int,
+                                             .Value = Temp.AbcGroup_id}},
+                                             New StoredProcedureParameter With {
+                                             .CommandText = "dbo.UpdateAbc",
+                                             .ParameterName = "@Table",
+                                             .TypeName = "AbcTable"}, Table)
         End Sub
 
 
@@ -173,22 +181,6 @@ Namespace AbcCalculator
             Table.Columns.Add("AbcClass_id", GetType(Integer))
             Return Table
         End Function
-
-
-        Private Sub UpdateAbc(table As DataTable)
-            Using Connection As New SqlConnection(My.Settings.AbcAnalysisConnectionString)
-                Connection.Open()
-                Using Command = Connection.CreateCommand()
-                    Command.CommandTimeout = 1800
-                    Command.CommandText = "dbo.UpdateAbc"
-                    Command.CommandType = CommandType.StoredProcedure
-                    Command.Parameters.Add("@AbcGroup_id", SqlDbType.Int).Value = Temp.AbcGroup_id
-                    Command.Parameters.Add("@Table", SqlDbType.Structured).TypeName = "AbcTable"
-                    Command.Parameters("@Table").Value = table
-                    Command.ExecuteReader()
-                End Using
-            End Using
-        End Sub
 
 
         Private Function IsResumeDialog(content As String) As Boolean?
