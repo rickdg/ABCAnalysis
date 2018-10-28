@@ -11,6 +11,7 @@ Namespace Pages
         Public Sub New()
             InitializeComponent()
             DataContext = Me
+            MainPage.Model.Update()
         End Sub
 
 
@@ -23,7 +24,10 @@ Namespace Pages
                 Return Projects.SingleOrDefault(Function(i) i.IsSelected)
             End Get
             Set
-                If Value Is Nothing Then Return
+                If Value Is Nothing Then
+                    MainPage.Model.Templates = Nothing
+                    Return
+                End If
                 For Each Item In Projects
                     Item.IsSelected = False
                 Next
@@ -33,24 +37,15 @@ Namespace Pages
                 IsDataChanged = True
             End Set
         End Property
-
-
-        Public ReadOnly Property AddNewProject As ICommand = New RelayCommand(AddressOf AddNewProjectExecute)
-        Private Sub AddNewProjectExecute(parameter As Object)
-            Dim NotExist = CurrentProject Is Nothing
-            If NotExist Then
-                For Each Item In Projects
-                    Item.IsSelected = False
-                Next
-            End If
-            Dim NewProject As New Project With {
+        Public ReadOnly Property AddNewProject As ICommand = New RelayCommand(
+            Sub()
+                Dim NewProject As New Project With {
                 .Parent = MainWindow.Model,
-                .Index = MainWindow.Model.ProjectCounter,
-                .IsSelected = NotExist}
-            NewProject.AttachDb()
-            Projects.Add(NewProject)
-            MainWindow.Model.ProjectCounter += 1
-        End Sub
+                .Index = MainWindow.Model.ProjectCounter}
+                NewProject.AttachDb()
+                Projects.Add(NewProject)
+                MainWindow.Model.ProjectCounter += 1
+            End Sub)
 
 
         Public Shared Sub SqlCommandExecute(commandText As String, connectionString As String)

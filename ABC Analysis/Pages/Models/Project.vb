@@ -73,14 +73,11 @@ Namespace Pages
             End Get
         End Property
         <JsonIgnore>
-        Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(Sub()
-                                                                              Parent.Projects.Remove(Me)
-                                                                              Entity.Database.Delete(TargetDbName)
-                                                                              If IsSelected Then
-                                                                                  Dim Item = Parent.Projects.FirstOrDefault
-                                                                                  If Item IsNot Nothing Then Item.IsSelected = True
-                                                                              End If
-                                                                          End Sub)
+        Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(
+        Sub()
+            Parent.Projects.Remove(Me)
+            Entity.Database.Delete(TargetDbName)
+        End Sub)
 
 
         Public Sub AttachDb()

@@ -20,15 +20,15 @@ Namespace Pages
         End Property
 
 
-        Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(AddressOf RemoveExecute)
-        Private Sub RemoveExecute(parameter As Object)
+        Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(
+        Sub()
             Using Context = ProjectManager.CurrentProject.Context
                 Context.DeleteAbc(Entity.Id)
                 Context.Entry(Entity).State = EntityState.Deleted
                 Context.SaveChanges()
                 ParentCollection.Remove(Me)
             End Using
-        End Sub
+        End Sub)
 
 
         Private Sub EntityModifed(propertyName As String)

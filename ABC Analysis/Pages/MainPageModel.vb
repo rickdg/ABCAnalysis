@@ -1,6 +1,5 @@
 ﻿Imports System.Collections.ObjectModel
 Imports FirstFloor.ModernUI.Presentation
-Imports Newtonsoft.Json
 
 Namespace Pages
     Public Class MainPageModel
@@ -16,9 +15,7 @@ Namespace Pages
         End Sub
 
 
-        <JsonIgnore>
         Public Property AbcGroups As New ObservableCollection(Of AbcGroupModel)
-        <JsonIgnore>
         Public Property Templates As ObservableCollection(Of TemplateVM)
             Get
                 Return _Templates
@@ -28,7 +25,6 @@ Namespace Pages
                 OnPropertyChanged("Templates")
             End Set
         End Property
-        <JsonIgnore>
         Public Property CurrentTemplate As TemplateVM
             Get
                 Return _CurrentTemplate
@@ -38,8 +34,6 @@ Namespace Pages
                 OnPropertyChanged("CurrentTemplate")
             End Set
         End Property
-
-        <JsonIgnore>
         Public ReadOnly Property CmdAddNewTemplate As ICommand = New RelayCommand(
             Sub()
                 If ProjectManager.CurrentProject Is Nothing Then Return
@@ -51,13 +45,12 @@ Namespace Pages
                 Templates.Add(NewTemplateVM)
                 CurrentTemplate = NewTemplateVM
             End Sub)
-        <JsonIgnore>
         Public ReadOnly Property CmdShowHint As ICommand = New RelayCommand(AddressOf ShowHintExecute)
 
 
         Public Sub Update()
             Dim Project = ProjectManager.CurrentProject
-
+            If Project Is Nothing Then Return
             Templates = Project.Templates
             CurrentTemplate = Nothing
 
