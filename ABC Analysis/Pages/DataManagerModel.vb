@@ -96,6 +96,8 @@ Namespace Pages
 
         Public Sub RefreshSeriesCollection()
             If ProjectManager.CurrentProject Is Nothing Then Return
+            YFormatter = NFormatter
+            StackMode = StackMode.Values
             SeriesCollection.Clear()
             SeriesCollection.AddRange(GetStackedColumnSeriesMonth())
         End Sub
