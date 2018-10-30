@@ -46,11 +46,17 @@
                           CanUserDeleteRows="False" CanUserResizeRows="False">
                     <DataGrid.Columns>
                         <mui:DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
+                        <DataGridTemplateColumn Header="Просмотр">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <mui:ModernButton Command="{Binding CmdView}" IconHeight="12" IconWidth="12" EllipseStrokeThickness="0" EllipseDiameter="16" HorizontalAlignment="Center" IconData="{StaticResource Excel}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                         <DataGridTemplateColumn Header="Удалить">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0" EllipseDiameter="16"
-                                                      HorizontalAlignment="Center" IconData="{StaticResource RemoveItem}"/>
+                                    <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0" EllipseDiameter="16" HorizontalAlignment="Center" IconData="{StaticResource RemoveItem}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

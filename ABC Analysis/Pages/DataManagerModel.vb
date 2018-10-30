@@ -68,7 +68,7 @@ Namespace Pages
                     RefreshSeriesCollection()
                     MainPage.Model.UpdateTemplates()
                 End If
-            End Sub, ProjectManager.ProjectExist)
+            End Sub, MainPageModel.ProjectExist)
         Public ReadOnly Property CmdDeleteTasks As ICommand = New RelayCommand(
             Sub()
                 Dim Dlg As New ModernDialog With {.Title = "Удаление данных"}
@@ -78,7 +78,7 @@ Namespace Pages
                     RefreshSeriesCollection()
                     MainPage.Model.UpdateTemplates()
                 End If
-            End Sub, ProjectManager.ProjectExist)
+            End Sub, MainPageModel.ProjectExist)
         Public ReadOnly Property CmdChangeStackMode As ICommand = New RelayCommand(
             Sub()
                 If StackMode = StackMode.Values Then
@@ -95,7 +95,7 @@ Namespace Pages
 
 
         Public Sub RefreshSeriesCollection()
-            If ProjectManager.CurrentProject Is Nothing Then Return
+            If MainPageModel.CurrentProject Is Nothing Then Return
             YFormatter = NFormatter
             StackMode = StackMode.Values
             SeriesCollection.Clear()
@@ -104,7 +104,7 @@ Namespace Pages
 
 
         Private Function GetData() As IEnumerable(Of Month_Tasks_Orders)
-            Using Context = ProjectManager.CurrentProject.Context
+            Using Context = MainPageModel.CurrentProject.Context
                 Return (From Task In Context.TaskDatas
                         Group By Task.YearNum, Task.MonthNum Into SumTasks = Sum(Task.Tasks), SumOrders = Sum(Task.Orders)
                         Select New Month_Tasks_Orders With {.YearNum = YearNum, .MonthNum = MonthNum, .Tasks = SumTasks, .Orders = SumOrders}).ToList

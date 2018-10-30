@@ -3,7 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mui="http://firstfloorsoftware.com/ModernUI"
                   Title="{Binding Title, Mode=OneWay}" IsTitleVisible="True"
-                  ContentSource="/Pages/ProjectManager.xaml"
+                  ContentSource="/Pages/MainPage.xaml"
                   MinWidth="1155" MinHeight="544"
                   WindowState="{Binding WindowState}" Left="{Binding Left, Mode=TwoWay}" Top="{Binding Top, Mode=TwoWay}"
                   Width="{Binding Width, Mode=TwoWay}" Height="{Binding Height, Mode=TwoWay}" Closing="ModernWindow_Closing">
@@ -14,12 +14,6 @@
     </mui:ModernWindow.TitleLinks>
 
     <mui:ModernWindow.MenuLinkGroups>
-
-        <mui:LinkGroup DisplayName="Проекты">
-            <mui:LinkGroup.Links>
-                <mui:Link DisplayName="" Source="/Pages/ProjectManager.xaml"/>
-            </mui:LinkGroup.Links>
-        </mui:LinkGroup>
 
         <mui:LinkGroup DisplayName="Главная">
             <mui:LinkGroup.Links>

@@ -98,7 +98,7 @@ Namespace Pages
         <JsonIgnore>
         Public ReadOnly Property CmdRunCombinatorics As ICommand = New RelayCommand(
         Sub()
-            If ProjectManager.CurrentProject Is Nothing Then Return
+            If MainPageModel.CurrentProject Is Nothing Then Return
             Dim Dlg As New ModernDialog
             Dlg.Content = New Combinatorics(Dlg) With {.Temp = Me}
             Dlg.ShowDialog()
@@ -106,7 +106,7 @@ Namespace Pages
         <JsonIgnore>
         Public ReadOnly Property CmdRunCalculateStatisticsAbc As ICommand = New RelayCommand(
         Async Sub()
-            If ProjectManager.CurrentProject Is Nothing OrElse IsStatisticsAbcProcessing Then Return
+            If MainPageModel.CurrentProject Is Nothing OrElse IsStatisticsAbcProcessing Then Return
             IsStatisticsAbcProcessing = True
             Try
                 Await Task.Factory.StartNew(Sub()
@@ -123,13 +123,13 @@ Namespace Pages
         <JsonIgnore>
         Public ReadOnly Property CmdRunCalculateAbc As ICommand = New RelayCommand(
         Async Sub()
-            If ProjectManager.CurrentProject Is Nothing OrElse IsCalculateAbcProcessing Then Return
+            If MainPageModel.CurrentProject Is Nothing OrElse IsCalculateAbcProcessing Then Return
             IsCalculateAbcProcessing = True
             Try
                 Await Task.Factory.StartNew(Sub()
                                                 Dim c As New Calculator With {.Temp = Me}
                                                 c.Calculate()
-                                                ProjectManager.IsAbcDataChanged = True
+                                                MainPageModel.IsAbcDataChanged = True
                                             End Sub)
             Catch ex As Exception
                 Dim Dlg As New ModernDialog With {.Title = "Сообщение", .Content = New ErrorMessage(ex)}
@@ -144,7 +144,7 @@ Namespace Pages
 
 
         Public Sub UpdateSubinventories()
-            Using Context = ProjectManager.CurrentProject.Context
+            Using Context = MainPageModel.CurrentProject.Context
                 Dim TempCollection As New List(Of SubinventoryItem)
                 Dim Data = Context.Subinventories.ToList
                 For Each Item In Data
@@ -165,7 +165,7 @@ Namespace Pages
 
 
         Public Sub UpdateUserPositionTypesAndCategoryes()
-            Using Context = ProjectManager.CurrentProject.Context
+            Using Context = MainPageModel.CurrentProject.Context
                 Dim Data = (From td In Context.TaskDatas
                             Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
                             Join upt In Context.UserPositionTypes On upt.Id Equals ci.UserPositionType_Id
@@ -179,7 +179,7 @@ Namespace Pages
 
 
         Public Sub UpdateCategoryes()
-            Using Context = ProjectManager.CurrentProject.Context
+            Using Context = MainPageModel.CurrentProject.Context
                 Dim Data = (From td In Context.TaskDatas
                             Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
                             Join c In Context.Categories On c.Id Equals ci.Category_Id

@@ -1,4 +1,7 @@
 ﻿Imports System.Collections.ObjectModel
+Imports System.Data
+Imports System.Data.SqlClient
+Imports ABCAnalysis.Connection.SqlServer
 Imports FirstFloor.ModernUI.Presentation
 
 Namespace Pages
@@ -10,11 +13,32 @@ Namespace Pages
 
 
         Public Sub New()
-            If ProjectManager.CurrentProject Is Nothing Then Return
-            Templates = ProjectManager.CurrentProject.Templates
+            Update()
         End Sub
 
 
+        Public Shared Property ProjectExist As Func(Of Object, Boolean) = Function(parameter) CurrentProject IsNot Nothing
+        Public Shared Property IsAbcDataChanged As Boolean
+        Public Shared Property IsDataChanged As Boolean
+        Public Shared Property Projects As ObservableCollection(Of Project) = MainWindow.Model.Projects
+        Public Shared Property CurrentProject As Project
+            Get
+                Return Projects.SingleOrDefault(Function(i) i.IsSelected)
+            End Get
+            Set
+                If Value Is Nothing Then
+                    MainPage.Model.Templates = Nothing
+                    Return
+                End If
+                For Each Item In Projects
+                    Item.IsSelected = False
+                Next
+                Value.IsSelected = True
+                MainPage.Model.Update()
+                IsAbcDataChanged = True
+                IsDataChanged = True
+            End Set
+        End Property
         Public Property AbcGroups As New ObservableCollection(Of AbcGroupModel)
         Public Property Templates As ObservableCollection(Of TemplateVM)
             Get
@@ -34,27 +58,35 @@ Namespace Pages
                 OnPropertyChanged("CurrentTemplate")
             End Set
         End Property
+        Public ReadOnly Property AddNewProject As ICommand = New RelayCommand(
+            Sub()
+                Dim NewProject As New Project With {
+                .Parent = MainWindow.Model,
+                .Index = MainWindow.Model.ProjectCounter}
+                NewProject.AttachDb()
+                Projects.Add(NewProject)
+                MainWindow.Model.ProjectCounter += 1
+            End Sub)
         Public ReadOnly Property CmdAddNewTemplate As ICommand = New RelayCommand(
             Sub()
-                If ProjectManager.CurrentProject Is Nothing Then Return
+                If CurrentProject Is Nothing Then Return
                 If Templates Is Nothing Then
-                    Templates = ProjectManager.CurrentProject.Templates
+                    Templates = CurrentProject.Templates
                 End If
-                Dim NewTemplateVM = New TemplateVM(True) With {.Parent = ProjectManager.CurrentProject}
-                NewTemplateVM.ReductionPickPercent.Value2 = 0.01
-                Templates.Add(NewTemplateVM)
-                CurrentTemplate = NewTemplateVM
+                Dim NewTemplate = New TemplateVM(True) With {.Parent = CurrentProject}
+                NewTemplate.ReductionPickPercent.Value2 = 0.01
+                Templates.Add(NewTemplate)
+                CurrentTemplate = NewTemplate
             End Sub)
         Public ReadOnly Property CmdShowHint As ICommand = New RelayCommand(AddressOf ShowHintExecute)
 
 
         Public Sub Update()
-            Dim Project = ProjectManager.CurrentProject
-            If Project Is Nothing Then Return
-            Templates = Project.Templates
+            If CurrentProject Is Nothing Then Return
+            Templates = CurrentProject.Templates
             CurrentTemplate = Nothing
 
-            Using Context = Project.Context
+            Using Context = CurrentProject.Context
                 AbcGroups.Clear()
                 For Each AbcGroup In Context.AbcGroups
                     AbcGroups.Add(New AbcGroupModel() With {
@@ -70,6 +102,38 @@ Namespace Pages
                 Tmp.UpdateSubinventories()
                 Tmp.UpdateUserPositionTypesAndCategoryes()
             Next
+        End Sub
+
+
+        Public Shared Sub SqlCommandExecute(commandText As String, connectionString As String)
+            Using Connection As New SqlConnection(connectionString)
+                Connection.Open()
+                Using Command = Connection.CreateCommand()
+                    Command.CommandTimeout = 1800
+                    Command.CommandText = commandText
+                    Command.ExecuteNonQuery()
+                End Using
+            End Using
+        End Sub
+
+
+        Public Shared Sub StoredProcedureExecute(cmdParameters As IEnumerable(Of CommandParameter),
+                                                 procParameters As StoredProcedureParameter,
+                                                 table As DataTable)
+            Using Connection As New SqlConnection(CurrentProject.SqlConnectionString)
+                Connection.Open()
+                Using Command = Connection.CreateCommand()
+                    Command.CommandTimeout = 1800
+                    Command.CommandText = procParameters.CommandText
+                    Command.CommandType = CommandType.StoredProcedure
+                    For Each Item In cmdParameters
+                        Command.Parameters.Add(Item.Name, Item.SqlDbType).Value = Item.Value
+                    Next
+                    Command.Parameters.Add(procParameters.ParameterName, SqlDbType.Structured).TypeName = procParameters.TypeName
+                    Command.Parameters(procParameters.ParameterName).Value = table
+                    Command.ExecuteReader()
+                End Using
+            End Using
         End Sub
 
     End Class

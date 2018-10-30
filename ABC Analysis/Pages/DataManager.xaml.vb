@@ -13,9 +13,9 @@
 
 
         Private Sub DataManager_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-            If ProjectManager.IsDataChanged Then
+            If MainPageModel.IsDataChanged Then
                 Model.RefreshSeriesCollection()
-                ProjectManager.IsDataChanged = False
+                MainPageModel.IsDataChanged = False
             End If
         End Sub
 

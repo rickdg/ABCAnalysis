@@ -62,7 +62,7 @@ Namespace AbcCalculator
             Dim HeuristicsResult As New BlockingCollection(Of ResultCalculation)
 
             Try
-                Using Context = ProjectManager.CurrentProject.Context
+                Using Context = MainPageModel.CurrentProject.Context
                     If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
                     InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                     FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)

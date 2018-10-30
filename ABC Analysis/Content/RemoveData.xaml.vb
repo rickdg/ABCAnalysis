@@ -17,7 +17,7 @@ Namespace Content
 
 
         Private Sub ClickYes(s As Object, e As RoutedEventArgs)
-            Using Context = ProjectManager.CurrentProject.Context
+            Using Context = MainPageModel.CurrentProject.Context
                 Context.DeleteTasks(StartDate, EndDate)
             End Using
         End Sub

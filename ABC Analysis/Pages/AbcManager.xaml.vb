@@ -35,12 +35,12 @@ Namespace Pages
 
         Public ReadOnly Property CmdAddNewEntity As ICommand = New RelayCommand(
             Sub()
-                Using Context = ProjectManager.CurrentProject.Context
+                Using Context = MainPageModel.CurrentProject.Context
                     Dim NewEntity = Context.AbcGroups.Add(New AbcGroup)
                     Context.SaveChanges()
                     AbcGroups.Add(New AbcGroupModel With {.ParentCollection = AbcGroups, .Entity = NewEntity})
                 End Using
-            End Sub, ProjectManager.ProjectExist)
+            End Sub, MainPageModel.ProjectExist)
         Public ReadOnly Property CmdLoadAbc As ICommand = New RelayCommand(
             Sub()
                 If AbcGroup_id = 0 Then Return
@@ -57,7 +57,7 @@ Namespace Pages
                         .TypeName = "ExcelAbcTable"}}
                 Dlg.ShowDialog()
                 If Dlg.DialogResult Then RefreshAbcGroupsSeries()
-            End Sub, ProjectManager.ProjectExist)
+            End Sub, MainPageModel.ProjectExist)
 
 
         Private Sub CollectionChanged(sender As Object, e As NotifyCollectionChangedEventArgs)
@@ -66,7 +66,7 @@ Namespace Pages
 
 
         Private Sub RefreshAbcGroupsSeries()
-            If ProjectManager.CurrentProject Is Nothing Then Return
+            If MainPageModel.CurrentProject Is Nothing Then Return
             AbcGroupsSeries.Clear()
             Dim Data = GetData()
             For Each Item In Data
@@ -78,7 +78,7 @@ Namespace Pages
 
 
         Private Function GetData() As IEnumerable(Of AbcGroup_Count)
-            Using Context = ProjectManager.CurrentProject.Context
+            Using Context = MainPageModel.CurrentProject.Context
                 Return (From Abc In Context.AbcCodeItems
                         Join AbcGroup In Context.AbcGroups On AbcGroup.Id Equals Abc.AbcGroup_id
                         Group By AbcGroup.Name Into Count
@@ -96,9 +96,9 @@ Namespace Pages
 
 
         Private Sub AbcManager_Loaded(sender As Object, e As RoutedEventArgs) Handles Me.Loaded
-            If ProjectManager.IsAbcDataChanged Then
+            If MainPageModel.IsAbcDataChanged Then
                 RefreshAbcGroupsSeries()
-                ProjectManager.IsAbcDataChanged = False
+                MainPageModel.IsAbcDataChanged = False
             End If
         End Sub
 

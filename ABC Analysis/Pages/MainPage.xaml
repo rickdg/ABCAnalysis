@@ -22,43 +22,88 @@
         <Border BorderBrush="{DynamicResource SeparatorBackground}" BorderThickness="0,0,1,0">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="Шаблоны" Style="{StaticResource Heading1}"/>
-                    <mui:ModernButton Grid.Column="1" Command="{Binding CmdAddNewTemplate}" ToolTip="Добавить" EllipseStrokeThickness="0" Margin="8,0" VerticalAlignment="Center" IconData="{StaticResource AddItem}"/>
-                </StackPanel>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
 
-                <DataGrid Grid.Row="1" ItemsSource="{Binding Templates}"
-                          SelectedItem="{Binding CurrentTemplate}"
-                          AutoGenerateColumns="False" HeadersVisibility="Column"
-                          CanUserSortColumns="False" CanUserReorderColumns="False"
-                          CanUserResizeColumns="False" CanUserAddRows="False"
-                          CanUserDeleteRows="False" CanUserResizeRows="False">
-                    <DataGrid.Columns>
-                        <DataGridTemplateColumn>
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Grid >
-                                        <Border CornerRadius="6" Height="12" Width="12" Background="{DynamicResource PopupBackground}"/>
-                                        <Ellipse Height="8" Width="8" Fill="{Binding NextCalculationData, Converter={StaticResource Converter}}"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <mui:DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
-                        <DataGridTemplateColumn Header="Удалить">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0"
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Проекты" Style="{StaticResource Heading1}"/>
+                        <mui:ModernButton Grid.Column="1" Command="{Binding AddNewProject}" ToolTip="Добавить" EllipseStrokeThickness="0" Margin="8,0" VerticalAlignment="Center" IconData="{StaticResource AddItem}"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Projects}"
+                              SelectedItem="{Binding CurrentProject}"
+                              AutoGenerateColumns="False" HeadersVisibility="Column"
+                              CanUserSortColumns="False" CanUserReorderColumns="False"
+                              CanUserResizeColumns="False" CanUserAddRows="False"
+                              CanUserDeleteRows="False" CanUserResizeRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <RadioButton IsChecked="{Binding IsSelected, Mode=OneWay}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <mui:DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
+                            <DataGridTemplateColumn Header="Удалить">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0"
+                                              IconData="{StaticResource RemoveItem}" HorizontalAlignment="Center" VerticalContentAlignment="Center"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Шаблоны" Style="{StaticResource Heading1}"/>
+                        <mui:ModernButton Grid.Column="1" Command="{Binding CmdAddNewTemplate}" ToolTip="Добавить" EllipseStrokeThickness="0" Margin="8,0" VerticalAlignment="Center" IconData="{StaticResource AddItem}"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1" ItemsSource="{Binding Templates}"
+                              SelectedItem="{Binding CurrentTemplate}"
+                              AutoGenerateColumns="False" HeadersVisibility="Column"
+                              CanUserSortColumns="False" CanUserReorderColumns="False"
+                              CanUserResizeColumns="False" CanUserAddRows="False"
+                              CanUserDeleteRows="False" CanUserResizeRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn>
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid >
+                                            <Border CornerRadius="6" Height="12" Width="12" Background="{DynamicResource PopupBackground}"/>
+                                            <Ellipse Height="8" Width="8" Fill="{Binding NextCalculationData, Converter={StaticResource Converter}}"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <mui:DataGridTextColumn Header="Имя" Binding="{Binding Name}"/>
+                            <DataGridTemplateColumn Header="Удалить">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <mui:ModernButton Command="{Binding CmdRemove}" IconHeight="8" IconWidth="8" EllipseStrokeThickness="0"
                                                       IconData="{StaticResource RemoveItem}" HorizontalAlignment="Center" VerticalContentAlignment="Center"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
             </Grid>
         </Border>
 
