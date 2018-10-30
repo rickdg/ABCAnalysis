@@ -32,8 +32,8 @@
     <WebPage>ABC Analysis.html</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <TrustUrlParameters>true</TrustUrlParameters>
-    <ApplicationRevision>24</ApplicationRevision>
-    <ApplicationVersion>4.0.1.24</ApplicationVersion>
+    <ApplicationRevision>26</ApplicationRevision>
+    <ApplicationVersion>4.0.1.26</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>

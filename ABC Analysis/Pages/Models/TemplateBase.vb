@@ -58,6 +58,7 @@ Namespace Pages
 #Region "Result"
         Public Property AvgPickPercent As Double
         Public Property Transition As Integer
+        Public Property AllTransition As Integer
         Public Property HeuristicsResult As IEnumerable(Of ResultCalculation)
 #End Region
 
@@ -79,10 +80,12 @@ Namespace Pages
             BillingPeriod = Result.Period
             AvgPickPercent = Result.AvgPickPercent
             Transition = Result.Transition
+            AllTransition = Result.AllTransition
             OnPropertyChanged("RunInterval")
             OnPropertyChanged("BillingPeriod")
             OnPropertyChanged("AvgPickPercent")
             OnPropertyChanged("Transition")
+            OnPropertyChanged("AllTransition")
             OnPropertyChanged("NextFinalDate")
         End Sub
 

@@ -2,6 +2,8 @@
 Imports System.Data.Entity
 Imports FirstFloor.ModernUI.Presentation
 Imports ABCAnalysis.Connection.Excel
+Imports FirstFloor.ModernUI.Windows.Controls
+Imports ABCAnalysis.Content
 
 Namespace Pages
     Public Class AbcGroupModel
@@ -22,12 +24,17 @@ Namespace Pages
 
 
         Public ReadOnly Property CmdView As ICommand = New RelayCommand(
-            Sub()
+            Async Sub()
                 Using Context = MainPageModel.CurrentProject.Context
                     Dim Collection = (From abc In Context.AbcCodeItems
                                       Where abc.AbcGroup_id = Entity.Id
                                       Select New AbcClassView With {.Позиция = abc.CodeItem, .AbcClass_id = abc.AbcClass_id}).ToList
-                    ViewCollection(Name, Collection)
+                    Try
+                        Await Task.Factory.StartNew(Sub() ViewCollection(Name, Collection))
+                    Catch ex As Exception
+                        Dim Dlg As New ModernDialog With {.Title = "Сообщение", .Content = New ErrorMessage(ex)}
+                        Dlg.ShowDialog()
+                    End Try
                 End Using
             End Sub)
         Public ReadOnly Property CmdRemove As ICommand = New RelayCommand(

@@ -15,6 +15,7 @@ Namespace AbcCalculator
             If Sum <> 0 Then AvgPickPercent = pickQtyTasks.Sum(Function(i) i.A + i.B) / Sum
 
             Transition = classChange.Sum(Function(i) i.AB + i.AC + i.AX + i.BA + i.BC + i.BX)
+            AllTransition = Transition + classChange.Sum(Function(i) i.CA + i.CB + i.XA + i.XB)
         End Sub
 
 
@@ -22,6 +23,7 @@ Namespace AbcCalculator
         Public Property Period As Integer
         Public Property AvgPickPercent As Double
         Public Property Transition As Integer
+        Public Property AllTransition As Integer
 
     End Class
 End Namespace

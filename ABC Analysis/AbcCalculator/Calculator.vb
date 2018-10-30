@@ -140,6 +140,8 @@ Namespace AbcCalculator
 
 
         Private Sub CalculateResult()
+            ViewCollection("ABC", CodeDict.Select(Function(i) Tuple.Create(i.Key, i.Value(CurIter).ToString)))
+
             Dim ResultData = (From cd In CodeDict
                               From ca In CurrentAbc.Where(Function(i) cd.Key = i.CodeItem).DefaultIfEmpty
                               Where cd.Value(CurIter) <> AbcClass.NA AndAlso (ca Is Nothing OrElse cd.Value(CurIter) <> ca.AbcClass_id)

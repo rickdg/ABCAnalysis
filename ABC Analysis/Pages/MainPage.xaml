@@ -285,6 +285,10 @@
                     <TextBlock Text="Изменения классов АВ"/>
                     <TextBox Foreground="{DynamicResource Accent}" Text="{Binding CurrentTemplate.Transition, Mode=OneWay}" IsReadOnly="True"/>
                 </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Изменения классов"/>
+                    <TextBox Foreground="{DynamicResource Accent}" Text="{Binding CurrentTemplate.AllTransition, Mode=OneWay}" IsReadOnly="True"/>
+                </StackPanel>
 
                 <TextBlock Text="Результаты" Style="{StaticResource Heading1}" Margin="0,12,0,4"/>
 

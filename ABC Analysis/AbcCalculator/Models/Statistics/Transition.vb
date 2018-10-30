@@ -9,6 +9,10 @@
             BA = GetValue(data, DirectionTransition.BA)
             BC = GetValue(data, DirectionTransition.BC)
             BX = GetValue(data, DirectionTransition.BX)
+            CA = GetValue(data, DirectionTransition.CA)
+            CB = GetValue(data, DirectionTransition.CB)
+            XA = GetValue(data, DirectionTransition.XA)
+            XB = GetValue(data, DirectionTransition.XB)
         End Sub
 
 
@@ -19,6 +23,10 @@
         Public Property BA As Integer
         Public Property BC As Integer
         Public Property BX As Integer
+        Public Property CA As Integer
+        Public Property CB As Integer
+        Public Property XA As Integer
+        Public Property XB As Integer
 
 
         Private Function GetValue(data As IEnumerable(Of DirectionItem), Direction As DirectionTransition) As Integer
