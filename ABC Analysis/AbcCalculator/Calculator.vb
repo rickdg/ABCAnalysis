@@ -22,7 +22,10 @@ Namespace AbcCalculator
                 Dim CheckTasks = Context.TaskDatas.Where(Function(i) i.XDate >= TempDate AndAlso i.XDate <= FinalDate).ToList.Count
                 If CheckTasks = 0 Then Throw New Exception("Недостаточно данных для расчета.")
 
-                CurrentAbc = Context.AbcCodeItems.Where(Function(i) i.AbcGroup_id = Temp.AbcGroup_id).ToList
+                CurrentAbc = (From abc In Context.AbcCodeItems
+                              Join ci In Context.CodeItems On abc.CodeItem Equals ci.Code
+                              Where abc.AbcGroup_id = Temp.AbcGroup_id And Temp.UserPositionTypes_id.Contains(ci.UserPositionType_Id)
+                              Select abc).ToList
 
                 If Temp.IsCalculated Then
                     If Temp.FinalDate < FinalDate Then
