@@ -58,7 +58,7 @@ Namespace AbcCalculator
 
             Dim Pick = (From td In (From d In Data
                                     Join cd In CodeDict On cd.Key Equals d.Code
-                                    Where d.XDate >= StartInterval AndAlso d.XDate <= FinalInterval
+                                    Where d.XDate >= StartInterval AndAlso d.XDate <= FinalInterval AndAlso d.Tasks > 0
                                     Group By d.Code, AbcClass = cd.Value(CurIter) Into Sum(d.Tasks))
                         Group By td.AbcClass Into Count, Sum(td.Sum)
                         Select New StatItem With {.AbcClass = AbcClass, .QtyCode = Count, .QtyTasks = Sum}).ToList
