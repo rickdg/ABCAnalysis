@@ -58,6 +58,7 @@ Namespace AbcCalculator
                 Dim AbcTable = GetAbcTable()
 
                 If CurIter = 0 Then
+                    RestoreABC(AbcTable)
                     PrevAbcTable1 = AbcTable
                     Continue For
                 End If
@@ -77,12 +78,15 @@ Namespace AbcCalculator
         End Sub
 
 
-        Public MustOverride Sub RecordStatistics(abcTable As IEnumerable(Of AbcItem))
+        Friend MustOverride Sub RestoreABC(abcTable As IEnumerable(Of AbcItem))
+
+
+        Friend MustOverride Sub RecordStatistics(abcTable As IEnumerable(Of AbcItem))
 #End Region
 
 
 #Region "Methods"
-        Public Function GetAbcTable() As IEnumerable(Of AbcItem)
+        Public Function GetAbcTable() As IList(Of AbcItem)
             Dim AbcTable = (From d In CalculationData
                             Where d.XDate >= StartBillingPeriod AndAlso d.XDate <= FinalBillingPeriod
                             Group By d.Code Into Sum(d.Value)
@@ -90,13 +94,13 @@ Namespace AbcCalculator
                             Select New AbcItem With {.Code = Code, .Value = Sum, .AbcClass = AbcClass.C}).ToList
 
             If CurIter = 0 Then
-                For j = 0 To AbcTable.Count - 1
-                    Dim Item = AbcTable(j)
-                    If j < Temp.QuantityAClass Then
+                For i = 0 To AbcTable.Count - 1
+                    Dim Item = AbcTable(i)
+                    If i < Temp.QuantityAClass Then
                         Item.AbcClass = AbcClass.A
                         CodeDict(Item.Code)(CurIter) = AbcClass.A
                     Else
-                        If j < Temp.QuantityABClass Then
+                        If i < Temp.QuantityABClass Then
                             Item.AbcClass = AbcClass.B
                             CodeDict(Item.Code)(CurIter) = AbcClass.B
                         Else
@@ -105,18 +109,18 @@ Namespace AbcCalculator
                     End If
                 Next
             Else
-                For j = 0 To AbcTable.Count - 1
-                    Dim Item = AbcTable(j)
+                For i = 0 To AbcTable.Count - 1
+                    Dim Item = AbcTable(i)
                     Dim PrevAbc = CodeDict(Item.Code)(CurIter - 1)
                     If {AbcClass.A, AbcClass.B, AbcClass.C}.Contains(PrevAbc) Then
                         Item.AbcClass = PrevAbc
                         CodeDict(Item.Code)(CurIter) = PrevAbc
                     Else
-                        If j < Temp.QuantityAClass Then
+                        If i < Temp.QuantityAClass Then
                             Item.AbcClass = AbcClass.A
                             CodeDict(Item.Code)(CurIter) = AbcClass.A
                         Else
-                            If j < Temp.QuantityABClass Then
+                            If i < Temp.QuantityABClass Then
                                 Item.AbcClass = AbcClass.B
                                 CodeDict(Item.Code)(CurIter) = AbcClass.B
                             Else
@@ -148,59 +152,60 @@ Namespace AbcCalculator
         End Sub
 
 
-        Public Sub Equalization(abcTable As IEnumerable(Of AbcItem))
+        Public Sub Equalization(abcTable As IList(Of AbcItem))
             Dim QtyA = Temp.QuantityAClass
             Dim QtyB = Temp.QuantityBClass
-            Dim CurQtyA = abcTable.Count(Function(Item) Item.AbcClass = AbcClass.A)
+            Dim CurQtyA = abcTable.AsEnumerable.Count(Function(Item) Item.AbcClass = AbcClass.A)
+
             If QtyA > CurQtyA Then
                 For i = 0 To abcTable.Count - 1
-                    If abcTable(i).AbcClass <> AbcClass.A Then
-                        abcTable(i).AbcClass = AbcClass.A
-                        CodeDict(abcTable(i).Code)(CurIter) = AbcClass.A
+                    Dim Item = abcTable(i)
+                    If Item.AbcClass <> AbcClass.A Then
+                        Item.AbcClass = AbcClass.A
+                        CodeDict(Item.Code)(CurIter) = AbcClass.A
                         CurQtyA += 1
                         If QtyA = CurQtyA Then Exit For
                     End If
                 Next
-            Else
-                If QtyA < CurQtyA Then
-                    For i = abcTable.Count - 1 To 0 Step -1
-                        If abcTable(i).AbcClass = AbcClass.A Then
-                            If QtyB = 0 Then
-                                abcTable(i).AbcClass = AbcClass.C
-                                CodeDict(abcTable(i).Code)(CurIter) = AbcClass.C
-                            Else
-                                abcTable(i).AbcClass = AbcClass.B
-                                CodeDict(abcTable(i).Code)(CurIter) = AbcClass.B
-                            End If
-                            CurQtyA -= 1
-                            If QtyA = CurQtyA Then Exit For
+            ElseIf QtyA < CurQtyA Then
+                For i = abcTable.Count - 1 To 0 Step -1
+                    Dim Item = abcTable(i)
+                    If Item.AbcClass = AbcClass.A Then
+                        If QtyB = 0 Then
+                            Item.AbcClass = AbcClass.C
+                            CodeDict(Item.Code)(CurIter) = AbcClass.C
+                        Else
+                            Item.AbcClass = AbcClass.B
+                            CodeDict(Item.Code)(CurIter) = AbcClass.B
                         End If
-                    Next
-                End If
+                        CurQtyA -= 1
+                        If QtyA = CurQtyA Then Exit For
+                    End If
+                Next
             End If
 
             If QtyB = 0 Then Return
-            Dim CurQtyB = abcTable.Count(Function(Item) Item.AbcClass = AbcClass.B)
+            Dim CurQtyB = abcTable.AsEnumerable.Count(Function(Item) Item.AbcClass = AbcClass.B)
             If QtyB > CurQtyB Then
                 For i = 0 To abcTable.Count - 1
-                    If abcTable(i).AbcClass = AbcClass.C Then
-                        abcTable(i).AbcClass = AbcClass.B
-                        CodeDict(abcTable(i).Code)(CurIter) = AbcClass.B
+                    Dim Item = abcTable(i)
+                    If Item.AbcClass = AbcClass.C Then
+                        Item.AbcClass = AbcClass.B
+                        CodeDict(Item.Code)(CurIter) = AbcClass.B
                         CurQtyB += 1
                         If QtyB = CurQtyB Then Exit For
                     End If
                 Next
-            Else
-                If QtyB < CurQtyB Then
-                    For i = abcTable.Count - 1 To 0 Step -1
-                        If abcTable(i).AbcClass = AbcClass.B Then
-                            abcTable(i).AbcClass = AbcClass.C
-                            CodeDict(abcTable(i).Code)(CurIter) = AbcClass.C
-                            CurQtyB -= 1
-                            If QtyB = CurQtyB Then Return
-                        End If
-                    Next
-                End If
+            ElseIf QtyB < CurQtyB Then
+                For i = abcTable.Count - 1 To 0 Step -1
+                    Dim Item = abcTable(i)
+                    If Item.AbcClass = AbcClass.B Then
+                        Item.AbcClass = AbcClass.C
+                        CodeDict(Item.Code)(CurIter) = AbcClass.C
+                        CurQtyB -= 1
+                        If QtyB = CurQtyB Then Return
+                    End If
+                Next
             End If
         End Sub
 #End Region

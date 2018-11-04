@@ -7,7 +7,7 @@ Namespace Pages
 
 
         Public Property Позиция As Long
-        Public ReadOnly Property Класс As String
+        Public ReadOnly Property Класс_ABC As String
             Get
                 Return CType([Enum].ToObject(GetType(AbcClass), AbcClass_id), AbcClass).ToString
             End Get

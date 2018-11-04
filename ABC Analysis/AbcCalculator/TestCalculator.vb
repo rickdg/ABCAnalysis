@@ -12,7 +12,7 @@
         Public Property ClassChange As New List(Of Transition)
 
 
-        Public Overrides Sub RecordStatistics(abcTable As IEnumerable(Of AbcItem))
+        Friend Overrides Sub RecordStatistics(abcTable As IEnumerable(Of AbcItem))
             Dim StartInterval = FinalBillingPeriod.AddDays(1)
             Dim FinalInterval = FinalBillingPeriod.AddDays(Temp.RunInterval)
 
@@ -32,6 +32,10 @@
 
             If CurIter = Iterations Then Return
             PickQtyTasks.Add(New PickValue(FinalInterval, Pick, Function(i) i.QtyTasks))
+        End Sub
+
+
+        Friend Overrides Sub RestoreABC(abcTable As IEnumerable(Of AbcItem))
         End Sub
 
     End Class

@@ -59,7 +59,7 @@ Namespace Pages
         Public Property AvgPickPercent As Double
         Public Property Transition As Integer
         Public Property AllTransition As Integer
-        Public Property HeuristicsResult As IEnumerable(Of ResultCalculation)
+        Public Property CalculateResult As IEnumerable(Of ResultCalculation)
 #End Region
 
 
@@ -71,16 +71,19 @@ Namespace Pages
 
 
         Public Sub UpdateSettings()
-            If HeuristicsResult Is Nothing Then Return
-            Dim TargetPickPercent = HeuristicsResult.Max(Function(j) j.AvgPickPercent) - ReductionPickPercent.Value2
-            Dim Result = (From Rc In HeuristicsResult
+            If CalculateResult Is Nothing Then Return
+            Dim TargetPickPercent = CalculateResult.Max(Function(j) j.AvgPickPercent) - ReductionPickPercent.Value2
+
+            Dim Result = (From Rc In CalculateResult
                           Where Rc.AvgPickPercent >= TargetPickPercent
                           Order By Rc.Transition Ascending, Rc.AvgPickPercent Descending).First
+
             RunInterval = Result.Interval
             BillingPeriod = Result.Period
             AvgPickPercent = Result.AvgPickPercent
             Transition = Result.Transition
             AllTransition = Result.AllTransition
+
             OnPropertyChanged("RunInterval")
             OnPropertyChanged("BillingPeriod")
             OnPropertyChanged("AvgPickPercent")

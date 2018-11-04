@@ -47,10 +47,10 @@ Namespace AbcCalculator
                             AlternativeCalculate()
                             Return
                         Else
-                            If Not IsResumeDialog("Текущая дата не совпадает с расчетной, начать новый расчет?") Then Return
+                            If Not IfYes("Текущая дата не совпадает с расчетной, начать новый расчет?") Then Return
                         End If
                     Else
-                        If Not IsResumeDialog("АВС уже был рассчитан, начать новый расчет?") Then Return
+                        If Not IfYes("АВС уже был рассчитан, начать новый расчет?") Then Return
                     End If
                 End If
 
@@ -70,7 +70,7 @@ Namespace AbcCalculator
 
             SetCalculationData()
             SetMasterData()
-            MyBase.RunIterations()
+            RunIterations()
             CalculateResult()
 
             Temp.FinalDate = FinalBillingPeriod
@@ -88,38 +88,7 @@ Namespace AbcCalculator
         End Sub
 
 
-        Private Overloads Sub RunIterations()
-            Dim PrevAbcTable1 As IEnumerable(Of AbcItem)
-            Dim PrevAbcTable2 As IEnumerable(Of AbcItem)
-
-            For i = 0 To Iterations
-                CurIter = i
-                StartBillingPeriod = StartDate
-                FinalBillingPeriod = StartDate.AddDays(Temp.BillingPeriodForCalculate)
-                StartDate = StartDate.AddDays(Temp.RunInterval)
-
-                Dim AbcTable = GetAbcTable()
-
-                If CurIter = 0 Then
-                    RestoreABC(AbcTable)
-                    PrevAbcTable1 = AbcTable
-                    Continue For
-                End If
-
-                If CurIter Mod 2 = 0 Then
-                    PrevAbcTable1 = AbcTable
-                    TransitionToX(PrevAbcTable2)
-                Else
-                    PrevAbcTable2 = AbcTable
-                    TransitionToX(PrevAbcTable1)
-                End If
-
-                Equalization(AbcTable)
-            Next
-        End Sub
-
-
-        Private Sub RestoreABC(abcTable As IEnumerable(Of AbcItem))
+        Friend Overrides Sub RestoreABC(abcTable As IEnumerable(Of AbcItem))
             For Each AbcItem In abcTable
                 Dim AbcCodeItem = CurrentAbc.SingleOrDefault(Function(i) i.CodeItem = AbcItem.Code)
                 If AbcCodeItem IsNot Nothing Then
@@ -197,7 +166,7 @@ Namespace AbcCalculator
         End Function
 
 
-        Private Function IsResumeDialog(content As String) As Boolean?
+        Private Function IfYes(content As String) As Boolean?
             Dim Result As Boolean?
             Application.Current.Dispatcher.Invoke(Sub()
                                                       Dim Dlg As New ModernDialog With {
@@ -210,7 +179,7 @@ Namespace AbcCalculator
         End Function
 
 
-        Public Overrides Sub RecordStatistics(abcTable As IEnumerable(Of AbcItem))
+        Friend Overrides Sub RecordStatistics(abcTable As IEnumerable(Of AbcItem))
         End Sub
 
     End Class

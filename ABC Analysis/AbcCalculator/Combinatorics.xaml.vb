@@ -59,11 +59,12 @@ Namespace AbcCalculator
             Dim InitialDate As Date
             Dim FinalDate As Date
             Dim Data As IEnumerable(Of TaskDataExtend)
-            Dim HeuristicsResult As New BlockingCollection(Of ResultCalculation)
+            Dim Result As New BlockingCollection(Of ResultCalculation)
 
             Try
                 Using Context = MainPageModel.CurrentProject.Context
                     If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
+
                     InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                     FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
                     Data = (From td In Context.TaskDatas
@@ -96,11 +97,11 @@ Namespace AbcCalculator
                                      .CalculationData = CalculationData}
 
                                      c.Calculate()
-                                     HeuristicsResult.Add(New ResultCalculation(c.Temp, c.PickQtyTasks, c.ClassChange))
+                                     Result.Add(New ResultCalculation(c.Temp, c.PickQtyTasks, c.ClassChange))
                                      ProgressValue += 1
                                  End Sub)
 
-                Temp.HeuristicsResult = HeuristicsResult.ToList
+                Temp.CalculateResult = Result.ToList
                 Temp.UpdateSettings()
             Catch ex As Exception
                 Dispatcher.Invoke(Sub()
@@ -116,15 +117,24 @@ Namespace AbcCalculator
 
 
         Private Function GetTemplates() As IEnumerable(Of TemplateBase)
-            Return (From RunInterval In {7, 14, 21, 28, 35, 42}
-                    From BillingPeriod In {21, 28, 35, 42, 49, 56, 63, 70, 77, 84, 91, 98, 105,
-                        112, 119, 126, 133, 140, 147, 154, 161, 168, 175, 182, 189, 196, 203}
+            Return (From RunInterval In NumberGenerator(7, 42, 7)
+                    From BillingPeriod In NumberGenerator(21, 203, 7)
                     Select New TemplateBase With {
-                       .RunInterval = RunInterval,
-                       .BillingPeriod = BillingPeriod,
-                       .QuantityAClass = Temp.QuantityAClass,
-                       .QuantityBClass = Temp.QuantityBClass,
-                       .QuantityABClass = Temp.QuantityABClass}).ToList
+                        .RunInterval = RunInterval,
+                        .BillingPeriod = BillingPeriod,
+                        .QuantityAClass = Temp.QuantityAClass,
+                        .QuantityBClass = Temp.QuantityBClass,
+                        .QuantityABClass = Temp.QuantityABClass}).ToList
+        End Function
+
+
+        Private Function NumberGenerator(fromNumber As Integer, toNumber As Integer, offset As Integer) As IEnumerable(Of Integer)
+            Dim Result As New List(Of Integer)
+            Do While fromNumber <= toNumber
+                Result.Add(fromNumber)
+                fromNumber += offset
+            Loop
+            Return Result
         End Function
 
 

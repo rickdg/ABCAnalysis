@@ -10,8 +10,10 @@ Namespace AbcCalculator
         Public Overrides Sub Calculate()
             Using Context = MainPageModel.CurrentProject.Context
                 If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
+
                 InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                 FinalDate = Context.TaskDatas.Where(Function(i) CBool(SqlFunctions.DatePart("Weekday", i.XDate) = 6)).Max(Function(i) i.XDate)
+
                 Data = (From td In Context.TaskDatas
                         Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
                         Where td.XDate <= FinalDate AndAlso Temp.Subinventories_id.Contains(td.Subinventory)
@@ -44,7 +46,7 @@ Namespace AbcCalculator
         Private Property Worksheets As ExcelWorksheets
 
 
-        Public Overrides Sub RecordStatistics(abcTable As IEnumerable(Of AbcItem))
+        Friend Overrides Sub RecordStatistics(abcTable As IEnumerable(Of AbcItem))
             Dim StartInterval = FinalBillingPeriod.AddDays(1)
             Dim FinalInterval = FinalBillingPeriod.AddDays(Temp.RunInterval)
 
@@ -108,6 +110,10 @@ Namespace AbcCalculator
         Private Function AddWorksheet(name As String) As WorksheetHelper
             Return New WorksheetHelper With {.Sheet = Worksheets.Add(name)}
         End Function
+
+
+        Friend Overrides Sub RestoreABC(abcTable As IEnumerable(Of AbcItem))
+        End Sub
 
     End Class
 End Namespace
