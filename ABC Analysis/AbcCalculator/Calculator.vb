@@ -109,7 +109,7 @@ Namespace AbcCalculator
 
 
         Private Sub CalculateResult()
-            ViewCollection("ABC", CodeDict.Select(Function(i) Tuple.Create(i.Key, i.Value(CurIter).ToString)))
+            ViewCollection($"АВС {Temp.Name}", CodeDict.Select(Function(i) Tuple.Create(i.Key, i.Value(CurIter).ToString)))
 
             Dim ResultData = (From cd In CodeDict
                               From ca In CurrentAbc.Where(Function(i) cd.Key = i.CodeItem).DefaultIfEmpty

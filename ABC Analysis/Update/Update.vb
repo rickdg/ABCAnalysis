@@ -1,7 +1,7 @@
 ﻿Module Update
 
     Public ReadOnly Property Revisions As New Dictionary(Of Integer, Revision) From {
-        {30, New Revision With {.VersionPart = "4.0.1", .Number = 30, .XDate = New DateTime(2018, 11, 4)}}}
+        {31, New Revision With {.VersionPart = "4.0.1", .Number = 31, .XDate = New DateTime(2018, 11, 6)}}}
 
 
     Public Sub ExecuteUpdate(oldRevision As Integer, newRevision As Integer)
