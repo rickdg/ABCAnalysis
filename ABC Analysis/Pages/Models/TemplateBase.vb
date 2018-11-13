@@ -64,6 +64,7 @@ Namespace Pages
 
 
 #Region "Filters"
+        Public Overridable ReadOnly Property IsSalesOrderFunc As Func(Of TaskData, Boolean)
         Public Overridable ReadOnly Property Subinventories_id As IEnumerable(Of Integer)
         Public Overridable ReadOnly Property UserPositionTypes_id As IEnumerable(Of Integer)
         Public Overridable ReadOnly Property Categoryes_id As IEnumerable(Of Integer)
@@ -89,7 +90,7 @@ Namespace Pages
             OnPropertyChanged("AvgPickPercent")
             OnPropertyChanged("Transition")
             OnPropertyChanged("AllTransition")
-            OnPropertyChanged("NextFinalDate")
+            OnPropertyChanged("NextCalculationData")
         End Sub
 
     End Class

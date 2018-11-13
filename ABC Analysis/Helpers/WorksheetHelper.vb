@@ -56,7 +56,7 @@ Public Class WorksheetHelper
             If Index = 0 Then
                 Sheet.Column(DataRange.Start.Column).Style.Numberformat.Format = "DD.MM.YYYY"
             Else
-                Chart.Series.Add(DataRange.Offset(1, Index, DataRange.End.Row - 1, 1), DataRange.Offset(1, 0, DataRange.End.Row - 1, 1)).Header = Prop.Name
+                Chart.Series.Add(DataRange.Offset(0, Index, DataRange.End.Row, 1), DataRange.Offset(0, 0, DataRange.End.Row, 1)).Header = Prop.Name
             End If
             Index += 1
         Next

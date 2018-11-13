@@ -160,7 +160,8 @@
                 </Grid>
 
                 <StackPanel Grid.Row="2" Margin="0,14,0,8">
-                    <TextBlock Text="Фильтры" Style="{StaticResource Heading1}" Margin="0,0,0,4"/>
+                    <TextBlock Text="Фильтры" Style="{StaticResource Heading1}"/>
+                    <CheckBox Content="Учитывать только ЗнП" IsChecked="{Binding CurrentTemplate.SalesOrder}" Padding="0,4"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition SharedSizeGroup="Col1"/>
@@ -279,7 +280,7 @@
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Средний процент отбора АВ"/>
-                    <TextBox Foreground="{DynamicResource Accent}" Text="{Binding CurrentTemplate.AvgPickPercent, Mode=OneWay, StringFormat={}{0:P0}}" IsReadOnly="True"/>
+                    <TextBox Foreground="{DynamicResource Accent}" Text="{Binding CurrentTemplate.AvgPickPercent, Mode=OneWay, StringFormat={}{0:P2}}" IsReadOnly="True"/>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Изменения классов АВ"/>

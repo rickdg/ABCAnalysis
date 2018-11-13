@@ -26,7 +26,7 @@ Namespace AbcCalculator
         Public Sub SetCalculationData()
             CalculationData = (From d In Data
                                Where Temp.UserPositionTypes_id.Contains(d.UserPositionType_Id) AndAlso
-                                   Temp.Categoryes_id.Contains(d.Category_Id) AndAlso d.SalesOrder
+                                   Temp.Categoryes_id.Contains(d.Category_Id) AndAlso Temp.IsSalesOrderFunc(d)
                                Select New DataItem With {.XDate = d.XDate, .Code = d.Code, .Value = d.Orders}).ToList
         End Sub
 

@@ -70,6 +70,17 @@ Namespace Pages
 
 
 #Region "Filters"
+        Public Property SalesOrder As Boolean
+        <JsonIgnore>
+        Public Overrides ReadOnly Property IsSalesOrderFunc As Func(Of TaskData, Boolean)
+            Get
+                If SalesOrder Then
+                    Return Function(d) d.SalesOrder
+                Else
+                    Return Function(d) True
+                End If
+            End Get
+        End Property
         Public Property Subinventories As New ObservableCollection(Of SubinventoryItem)
         Public Property UserPositionTypes As New ObservableCollection(Of Named)
         Public Property Categoryes As New ObservableCollection(Of Named)
