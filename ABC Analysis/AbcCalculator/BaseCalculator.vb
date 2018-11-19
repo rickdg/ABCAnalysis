@@ -43,9 +43,11 @@ Namespace AbcCalculator
         Public Property CurIter As Integer
         Public Property StartBillingPeriod As Date
         Public Property FinalBillingPeriod As Date
+        Public Property LastAbcTable As IList(Of AbcItem)
 
 
         Public Sub RunIterations()
+            Dim AbcTable As IList(Of AbcItem)
             Dim PrevAbcTable1 As IEnumerable(Of AbcItem)
             Dim PrevAbcTable2 As IEnumerable(Of AbcItem)
 
@@ -55,7 +57,7 @@ Namespace AbcCalculator
                 FinalBillingPeriod = StartDate.AddDays(Temp.BillingPeriodForCalculate)
                 StartDate = StartDate.AddDays(Temp.RunInterval)
 
-                Dim AbcTable = GetAbcTable()
+                AbcTable = GetAbcTable()
 
                 If CurIter = 0 Then
                     RestoreABC(AbcTable)
@@ -75,6 +77,8 @@ Namespace AbcCalculator
 
                 RecordStatistics(AbcTable)
             Next
+
+            LastAbcTable = AbcTable
         End Sub
 
 
