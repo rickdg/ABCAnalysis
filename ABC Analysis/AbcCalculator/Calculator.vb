@@ -11,9 +11,23 @@ Namespace AbcCalculator
         Inherits BaseCalculator
 
         Private Property CurrentAbc As IEnumerable(Of AbcCodeItem)
+        Private Property IsRestoreABC As Boolean
 
 
         Public Overrides Sub Calculate()
+            If SetData() Then
+                SetCalculationData()
+                SetMasterData()
+                RunIterations()
+                CalculateResult()
+
+                Temp.FinalDate = FinalBillingPeriod
+                Temp.IsCalculated = True
+            End If
+        End Sub
+
+
+        Private Function SetData() As Boolean
             Using Context = MainPageModel.CurrentProject.Context
                 If Context.TaskDatas.FirstOrDefault Is Nothing Then Throw New Exception("Нет данных для расчета.")
 
@@ -21,6 +35,9 @@ Namespace AbcCalculator
                 Dim TempDate = FinalDate.AddDays(-4)
                 Dim CheckTasks = Context.TaskDatas.Where(Function(i) i.XDate >= TempDate AndAlso i.XDate <= FinalDate).ToList.Count
                 If CheckTasks = 0 Then Throw New Exception("Недостаточно данных для расчета.")
+
+                InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
+                IsRestoreABC = False
 
                 CurrentAbc = (From abc In Context.AbcCodeItems
                               Join ci In Context.CodeItems On abc.CodeItem Equals ci.Code
@@ -30,31 +47,16 @@ Namespace AbcCalculator
                 If Temp.IsCalculated Then
                     If Temp.FinalDate < FinalDate Then
                         If DateDiff("d", Temp.FinalDate, FinalDate) Mod Temp.RunInterval = 0 Then
-
                             InitialDate = Temp.FinalDate.AddDays(-Temp.BillingPeriodForCalculate)
-                            Data = (From td In Context.TaskDatas
-                                    Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
-                                    Where td.XDate >= InitialDate AndAlso td.XDate <= FinalDate AndAlso Temp.Subinventories_id.Contains(td.Subinventory)
-                                    Select New TaskDataExtend With {
-                                        .XDate = td.XDate,
-                                        .Code = td.Code,
-                                        .Category_Id = ci.Category_Id,
-                                        .UserPositionType_Id = ci.UserPositionType_Id,
-                                        .SalesOrder = td.SalesOrder,
-                                        .Orders = td.Orders,
-                                        .Tasks = td.Tasks}).ToList
-
-                            AlternativeCalculate()
-                            Return
+                            IsRestoreABC = True
                         Else
-                            If Not IfYes("Текущая дата не совпадает с расчетной, начать новый расчет?") Then Return
+                            If Not ConfirmAction("Текущая дата не совпадает с расчетной, начать новый расчет?") Then Return False
                         End If
                     Else
-                        If Not IfYes("АВС уже был рассчитан, начать новый расчет?") Then Return
+                        If Not ConfirmAction("АВС уже был рассчитан, начать новый расчет?") Then Return False
                     End If
                 End If
 
-                InitialDate = Context.TaskDatas.Min(Function(i) i.XDate)
                 Data = (From td In Context.TaskDatas
                         Join ci In Context.CodeItems On ci.Id Equals td.CodeItem_id
                         Where td.XDate >= InitialDate AndAlso td.XDate <= FinalDate AndAlso Temp.Subinventories_id.Contains(td.Subinventory)
@@ -67,44 +69,29 @@ Namespace AbcCalculator
                             .Orders = td.Orders,
                             .Tasks = td.Tasks}).ToList
             End Using
-
-            SetCalculationData()
-            SetMasterData()
-            RunIterations()
-            CalculateResult()
-
-            Temp.FinalDate = FinalBillingPeriod
-            Temp.IsCalculated = True
-        End Sub
-
-
-        Private Sub AlternativeCalculate()
-            SetCalculationData()
-            SetMasterData()
-            RunIterations()
-            CalculateResult()
-
-            Temp.FinalDate = FinalBillingPeriod
-        End Sub
+            Return True
+        End Function
 
 
         Friend Overrides Sub RestoreABC(abcTable As IEnumerable(Of AbcItem))
-            For Each AbcItem In abcTable
-                Dim AbcCodeItem = CurrentAbc.SingleOrDefault(Function(i) i.CodeItem = AbcItem.Code)
-                If AbcCodeItem IsNot Nothing Then
-                    AbcItem.AbcClass = CType([Enum].ToObject(GetType(AbcClass), AbcCodeItem.AbcClass_id), AbcClass)
-                    CodeDict(AbcItem.Code)(CurIter) = AbcItem.AbcClass
-                End If
-            Next
-
-            For Each Item In CodeDict
-                If Item.Value(CurIter) = AbcClass.NA Then
-                    Dim AbcCodeItem = CurrentAbc.SingleOrDefault(Function(i) i.CodeItem = Item.Key)
+            If IsRestoreABC Then
+                For Each AbcItem In abcTable
+                    Dim AbcCodeItem = CurrentAbc.SingleOrDefault(Function(i) i.CodeItem = AbcItem.Code)
                     If AbcCodeItem IsNot Nothing Then
-                        Item.Value(CurIter) = CType([Enum].ToObject(GetType(AbcClass), AbcCodeItem.AbcClass_id), AbcClass)
+                        AbcItem.AbcClass = CType([Enum].ToObject(GetType(AbcClass), AbcCodeItem.AbcClass_id), AbcClass)
+                        CodeDict(AbcItem.Code)(CurIter) = AbcItem.AbcClass
                     End If
-                End If
-            Next
+                Next
+
+                For Each Item In CodeDict
+                    If Item.Value(CurIter) = AbcClass.NA Then
+                        Dim AbcCodeItem = CurrentAbc.SingleOrDefault(Function(i) i.CodeItem = Item.Key)
+                        If AbcCodeItem IsNot Nothing Then
+                            Item.Value(CurIter) = CType([Enum].ToObject(GetType(AbcClass), AbcCodeItem.AbcClass_id), AbcClass)
+                        End If
+                    End If
+                Next
+            End If
         End Sub
 
 
@@ -138,14 +125,16 @@ Namespace AbcCalculator
             DLW.Write(DlData.ToString)
             Process.Start(NewFile.FullName)
 
-            MainPageModel.StoredProcedureExecute({New CommandParameter With {
-                                                 .Name = "@AbcGroup_id",
-                                                 .SqlDbType = SqlDbType.Int,
-                                                 .Value = Temp.AbcGroup_id}},
-                                                 New StoredProcedureParameter With {
-                                                 .CommandText = "dbo.UpdateAbc",
-                                                 .ParameterName = "@Table",
-                                                 .TypeName = "AbcTable"}, Table)
+            Dim CommandParameters = {New CommandParameter With {
+                .Name = "@AbcGroup_id",
+                .SqlDbType = SqlDbType.Int,
+                .Value = Temp.AbcGroup_id}}
+            Dim StoredProcedureParameter = New StoredProcedureParameter With {
+                .CommandText = "dbo.UpdateAbc",
+                .ParameterName = "@Table",
+                .TypeName = "AbcTable"}
+
+            MainPageModel.StoredProcedureExecute(CommandParameters, StoredProcedureParameter, Table)
         End Sub
 
 
@@ -166,7 +155,7 @@ Namespace AbcCalculator
         End Function
 
 
-        Private Function IfYes(content As String) As Boolean?
+        Private Function ConfirmAction(content As String) As Boolean?
             Dim Result As Boolean?
             Application.Current.Dispatcher.Invoke(Sub()
                                                       Dim Dlg As New ModernDialog With {

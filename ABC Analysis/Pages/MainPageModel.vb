@@ -118,19 +118,19 @@ Namespace Pages
 
 
         Public Shared Sub StoredProcedureExecute(cmdParameters As IEnumerable(Of CommandParameter),
-                                                 procParameters As StoredProcedureParameter,
+                                                 procParameter As StoredProcedureParameter,
                                                  table As DataTable)
             Using Connection As New SqlConnection(CurrentProject.SqlConnectionString)
                 Connection.Open()
                 Using Command = Connection.CreateCommand()
                     Command.CommandTimeout = 1800
-                    Command.CommandText = procParameters.CommandText
+                    Command.CommandText = procParameter.CommandText
                     Command.CommandType = CommandType.StoredProcedure
                     For Each Item In cmdParameters
                         Command.Parameters.Add(Item.Name, Item.SqlDbType).Value = Item.Value
                     Next
-                    Command.Parameters.Add(procParameters.ParameterName, SqlDbType.Structured).TypeName = procParameters.TypeName
-                    Command.Parameters(procParameters.ParameterName).Value = table
+                    Command.Parameters.Add(procParameter.ParameterName, SqlDbType.Structured).TypeName = procParameter.TypeName
+                    Command.Parameters(procParameter.ParameterName).Value = table
                     Command.ExecuteReader()
                 End Using
             End Using
